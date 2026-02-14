@@ -1,0 +1,167 @@
+.loading {
+    padding: 24px;
+    color: #64748b;
+}
+
+.heading {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.subheading {
+    color: #64748b;
+    margin-bottom: 32px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.card {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.cardTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.cardValue {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.cardDesc {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.iconBlue {
+    color: #3b82f6;
+}
+
+.iconYellow {
+    color: #eab308;
+}
+
+.iconGreen {
+    color: #22c55e;
+}
+
+.link {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sectionHeader h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.actionsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.actionCard {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.actionCard:hover {
+    background: var(--muted);
+    border-color: var(--primary);
+}
+
+.actionTitle {
+    font-weight: 500;
+}
+
+.conversationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.conversationItem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.2s;
+}
+
+.conversationItem:hover {
+    background: var(--muted);
+    border-color: var(--primary);
+}
+
+.conversationIcon {
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.conversationInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.conversationBot {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.conversationVisitor {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.conversationDate {
+    font-size: 13px;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.emptyState {
+    padding: 32px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+}

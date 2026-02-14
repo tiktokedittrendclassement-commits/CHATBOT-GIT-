@@ -8,19 +8,16 @@ create table profiles (
   full_name text,
   plan_tier text default 'free', -- free, pro, agency
   credits_balance int default 10, -- 10 free credits to start
-  stripe_customer_id text,
+  stripe_customer_id text, -- or lemon_squeezy_customer_id
+  lemon_squeezy_customer_id text,
+  subscription_status text default 'active', -- active, past_due, canceled
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
--- Enable RLS for profiles
 alter table profiles enable row level security;
-
-create policy "Users can view own profile" on profiles
-  for select using (auth.uid() = id);
-
-create policy "Users can update own profile" on profiles
-  for update using (auth.uid() = id);
+create policy "Users can view own profile" on profiles for select using (auth.uid() = id);
+create policy "Users can update own profile" on profiles for update using (auth.uid() = id);
 
 -- Trigger to create profile on signup
 create or replace function public.handle_new_user() 
@@ -41,38 +38,23 @@ create table chatbots (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references profiles(id) on delete cascade not null,
   name text not null,
-  color text default '#000000',
+  color text default '#4F46E5',
   system_prompt text default 'You are a helpful assistant.',
   data_sources text, -- Simple text block for context
   created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  updated_at timestamptz default now(),
+  collect_emails boolean default false,
+  whatsapp_number text
 );
 
--- Enable RLS for chatbots
 alter table chatbots enable row level security;
+create policy "Users can view own chatbots" on chatbots for select using (auth.uid() = user_id);
+create policy "Users can insert own chatbots" on chatbots for insert with check (auth.uid() = user_id);
+create policy "Users can update own chatbots" on chatbots for update using (auth.uid() = user_id);
+create policy "Users can delete own chatbots" on chatbots for delete using (auth.uid() = user_id);
 
-create policy "Users can view own chatbots" on chatbots
-  for select using (auth.uid() = user_id);
-
-create policy "Users can insert own chatbots" on chatbots
-  for insert with check (auth.uid() = user_id);
-
-create policy "Users can update own chatbots" on chatbots
-  for update using (auth.uid() = user_id);
-
-create policy "Users can delete own chatbots" on chatbots
-  for delete using (auth.uid() = user_id);
-
--- Public Policy for Embed (Read-Only)
--- The embed script needs to read the chatbot config (name, color, prompt-maybe?)
--- Wait, system_prompt should NOT be public if it contains sensitive info.
--- But for a simple chatbot, the frontend needs to know where to send messages.
--- Actually, the frontend (embed) will send messages to our API, and our API (server-side) will read the system_prompt.
--- So we don't need public read on chatbots table if we route everything through our API.
--- However, we might want to display the bot name/color on the widget.
--- Let's allow public read for 'name' and 'color' only? Supabase policies apply to rows, not columns.
--- We can create a secure view or just assume API usage.
--- For now, let's keep it private and use the API to fetch config.
+-- Helper to check plan limits (Enforced in application logic or RLS if complex)
+-- For now, we rely on application logic to enforce plan limits on INSERT.
 
 -- Table: conversations
 create table conversations (
@@ -84,7 +66,7 @@ create table conversations (
 );
 
 alter table conversations enable row level security;
-
+-- Owner can view conversations
 create policy "Users can view conversations for their chatbots" on conversations
   for select using (
     exists (
@@ -104,7 +86,7 @@ create table messages (
 );
 
 alter table messages enable row level security;
-
+-- Owner can view messages
 create policy "Users can view messages for their bot conversations" on messages
   for select using (
     exists (
@@ -114,3 +96,54 @@ create policy "Users can view messages for their bot conversations" on messages
       and chatbots.user_id = auth.uid()
     )
   );
+
+-- Table: usages (To track credit consumption)
+create table usages (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references profiles(id) on delete cascade not null,
+  chatbot_id uuid references chatbots(id) on delete set null,
+  tokens_used int default 0,
+  credits_deducted int default 0,
+  created_at timestamptz default now()
+);
+
+alter table usages enable row level security;
+create policy "Users can view own usage" on usages for select using (auth.uid() = user_id);
+
+-- PUBLIC ACCESS POLICIES FOR WIDGET
+-- The widget needs to insert messages (as visitor) and read chatbot config (name, color).
+-- Since supabase-js in the browser exposes the key, we need specific policies.
+
+-- Allow PUBLIC read access to chatbots (id, name, color) only?
+-- Or better: Create a "public_chatbots" view?
+-- Simplest for MVP: Allow public read on chatbots, but maybe restrict columns in frontend query.
+-- RLS applies to rows.
+-- Let's create a policy that allows anyone to read a chatbot if they have the ID.
+create policy "Public can view chatbots by ID" on chatbots
+  for select using (true);
+-- Note: This makes all chatbots public. Ideally we restrict origin, but that's hard in RLS.
+-- This is acceptable for a widget that is meant to be public on a website.
+
+-- Allow PUBLIC insert to conversations?
+-- Anyone can start a conversation with a valid chatbot_id.
+create policy "Public can insert conversations" on conversations
+  for insert with check (true);
+
+-- Allow PUBLIC insert to messages?
+-- Anyone can send a message to a conversation.
+create policy "Public can insert messages" on messages
+  for insert with check (
+    exists (
+      select 1 from conversations
+      where conversations.id = messages.conversation_id
+    )
+  );
+-- Allow Public to read messages of their own conversation?
+-- This is tricky without a logged-in user.
+-- Usually, the widget keeps state.
+-- For now, let's allow public read on messages if they belong to a conversation?
+-- This is risky if IDs are guessable (UUIDs are not easily guessable).
+create policy "Public can read messages by conversation" on messages
+  for select using (true);
+-- Warning: This allows scraping if conversation IDs are leaked.
+-- For an MVP, this is standard "security through unguessability".

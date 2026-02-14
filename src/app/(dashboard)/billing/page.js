@@ -1,0 +1,313 @@
+
+'use client'
+
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/components/auth-provider'
+import styles from './page.module.css'
+import { Check, CreditCard, Trash, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+const PLANS = [
+    {
+        id: 'free',
+        name: 'Gratuit',
+        price: '0€/mois',
+        features: ['1 Chatbot', '1000 messages/mois', 'Personnalisation Basique', 'Support Communautaire', 'Crédits à la demande'],
+        current: true // Default logic handling below
+    },
+    {
+        id: 'pro',
+        name: 'Croissance',
+        price: '49€/mois',
+        features: ['10 Chatbots', 'Messages illimités', 'Email Marketing', 'Nom du Bot Personnalisé', 'Photos Produits', 'Relance Panier'],
+        link: 'https://test.lemonsqueezy.com/checkout/...' // Placeholder
+    },
+    {
+        id: 'agency',
+        name: 'Agence',
+        price: '249€/mois',
+        features: ['Chatbots illimités', 'Messages illimités', 'Marketing WhatsApp', 'Droits de Revente', 'Marque Blanche', 'Popups Intelligents'],
+        link: 'https://test.lemonsqueezy.com/checkout/...' // Placeholder
+    }
+]
+
+export default function BillingPage() {
+    const { user } = useAuth()
+    const [profile, setProfile] = useState(null)
+    const [loading, setLoading] = useState(true)
+
+    // Modal state for chatbot deletion
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [chatbots, setChatbots] = useState([])
+    const [selectedChatbots, setSelectedChatbots] = useState([])
+    const [targetPlan, setTargetPlan] = useState(null)
+    const [requiredDeletions, setRequiredDeletions] = useState(0)
+
+    useEffect(() => {
+        if (!user) return
+        const fetchProfile = async () => {
+            const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+            setProfile(data)
+            setLoading(false)
+        }
+        fetchProfile()
+    }, [user])
+
+    const handlePlanChange = async (newPlan) => {
+        const PLAN_LIMITS = { free: 1, pro: 10, agency: 999999 }
+
+        // Count current chatbots
+        const { data: userChatbots, count } = await supabase
+            .from('chatbots')
+            .select('*', { count: 'exact' })
+            .eq('user_id', user.id)
+
+        const newLimit = PLAN_LIMITS[newPlan]
+
+        if (count > newLimit) {
+            // Show deletion modal
+            setChatbots(userChatbots || [])
+            setTargetPlan(newPlan)
+            setRequiredDeletions(count - newLimit)
+            setSelectedChatbots([])
+            setShowDeleteModal(true)
+        } else {
+            // Can change directly
+            if (newPlan === 'free') {
+                // Rename all chatbots for free plan
+                await supabase
+                    .from('chatbots')
+                    .update({ name: 'Mon Assistant Vendo' })
+                    .eq('user_id', user.id)
+            }
+
+            await supabase.from('profiles').update({ plan_tier: newPlan }).eq('id', user.id)
+            window.location.reload()
+        }
+    }
+
+    const handleConfirmDeletion = async () => {
+        if (selectedChatbots.length < requiredDeletions) {
+            alert(`Veuillez sélectionner au moins ${requiredDeletions} chatbot(s) à supprimer.`)
+            return
+        }
+
+        // Delete selected chatbots
+        const { error } = await supabase
+            .from('chatbots')
+            .delete()
+            .in('id', selectedChatbots)
+
+        if (error) {
+            alert('Erreur lors de la suppression: ' + error.message)
+            return
+        }
+
+        // Apply plan restrictions if downgrading to free
+        if (targetPlan === 'free') {
+            await supabase
+                .from('chatbots')
+                .update({ name: 'Mon Assistant Vendo' })
+                .eq('user_id', user.id)
+                .not('id', 'in', `(${selectedChatbots.join(',')})`)
+        }
+
+        // Change plan
+        await supabase.from('profiles').update({ plan_tier: targetPlan }).eq('id', user.id)
+        window.location.reload()
+    }
+
+    if (loading) return <div className={styles.loading}>Chargement de la facturation...</div>
+
+    return (
+        <div>
+            <h1 className={styles.heading}>Facturation & Abonnement</h1>
+            <p className={styles.subheading}>Gérez votre plan et vos méthodes de paiement</p>
+
+            <div style={{ marginBottom: 32, padding: 16, background: '#eff6ff', borderRadius: 8, border: '1px solid #bfdbfe', color: '#1e3a8a' }}>
+                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span>ℹ️</span> Fonctionnement de la facturation
+                </div>
+                <p style={{ fontSize: 14, opacity: 0.9 }}>
+                    <strong>Abonnement :</strong> Débloque les fonctionnalités (nombre de chatbots, marketing, marque blanche).<br />
+                    <strong>Portefeuille :</strong> Payez uniquement ce que vous consommez (réponses IA) via des crédits.
+                </p>
+            </div>
+
+            <div className={styles.grid}>
+                {PLANS.map(plan => {
+                    const isCurrent = profile?.plan_tier === plan.id || (plan.id === 'free' && !profile?.plan_tier)
+                    return (
+                        <div key={plan.id} className={`${styles.card} ${isCurrent ? styles.currentCard : ''}`}>
+                            <div className={styles.cardHeader}>
+                                <h3 className={styles.planName}>{plan.name}</h3>
+                                <div className={styles.price}>{plan.price}</div>
+                            </div>
+                            <ul className={styles.features}>
+                                {plan.features.map((f, i) => (
+                                    <li key={i} className={styles.feature}>
+                                        <Check size={16} className={styles.checkIcon} />
+                                        {f}
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className={styles.action}>
+                                {isCurrent ? (
+                                    <Button disabled className={styles.currentBtn}>Plan Actuel</Button>
+                                ) : (
+                                    <a href={plan.link || '#'} target="_blank" rel="noopener noreferrer">
+                                        <Button className={styles.upgradeBtn} variant={plan.id === 'agency' ? 'primary' : 'outline'}>
+                                            Mettre à niveau
+                                        </Button>
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
+
+            {/* DEBUG SECTION FOR TESTING */}
+            <div style={{ marginTop: 48, padding: 24, border: '1px dashed #cbd5e1', borderRadius: 8, background: '#f8fafc' }}>
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, color: '#475569' }}>🛠️ Zone de Test (Admin)</h3>
+                <p style={{ fontSize: 14, color: '#64748b', marginBottom: 16 }}>
+                    Utilisez ces boutons pour changer votre plan instantanément et tester les différentes fonctionnalités (sans paiement).
+                </p>
+                <div style={{ display: 'flex', gap: 12 }}>
+                    <Button variant="outline" onClick={() => handlePlanChange('free')}>
+                        Force Free
+                    </Button>
+                    <Button variant="outline" onClick={() => handlePlanChange('pro')}>
+                        Force Pro
+                    </Button>
+                    <Button variant="outline" onClick={() => handlePlanChange('agency')}>
+                        Force Agency
+                    </Button>
+                </div>
+            </div>
+
+            {/* Chatbot Deletion Modal */}
+            {showDeleteModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: 12,
+                        padding: 32,
+                        maxWidth: 600,
+                        width: '90%',
+                        maxHeight: '80vh',
+                        overflow: 'auto',
+                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                            <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>
+                                Sélectionner les chatbots à supprimer
+                            </h2>
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: 8,
+                                    color: '#64748b'
+                                }}
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div style={{
+                            padding: 16,
+                            background: '#fef3c7',
+                            borderRadius: 8,
+                            marginBottom: 24,
+                            borderLeft: '4px solid #f59e0b'
+                        }}>
+                            <p style={{ margin: 0, color: '#92400e', fontSize: 14 }}>
+                                ⚠️ Vous devez supprimer <strong>{requiredDeletions}</strong> chatbot(s) pour passer au plan{' '}
+                                <strong>{targetPlan === 'free' ? 'Gratuit' : 'Croissance'}</strong>.
+                            </p>
+                            <p style={{ margin: '8px 0 0 0', color: '#92400e', fontSize: 13 }}>
+                                Sélectionnés: {selectedChatbots.length} / {requiredDeletions} minimum
+                            </p>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+                            {chatbots.map(bot => (
+                                <label
+                                    key={bot.id}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 12,
+                                        padding: 16,
+                                        border: selectedChatbots.includes(bot.id) ? '2px solid #ef4444' : '1px solid #e2e8f0',
+                                        borderRadius: 8,
+                                        cursor: 'pointer',
+                                        background: selectedChatbots.includes(bot.id) ? '#fef2f2' : 'white',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedChatbots.includes(bot.id)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setSelectedChatbots([...selectedChatbots, bot.id])
+                                            } else {
+                                                setSelectedChatbots(selectedChatbots.filter(id => id !== bot.id))
+                                            }
+                                        }}
+                                        style={{ width: 18, height: 18, cursor: 'pointer' }}
+                                    />
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontWeight: 500, marginBottom: 4 }}>{bot.name}</div>
+                                        <div style={{ fontSize: 13, color: '#64748b' }}>
+                                            Créé le {new Date(bot.created_at).toLocaleDateString('fr-FR')}
+                                        </div>
+                                    </div>
+                                    {selectedChatbots.includes(bot.id) && (
+                                        <Trash size={20} style={{ color: '#ef4444' }} />
+                                    )}
+                                </label>
+                            ))}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                            <Button
+                                variant="outline"
+                                onClick={() => setShowDeleteModal(false)}
+                            >
+                                Annuler
+                            </Button>
+                            <Button
+                                onClick={handleConfirmDeletion}
+                                disabled={selectedChatbots.length < requiredDeletions}
+                                style={{
+                                    background: selectedChatbots.length >= requiredDeletions ? '#ef4444' : '#cbd5e1',
+                                    color: 'white',
+                                    cursor: selectedChatbots.length >= requiredDeletions ? 'pointer' : 'not-allowed'
+                                }}
+                            >
+                                Supprimer {selectedChatbots.length} chatbot(s) et changer de plan
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}

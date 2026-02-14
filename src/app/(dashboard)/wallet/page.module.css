@@ -1,0 +1,85 @@
+.loading {
+    padding: 24px;
+    color: #64748b;
+}
+
+.heading {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.subheading {
+    color: #64748b;
+    margin-bottom: 48px;
+}
+
+.balanceCard {
+    background: var(--primary);
+    color: white;
+    padding: 40px;
+    border-radius: var(--radius);
+    max-width: 800px;
+}
+
+.balanceHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    opacity: 0.9;
+}
+
+.amount {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.note {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 40px;
+}
+
+.topUpGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.topUpOption {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 24px;
+    border-radius: var(--radius);
+    text-align: center;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease;
+}
+
+.topUpAmount {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.topUpPrice {
+    font-size: 16px;
+    margin-bottom: 16px;
+    opacity: 0.9;
+}
+
+.buyBtn {
+    background: white;
+    color: var(--primary);
+    width: 100%;
+    border: none;
+}
+
+.buyBtn:hover {
+    background: #f8fafc;
+}

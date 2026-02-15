@@ -178,7 +178,7 @@ export default function DemoChatStore({ context }) {
                             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
                                 <div style={{ display: 'flex', gap: 8, flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', maxWidth: '85%' }}>
                                     {msg.role === 'assistant' && msg.content && (
-                                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, marginTop: 4 }}>
+                                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#673DE6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, marginTop: 4 }}>
                                             <Bot size={14} />
                                         </div>
                                     )}
@@ -203,7 +203,7 @@ export default function DemoChatStore({ context }) {
                         ))}
                         {isTyping && (
                             <div style={{ display: 'flex', gap: 8 }}>
-                                <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
+                                <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#673DE6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
                                     <Bot size={14} />
                                 </div>
                                 <div style={{ background: 'white', padding: '12px 16px', borderRadius: 12, borderTopLeftRadius: 4, boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>

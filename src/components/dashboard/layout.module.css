@@ -59,8 +59,8 @@
 }
 
 .navItem.active {
-    background-color: #e0e7ff;
-    /* Indigo 100 (if primary is indigo) */
+    background-color: #ede9fe;
+    /* Violet 100 */
     color: var(--primary);
 }
 

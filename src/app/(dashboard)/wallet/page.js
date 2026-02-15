@@ -121,7 +121,7 @@ export default function WalletPage() {
                                 <Button
                                     onClick={handleTopUp}
                                     disabled={processing || parseFloat(amount) < 5}
-                                    size="lg"
+                                    size="md"
                                 >
                                     {processing ? 'Traitement...' : `Payer ${amount || 0}€`}
                                 </Button>

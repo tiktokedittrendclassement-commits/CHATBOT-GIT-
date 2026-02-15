@@ -142,7 +142,7 @@
 
 .popular {
   border-color: var(--primary);
-  box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 10px 30px -10px rgba(103, 61, 230, 0.2);
   position: relative;
 }
 

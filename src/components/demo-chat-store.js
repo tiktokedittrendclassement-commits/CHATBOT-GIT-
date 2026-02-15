@@ -189,8 +189,8 @@ export default function DemoChatStore({ context }) {
                                             fontSize: 14,
                                             lineHeight: '1.5',
                                             color: msg.role === 'user' ? 'white' : '#1e293b',
-                                            background: msg.role === 'user' ? '#2563eb' : 'white',
-                                            boxShadow: msg.role === 'user' ? '0 4px 6px -1px rgba(37, 99, 235, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
+                                            background: msg.role === 'user' ? '#673DE6' : 'white',
+                                            boxShadow: msg.role === 'user' ? '0 4px 6px -1px rgba(103, 61, 230, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
                                             borderTopRightRadius: msg.role === 'user' ? 4 : 12,
                                             borderTopLeftRadius: msg.role === 'assistant' ? 4 : 12,
                                             whiteSpace: 'pre-wrap'
@@ -219,7 +219,7 @@ export default function DemoChatStore({ context }) {
                     </div>
 
                     {/* Input Area */}
-                    <form onSubmit={handleSend} style={{ padding: 16, background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', gap: 10 }}>
+                    < form onSubmit={handleSend} style={{ padding: 16, background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', gap: 10 }}>
                         <input
                             value={input}
                             onChange={e => setInput(e.target.value)}
@@ -235,12 +235,13 @@ export default function DemoChatStore({ context }) {
                                 color: '#0f172a'
                             }}
                         />
-                        <button type="submit" style={{ background: '#2563eb', color: 'white', width: 40, height: 40, borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(37, 99, 235, 0.4)' }}>
+                        <button type="submit" style={{ background: '#673DE6', color: 'white', width: 40, height: 40, borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(103, 61, 230, 0.4)' }}>
                             <Send size={18} />
                         </button>
                     </form>
                 </div>
-            )}
+            )
+            }
 
             <style jsx global>{`
                 @keyframes slideUp {
@@ -252,6 +253,6 @@ export default function DemoChatStore({ context }) {
                     50% { transform: translateY(-4px); }
                 }
             `}</style>
-        </div>
+        </div >
     )
 }

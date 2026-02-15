@@ -3,10 +3,10 @@
   --foreground: #0f172a;
   /* Slate 900 */
 
-  --primary: #4f46e5;
-  /* Indigo 600 */
-  --primary-dark: #4338ca;
-  /* Indigo 700 */
+  --primary: #673DE6;
+  /* Violet (SaaS Primary) */
+  --primary-dark: #5B21B6;
+  /* Violet Dark */
 
   --secondary: #f1f5f9;
   /* Slate 100 */
@@ -27,10 +27,10 @@
   --foreground: #f8fafc;
   /* Slate 50 */
 
-  --primary: #6366f1;
-  /* Indigo 500 */
-  --primary-dark: #4f46e5;
-  /* Indigo 600 */
+  --primary: #8B5CF6;
+  /* Violet 500 (Lighter for Dark Mode) */
+  --primary-dark: #7C3AED;
+  /* Violet 600 */
 
   --secondary: #1e293b;
   /* Slate 800 */

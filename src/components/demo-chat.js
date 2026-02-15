@@ -58,10 +58,10 @@ export default function DemoChat() {
                         width: 60,
                         height: 60,
                         borderRadius: '50%',
-                        background: '#2563eb',
+                        background: '#673DE6',
                         color: 'white',
                         border: 'none',
-                        boxShadow: '0 4px 12px rgba(37,99,235,0.4)',
+                        boxShadow: '0 4px 12px rgba(103, 61, 230, 0.4)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -95,9 +95,9 @@ export default function DemoChat() {
                     animation: 'fadeIn 0.3s ease-out'
                 }}>
                     {/* Header */}
-                    <div style={{ background: '#2563eb', color: 'white', padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ background: '#673DE6', color: 'white', padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ background: 'white', padding: 8, borderRadius: '50%', color: '#2563eb' }}>
+                            <div style={{ background: 'white', padding: 8, borderRadius: '50%', color: '#673DE6' }}>
                                 <Bot size={20} />
                             </div>
                             <div>
@@ -124,8 +124,8 @@ export default function DemoChat() {
                                     fontSize: 14,
                                     lineHeight: '1.5',
                                     color: msg.role === 'user' ? 'white' : '#1e293b',
-                                    background: msg.role === 'user' ? '#2563eb' : 'white',
-                                    boxShadow: msg.role === 'user' ? '0 2px 4px rgba(37,99,235,0.2)' : '0 2px 4px rgba(0,0,0,0.05)',
+                                    background: msg.role === 'user' ? '#673DE6' : 'white',
+                                    boxShadow: msg.role === 'user' ? '0 2px 4px rgba(103, 61, 230, 0.2)' : '0 2px 4px rgba(0,0,0,0.05)',
                                     borderTopRightRadius: msg.role === 'user' ? 2 : 12,
                                     borderTopLeftRadius: msg.role === 'assistant' ? 2 : 12
                                 }}>

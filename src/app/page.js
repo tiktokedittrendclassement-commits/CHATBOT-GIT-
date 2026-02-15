@@ -25,7 +25,7 @@ export default function Home() {
           <h1 className={styles.title}>
             Chatbots IA pour <span className={styles.highlight}>Shopify</span> & <span className={styles.highlight}>WordPress</span>
           </h1>
-          <div style={{ fontSize: 24, fontWeight: 600, color: '#2563eb', marginBottom: 16 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#673DE6', marginBottom: 16 }}>
             "Le bon vendeur, au bon moment."
           </div>
           <p className={styles.subtitle}>
@@ -85,7 +85,7 @@ export default function Home() {
         <div className={styles.sectionHeader}>
           <h2>Tarification Simple et Transparente</h2>
           <p>Choisissez le plan adapté à votre activité.</p>
-          <div style={{ marginTop: 16, padding: '12px 24px', background: '#eff6ff', borderRadius: 8, color: '#1e40af', display: 'inline-block', fontSize: 14, textAlign: 'left' }}>
+          <div style={{ marginTop: 16, padding: '12px 24px', background: '#F3E8FF', borderRadius: 8, color: '#673DE6', display: 'inline-block', fontSize: 14, textAlign: 'left' }}>
             💡 <strong>Note :</strong> Les abonnements couvrent les fonctionnalités (nombre de bots, marketing, etc.).<br />
             La consommation de l'IA est payée à l'usage : <strong>~0.0001€ / message</strong>.<br />
             <span style={{ fontSize: 13, opacity: 0.9 }}>Soit environ 50 messages pour seulement 0.005€ (un demi-centime).</span>

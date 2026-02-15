@@ -6,7 +6,7 @@ import { MessageCircle, X, Send, Bot } from 'lucide-react'
 export default function DemoChatStore({ context }) {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: 'Bonjour ! Bienvenue chez LUMINA. Je suis votre assistant personnel. Comment puis-je vous aider à trouver votre style aujourd\'hui ? ✨' }
+        { role: 'assistant', content: 'Bienvenue chez AESTHETIX. Je suis votre concierge personnel. Comment puis-je vous assister dans votre sélection aujourd\'hui ?' }
     ])
     const [input, setInput] = useState('')
     const [isTyping, setIsTyping] = useState(false)
@@ -22,22 +22,32 @@ export default function DemoChatStore({ context }) {
         }
     }
 
-    // Auto-open logic when viewing product
+    // Effect to handle view/context changes
     useEffect(() => {
-        if (context) {
-            setIsOpen(true)
-            // Contextual proactive message
-            let proactiveMsg = ""
-            if (context.category === "Chaussures") {
-                proactiveMsg = `Excellent choix ! Les ${context.name} sont notre best-seller. Elles taillent normalement. Besoin d'aide ? 👟`
-            } else if (context.category === "Accessoires") {
-                proactiveMsg = `Cette montre est magnifique. Saviez-vous qu'elle est livrée avec une extension de garantie offerte ? ⌚`
+        if (!context) return;
+
+        let proactiveMsg = "";
+
+        if (context.view === 'cart' && context.cart?.length > 0) {
+            proactiveMsg = `Vous avez une excellente sélection dans votre panier. Le total est de ${context.total.toFixed(2)} €. Souhaitez-vous finaliser votre commande ou avez-vous besoin d'un conseil sur l'un des articles ?`;
+        } else if (context.view === 'checkout') {
+            proactiveMsg = `Vous êtes à l'étape finale. N'oubliez pas que la livraison est offerte pour cette collection. Une question sur les délais ?`;
+        } else if (context.view === 'faq') {
+            proactiveMsg = `Besoin d'aide ? Je connais toutes nos procédures d'expédition et de retour sur le bout des doigts. Qu'est-ce qui vous tracasse ?`;
+        } else if (context.product) {
+            const p = context.product;
+            if (p.category === "Outerwear") {
+                proactiveMsg = `Le ${p.name} est une pièce maîtresse. La laine vierge est traitée pour durer des décennies. Une question sur la coupe ?`;
             } else {
-                proactiveMsg = `Vous regardez le ${context.name}. C'est une pièce très demandée !`
+                proactiveMsg = `Vous regardez le ${p.name}. C'est l'un de nos articles les plus recherchés en ce moment.`;
             }
-            setMessages(prev => [...prev, { role: 'assistant', content: proactiveMsg }])
         }
-    }, [context])
+
+        if (proactiveMsg) {
+            setIsOpen(true);
+            setMessages(prev => [...prev, { role: 'assistant', content: proactiveMsg }]);
+        }
+    }, [context?.view, context?.product?.id])
 
     // Effect to scroll on messages change or typing
     useEffect(() => {
@@ -111,25 +121,27 @@ export default function DemoChatStore({ context }) {
                     <button
                         onClick={() => setIsOpen(true)}
                         style={{
-                            width: 64,
-                            height: 64,
-                            borderRadius: '50%',
-                            background: '#6366F1',
+                            width: 68,
+                            height: 68,
+                            borderRadius: 0,
+                            background: '#000',
                             color: 'white',
                             border: 'none',
-                            boxShadow: '0 20px 40px rgba(99, 102, 241, 0.4)',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1) translateY(-4px)'}
-                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1) translateY(0)'}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
-                        <MessageCircle size={32} />
+                        <MessageCircle size={34} />
                     </button>
-                    <div style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, background: '#22C55E', borderRadius: '50%', border: '3px solid white' }}></div>
+                    <div style={{ position: 'absolute', bottom: -5, right: -5, width: 14, height: 14, background: '#000', borderRadius: '50%', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 6, height: 6, background: '#fff', borderRadius: '50%' }}></div>
+                    </div>
                 </div>
             )}
 
@@ -149,20 +161,20 @@ export default function DemoChatStore({ context }) {
                     transformOrigin: 'bottom right'
                 }}>
                     {/* Header */}
-                    <div style={{ background: '#0F172A', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ background: '#000', padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                             <div style={{ position: 'relative' }}>
-                                <div style={{ background: '#6366F1', padding: 8, borderRadius: 12, color: 'white' }}>
-                                    <Bot size={22} />
+                                <div style={{ background: '#fff', padding: 8, borderRadius: 0, color: '#000' }}>
+                                    <Bot size={24} />
                                 </div>
-                                <div style={{ position: 'absolute', bottom: -4, right: -4, width: 12, height: 12, background: '#22C55E', borderRadius: '50%', border: '2px solid #0F172A' }}></div>
+                                <div style={{ position: 'absolute', bottom: -4, right: -4, width: 12, height: 12, background: '#22C55E', borderRadius: '50%', border: '2px solid #000' }}></div>
                             </div>
                             <div>
-                                <div style={{ fontWeight: 800, fontSize: 16, color: 'white', letterSpacing: '-0.3px' }}>VENDO AI</div>
-                                <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>Support Client Ultra-Rapide</div>
+                                <div style={{ fontWeight: 900, fontSize: 17, color: '#fff', letterSpacing: '1px' }}>CONCIERGE</div>
+                                <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>AESTHETIX PRIVATE ASSISTANT</div>
                             </div>
                         </div>
-                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', cursor: 'pointer', padding: 8, borderRadius: 10, transition: 'all 0.2s' }}>
+                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: 8, borderRadius: 0, transition: 'all 0.2s' }}>
                             <X size={20} />
                         </button>
                     </div>
@@ -188,12 +200,13 @@ export default function DemoChatStore({ context }) {
                                             borderRadius: 12,
                                             fontSize: 14,
                                             lineHeight: '1.5',
-                                            color: msg.role === 'user' ? 'white' : '#1e293b',
-                                            background: msg.role === 'user' ? '#673DE6' : 'white',
-                                            boxShadow: msg.role === 'user' ? '0 4px 6px -1px rgba(103, 61, 230, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)',
-                                            borderTopRightRadius: msg.role === 'user' ? 4 : 12,
-                                            borderTopLeftRadius: msg.role === 'assistant' ? 4 : 12,
-                                            whiteSpace: 'pre-wrap'
+                                            color: msg.role === 'user' ? '#fff' : '#000',
+                                            background: msg.role === 'user' ? '#000' : '#fff',
+                                            boxShadow: msg.role === 'user' ? '0 10px 15px -3px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.05)',
+                                            borderRadius: 0,
+                                            border: msg.role === 'assistant' ? '1px solid #000' : 'none',
+                                            whiteSpace: 'pre-wrap',
+                                            fontWeight: 600
                                         }}>
                                             {msg.content}
                                         </div>
@@ -237,7 +250,7 @@ export default function DemoChatStore({ context }) {
                                 transition: 'all 0.2s'
                             }}
                         />
-                        <button type="submit" style={{ background: '#6366F1', color: 'white', width: 48, height: 48, borderRadius: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(99, 102, 241, 0.3)', transition: 'all 0.2s' }}>
+                        <button type="submit" style={{ background: '#000', color: '#fff', width: 48, height: 48, borderRadius: 0, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }}>
                             <Send size={20} />
                         </button>
                     </form>

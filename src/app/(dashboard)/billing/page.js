@@ -118,32 +118,38 @@ export default function BillingPage() {
         window.location.reload()
     }
 
-    if (loading) return <div className={styles.loading}>Chargement de la facturation...</div>
+    if (loading) return <div className={styles.loading}>Chargement de l'abonnement...</div>
 
     return (
-        <div>
-            <h1 className={styles.heading}>Facturation & Abonnement</h1>
-            <p className={styles.subheading}>Gérez votre plan et vos méthodes de paiement</p>
+        <div className={styles.container}>
+            <h1 className={styles.heading}>Mon Abonnement</h1>
+            <p className={styles.subheading}>Gérez votre forfait et vos limites.</p>
 
-            <div style={{ marginBottom: 32, padding: 16, background: '#eff6ff', borderRadius: 8, border: '1px solid #bfdbfe', color: '#1e3a8a' }}>
-                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span>ℹ️</span> Fonctionnement de la facturation
+            <div className={styles.infoBox}>
+                <div className={styles.infoIcon}>ℹ️</div>
+                <div className={styles.infoContent}>
+                    <div className={styles.infoTitle}>Fonctionnement de l'abonnement</div>
+                    <p className={styles.infoText}>
+                        <strong>Abonnement :</strong> Débloque les fonctionnalités (nombre de chatbots, marketing, marque blanche).<br />
+                        <strong>Portefeuille :</strong> Payez uniquement ce que vous consommez (réponses IA) via des crédits.
+                    </p>
                 </div>
-                <p style={{ fontSize: 14, opacity: 0.9 }}>
-                    <strong>Abonnement :</strong> Débloque les fonctionnalités (nombre de chatbots, marketing, marque blanche).<br />
-                    <strong>Portefeuille :</strong> Payez uniquement ce que vous consommez (réponses IA) via des crédits.
-                </p>
             </div>
 
             <div className={styles.grid}>
                 {PLANS.map(plan => {
                     const isCurrent = profile?.plan_tier === plan.id || (plan.id === 'free' && !profile?.plan_tier)
+                    const isRecommended = plan.id === 'agency'
+
                     return (
-                        <div key={plan.id} className={`${styles.card} ${isCurrent ? styles.currentCard : ''}`}>
+                        <div key={plan.id} className={`${styles.card} ${isRecommended && !isCurrent ? styles.recommendedCard : ''}`}>
+                            {isRecommended && !isCurrent && <div className={styles.badge}>Recommandé</div>}
+
                             <div className={styles.cardHeader}>
                                 <h3 className={styles.planName}>{plan.name}</h3>
                                 <div className={styles.price}>{plan.price}</div>
                             </div>
+
                             <ul className={styles.features}>
                                 {plan.features.map((f, i) => (
                                     <li key={i} className={styles.feature}>
@@ -152,13 +158,14 @@ export default function BillingPage() {
                                     </li>
                                 ))}
                             </ul>
+
                             <div className={styles.action}>
                                 {isCurrent ? (
                                     <Button disabled className={styles.currentBtn}>Plan Actuel</Button>
                                 ) : (
-                                    <a href={plan.link || '#'} target="_blank" rel="noopener noreferrer">
-                                        <Button className={styles.upgradeBtn} variant={plan.id === 'agency' ? 'primary' : 'outline'}>
-                                            Mettre à niveau
+                                    <a href={plan.link || '#'} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+                                        <Button className={plan.id === 'agency' ? styles.primaryBtn : styles.actionBtn}>
+                                            Choisir {plan.name}
                                         </Button>
                                     </a>
                                 )}
@@ -169,11 +176,8 @@ export default function BillingPage() {
             </div>
 
             {/* DEBUG SECTION FOR TESTING */}
-            <div style={{ marginTop: 48, padding: 24, border: '1px dashed #cbd5e1', borderRadius: 8, background: '#f8fafc' }}>
-                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, color: '#475569' }}>🛠️ Zone de Test (Admin)</h3>
-                <p style={{ fontSize: 14, color: '#64748b', marginBottom: 16 }}>
-                    Utilisez ces boutons pour changer votre plan instantanément et tester les différentes fonctionnalités (sans paiement).
-                </p>
+            <div className={styles.testZone}>
+                <h3 className={styles.testTitle}>🛠️ Zone de Test (Admin Only)</h3>
                 <div style={{ display: 'flex', gap: 12 }}>
                     <Button variant="outline" onClick={() => handlePlanChange('free')}>
                         Force Free

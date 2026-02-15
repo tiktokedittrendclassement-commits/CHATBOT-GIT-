@@ -27,7 +27,7 @@ const navItems = [
     { href: '/conversations', label: 'Conversations', icon: MessageSquare },
     { href: '/statistics', label: 'Statistiques IA', icon: MessageSquare }, // Using MessageSquare for now, or create/import ChartBar/PieChart if available
     { href: '/wallet', label: 'Portefeuille', icon: Wallet },
-    { href: '/billing', label: 'Facturation', icon: CreditCard }, // Or 'Subscripton'
+    { href: '/billing', label: 'Abonnement', icon: CreditCard },
     { href: '/settings', label: 'Paramètres', icon: Settings },
 ]
 

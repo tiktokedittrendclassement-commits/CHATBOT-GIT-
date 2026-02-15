@@ -153,7 +153,7 @@ export default function SettingsPage() {
                                 <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>
                             </div>
                             <div className={styles.actions}>
-                                <Button type="submit" disabled={saving} size="md">
+                                <Button type="submit" disabled={saving} size="lg">
                                     {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
                                 </Button>
                             </div>

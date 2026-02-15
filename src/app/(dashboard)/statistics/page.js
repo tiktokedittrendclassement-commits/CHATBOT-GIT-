@@ -127,7 +127,6 @@ export default function StatisticsPage() {
                 <div>
                     <h1 className={styles.heading}>
                         Statistiques IA
-                        {isFreePlan && <span className={styles.badgePro}>PRO</span>}
                     </h1>
                     <p className={styles.subheading}>Analysez vos conversations pour améliorer votre assistant.</p>
                 </div>

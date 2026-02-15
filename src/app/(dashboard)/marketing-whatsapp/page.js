@@ -45,7 +45,6 @@ export default function MarketingWhatsAppPage() {
             <div className={styles.card}>
                 <div className={styles.cardTitle}>
                     Configuration API Meta
-                    {isLocked && <span className={styles.badgeAgency}>AGENCE UNIQUEMENT</span>}
                 </div>
 
                 <p className={styles.cardDescription}>

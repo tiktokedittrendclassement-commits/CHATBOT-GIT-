@@ -59,7 +59,6 @@ export default function MarketingEmailPage() {
             <div className={styles.card}>
                 <div className={styles.cardTitle}>
                     Collecte de Leads
-                    {isLocked && <span className={styles.badgePro}>PRO & AGENCE</span>}
                 </div>
 
                 <p className={styles.cardDescription}>

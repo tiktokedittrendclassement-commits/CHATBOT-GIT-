@@ -84,7 +84,6 @@ export default function InsightsPage() {
                 <div>
                     <h1 className={styles.heading}>
                         Visiteurs
-                        {!isAgency && <span className={styles.badgeAgency}>AGENCE</span>}
                     </h1>
                     <p className={styles.subheading}>Découvrez sur quelles pages vos utilisateurs interagissent avec vos chatbots.</p>
                 </div>
@@ -103,7 +102,7 @@ export default function InsightsPage() {
                         </p>
                     </div>
                     <Link href="/billing" style={{ marginLeft: 'auto' }}>
-                        <Button className={styles.upgradeBtn}>Upgrader</Button>
+                        <Button className={styles.upgradeBtn} style={{ background: '#673DE6', borderColor: '#673DE6', color: 'white' }}>Upgrader</Button>
                     </Link>
                 </div>
             )}

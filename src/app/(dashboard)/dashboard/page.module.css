@@ -61,9 +61,8 @@
 
 /* Bouton d'action principal style 'Outline' ou 'Primary' propre */
 .actionBtn {
-    background: #0F172A;
-    /* Noir/Bleu nuit très pro */
-    border: 1px solid #0F172A;
+    background: var(--primary);
+    border: 1px solid var(--primary);
     color: white;
     padding: 10px 20px;
     border-radius: 8px;
@@ -74,13 +73,14 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(103, 61, 230, 0.2);
 }
 
 .actionBtn:hover {
-    background: #334155;
-    border-color: #334155;
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
     transform: translateY(-1px);
+    box-shadow: 0 6px 10px -2px rgba(103, 61, 230, 0.3);
 }
 
 /* Stats Grid */

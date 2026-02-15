@@ -129,7 +129,7 @@ export default function DemoStore() {
                                         <div style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 6, cursor: 'pointer', background: 'white' }}>L</div>
                                     </div>
 
-                                    <Button size="lg" className="w-full" onClick={addToCart} disabled={!selectedProduct.stock} style={{ background: selectedProduct.stock ? '#0f172a' : '#94a3b8' }}>
+                                    <Button size="lg" className="w-full" onClick={addToCart} disabled={!selectedProduct.stock} style={{ background: selectedProduct.stock ? '#673DE6' : '#94a3b8' }}>
                                         {selectedProduct.stock ? 'Ajouter au panier' : 'Rupture de stock'}
                                     </Button>
 

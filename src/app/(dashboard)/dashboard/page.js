@@ -6,6 +6,7 @@ import { useAuth } from '@/components/auth-provider'
 import styles from './page.module.css'
 import { MessageSquare, Zap, CreditCard, ChevronRight, DollarSign, TrendingUp, Plus, User, ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 export default function DashboardPage() {
     const { user } = useAuth()
@@ -150,11 +151,15 @@ export default function DashboardPage() {
                     <p className={styles.subheading}>Voici ce qu'il se passe sur vos chatbots aujourd'hui.</p>
                 </div>
                 <div className={styles.headerActions}>
-                    <Link href="/billing" className={styles.actionBtn} style={{ background: 'white', color: '#0F172A', border: '1px solid #E2E8F0' }}>
-                        <CreditCard size={16} /> Mon Abonnement
+                    <Link href="/billing">
+                        <Button variant="outline" size="lg">
+                            <CreditCard size={16} style={{ marginRight: 8 }} /> Mon Abonnement
+                        </Button>
                     </Link>
-                    <Link href="/chatbots/new" className={styles.actionBtn} style={{ background: '#673DE6', color: 'white', border: '1px solid #673DE6' }}>
-                        <Plus size={16} /> Nouveau Chatbot
+                    <Link href="/chatbots/new">
+                        <Button size="lg">
+                            <Plus size={16} style={{ marginRight: 8 }} /> Nouveau Chatbot
+                        </Button>
                     </Link>
                 </div>
             </div>

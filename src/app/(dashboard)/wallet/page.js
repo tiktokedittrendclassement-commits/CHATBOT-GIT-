@@ -6,6 +6,7 @@ import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Wallet, CreditCard, History, AlertCircle } from 'lucide-react'
+import styles from './page.module.css'
 
 export default function WalletPage() {
     const { user } = useAuth()
@@ -77,7 +78,7 @@ export default function WalletPage() {
                 {/* Main Column */}
                 <div className={styles.mainColumn}>
 
-                    {/* Balance Card - Gradient Violet */}
+                    {/* Balance Card - Flat Violet */}
                     <div className={styles.balanceCard}>
                         <div>
                             <div className={styles.balanceLabel}>Solde actuel</div>
@@ -97,7 +98,7 @@ export default function WalletPage() {
                     {/* Top Up Card */}
                     <div className={styles.card}>
                         <div className={styles.cardTitle}>
-                            <CreditCard size={20} className="text-slate-500" />
+                            <CreditCard size={20} style={{ color: '#673DE6' }} />
                             Recharger le solde
                         </div>
 
@@ -163,7 +164,7 @@ export default function WalletPage() {
                 <div className={styles.sideColumn}>
                     <div className={styles.infoBox}>
                         <div className={styles.infoTitle}>
-                            <History size={18} className="text-slate-500" />
+                            <History size={18} className="text-slate-400" />
                             Tarifs Détaillés
                         </div>
                         <div className={styles.infoList}>
@@ -186,11 +187,12 @@ export default function WalletPage() {
                         </div>
                     </div>
 
-                    <div className={styles.infoBox} style={{ background: '#FFF7ED', borderColor: '#FFEDD5' }}>
-                        <div className={styles.infoTitle} style={{ color: '#9A3412' }}>
+                    <div className={styles.helpBox}>
+                        <div className={styles.helpTitle}>
+                            <AlertCircle size={16} color="#673DE6" />
                             Besoin d'aide ?
                         </div>
-                        <p style={{ fontSize: 13, color: '#9A3412', lineHeight: 1.5, margin: 0 }}>
+                        <p className={styles.helpText}>
                             Si vous avez des questions sur la facturation ou besoin d'une facture détaillée, contactez le support.
                         </p>
                     </div>

@@ -69,9 +69,11 @@
     gap: 10px;
 }
 
-/* Balance Card (Violet Gradient) */
+/* Balance Card (Flat Violet or Subtle Gradient based on request) */
+/* Balance Card (Flat Violet) */
 .balanceCard {
-    background: linear-gradient(135deg, #673DE6 0%, #4C1D95 100%);
+    background: #673DE6;
+    /* Exact match requested */
     border-radius: 16px;
     padding: 32px;
     color: white;
@@ -119,26 +121,27 @@
 
 /* Info Box */
 .infoBox {
-    background: #F8FAFC;
+    background: white;
     border: 1px solid #E2E8F0;
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .infoTitle {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: #0F172A;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .infoList {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .infoItem {
@@ -146,8 +149,8 @@
     justify-content: space-between;
     font-size: 14px;
     color: #64748b;
-    padding-bottom: 8px;
-    border-bottom: 1px dashed #E2E8F0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F1F5F9;
 }
 
 .infoItem:last-child {
@@ -156,7 +159,33 @@
 }
 
 .infoItem strong {
-    color: #334155;
+    color: #0F172A;
+    font-weight: 600;
+}
+
+/* Help Box (Neutral/Violet) */
+.helpBox {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.helpTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.helpText {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
 }
 
 /* Top Up Form */
@@ -192,27 +221,39 @@
 }
 
 .amountBtn {
-    padding: 8px 16px;
-    border-radius: 99px;
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 16px;
+    border-radius: 8px;
     border: 1px solid #E2E8F0;
     background: white;
     color: #64748b;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .amountBtn:hover {
     border-color: #673DE6;
     color: #673DE6;
+    background: #F3E8FF;
 }
 
 .amountBtnActive {
-    background: #F3E8FF;
+    background: #673DE6;
     border-color: #673DE6;
-    color: #673DE6;
+    color: white;
     font-weight: 600;
+    box-shadow: 0 4px 6px -1px rgba(103, 61, 230, 0.2);
+}
+
+.amountBtnActive:hover {
+    background: #5B21B6;
+    color: white;
 }
 
 /* Action Button */
@@ -221,6 +262,7 @@
     border-color: #673DE6;
     color: white;
     font-weight: 600;
+    padding: 0 24px;
     transition: all 0.2s;
 }
 
@@ -231,8 +273,10 @@
 }
 
 .transparencyBox {
-    background: #EFF6FF;
-    border: 1px solid #DBEAFE;
+    background: #F3E8FF;
+    /* Violet-100 */
+    border: 1px solid #DDD6FE;
+    /* Violet-200 */
     border-radius: 12px;
     padding: 16px;
     display: flex;
@@ -241,7 +285,8 @@
 }
 
 .transparencyIcon {
-    color: #2563EB;
+    color: #673DE6;
+    /* Dashboard Violet */
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -249,13 +294,15 @@
 .transparencyTitle {
     font-size: 15px;
     font-weight: 600;
-    color: #1E40AF;
+    color: #5B21B6;
+    /* Deep Violet */
     margin-bottom: 4px;
 }
 
 .transparencyText {
     font-size: 14px;
-    color: #1E3A8A;
+    color: #673DE6;
+    /* Violet Text */
     line-height: 1.5;
     margin: 0;
 }

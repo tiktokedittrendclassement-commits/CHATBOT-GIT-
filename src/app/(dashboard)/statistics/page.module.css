@@ -1,0 +1,321 @@
+/* Main Layout */
+.container {
+    padding-bottom: 40px;
+}
+
+/* Header Minimalist */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.heading {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.subheading {
+    color: #64748b;
+}
+
+.headerActions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    outline: none;
+    font-size: 14px;
+    background: white;
+    color: #334155;
+}
+
+
+.analyzeBtn {
+    background: #673DE6;
+    /* Dashboard inline color */
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    /* Dashboard font-size */
+    padding: 10px 20px;
+    /* Dashboard padding */
+    border-radius: 8px;
+    /* Dashboard border-radius */
+    border: 1px solid #673DE6;
+    /* Dashboard styling */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    /* Dashboard shadow (black) */
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.analyzeBtn:hover {
+    background: #673DE6;
+    /* Kept constant */
+    border-color: #673DE6;
+    transform: translateY(-1px);
+    /* Only transform on hover */
+    /* No shadow change in original dashboard button */
+}
+
+.analyzeBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: #CBD5E1;
+    /* Slate-300 */
+    box-shadow: none;
+    transform: none;
+}
+
+
+/* Badges */
+.badgePro {
+    font-size: 12px;
+    background: #F3E8FF;
+    color: #673DE6;
+    /* Dashboard Violet */
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+/* Locked / Free Plan State (Violet) */
+.lockedBox {
+    background: linear-gradient(to right, #F5F3FF, #FFFFFF);
+    /* Violet Gradient */
+    border: 1px solid #DDD6FE;
+    /* Violet Border */
+    border-radius: 12px;
+    padding: 24px;
+    /* Increased padding to match Marketing Email */
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Increased gap */
+}
+
+.lockedBoxIcon {
+    background: #EDE9FE;
+    /* Violet-100 */
+    padding: 12px;
+    /* Increased padding */
+    border-radius: 50%;
+    color: #673DE6;
+    /* Dashboard Violet */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lockedText {
+    font-size: 15px;
+    color: #5B21B6;
+    /* Deep Violet */
+    margin-bottom: 5px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.lockedSubText {
+    font-size: 14px;
+    color: #673DE6;
+    /* Dashboard Violet */
+    margin: 0;
+}
+
+/* Analysis Results */
+/* Analysis Results */
+.analysisContainer {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Unified Card Style (Matches Marketing WhatsApp) */
+.summaryCard,
+.card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.iconBox {
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.iconBoxBlue {
+    background: #F1F5F9;
+    /* Slate-100 */
+    color: #64748B;
+    /* Slate-500 */
+}
+
+.iconBoxViolet {
+    background: #F1F5F9;
+    /* Slate-100 */
+    color: #64748B;
+    /* Slate-500 */
+}
+
+.iconBoxGreen {
+    background: #F1F5F9;
+    /* Slate-100 */
+    color: #64748B;
+    /* Slate-500 */
+}
+
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    /* Adjusted to 600 to match WhatsApp */
+    color: #0F172A;
+    /* Slate-900 */
+    margin: 0;
+}
+
+.cardText {
+    line-height: 1.6;
+    color: #64748b;
+    /* Slate-500 */
+    font-size: 15px;
+}
+
+.gridTwo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.list {
+    padding-left: 20px;
+    margin: 0;
+    color: #475569;
+}
+
+.listItem {
+    margin-bottom: 8px;
+}
+
+/* Recommendations Title */
+.recommendationsTitle {
+    font-size: 13px;
+    color: #0F172A;
+    /* Slate-900 (Black) */
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.promptBox {
+    font-size: 13px;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px dashed #cbd5e1;
+    margin-top: 4px;
+}
+
+/* Empty State / CTA (Aligned with Card Style) */
+.emptyState {
+    text-align: center;
+    padding: 60px;
+    background: white;
+    border: 1px solid #E2E8F0;
+    /* Solid border instead of dashed */
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    /* Added shadow */
+    position: relative;
+    overflow: hidden;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.emptyIcon {
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.emptyTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.emptyText {
+    color: #64748b;
+    max-width: 400px;
+    margin: 0 auto 24px auto;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+/* Upgrade Button */
+.upgradeBtn {
+    background: white;
+    color: #7C3AED;
+    border: 1px solid #DDD6FE;
+    /* Lighter border */
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.upgradeBtn:hover {
+    background: #F5F3FF;
+    border-color: #7C3AED;
+}

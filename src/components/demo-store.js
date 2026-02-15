@@ -65,7 +65,7 @@ export default function DemoStore() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                     <Menu size={20} color="#64748b" style={{ cursor: 'pointer' }} />
                     <div style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.5px', color: '#0f172a' }}>
-                        LUMINA<span style={{ color: '#2563eb' }}>.</span>
+                        LUMINA<span style={{ color: '#673DE6' }}>.</span>
                     </div>
                 </div>
 
@@ -74,7 +74,7 @@ export default function DemoStore() {
                     <div style={{ position: 'relative', cursor: 'pointer' }}>
                         <ShoppingBag size={20} color="#0f172a" />
                         {cartCount > 0 && (
-                            <span style={{ position: 'absolute', top: -5, right: -5, background: '#2563eb', color: 'white', fontSize: 10, width: 14, height: 14, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartCount}</span>
+                            <span style={{ position: 'absolute', top: -5, right: -5, background: '#673DE6', color: 'white', fontSize: 10, width: 14, height: 14, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartCount}</span>
                         )}
                     </div>
                 </div>
@@ -108,7 +108,7 @@ export default function DemoStore() {
                                 </div>
 
                                 <div>
-                                    <div style={{ fontSize: 12, color: '#2563eb', fontWeight: 600, textTransform: 'uppercase', marginBottom: 8 }}>{selectedProduct.category}</div>
+                                    <div style={{ fontSize: 12, color: '#673DE6', fontWeight: 600, textTransform: 'uppercase', marginBottom: 8 }}>{selectedProduct.category}</div>
                                     <h3 style={{ fontSize: 26, fontWeight: 'bold', marginBottom: 12, color: '#1e293b' }}>{selectedProduct.name}</h3>
                                     <div style={{ fontSize: 24, color: '#0f172a', fontWeight: 700, marginBottom: 16 }}>{selectedProduct.price}</div>
 
@@ -125,7 +125,7 @@ export default function DemoStore() {
 
                                     <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
                                         <div style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 6, cursor: 'pointer', background: 'white' }}>S</div>
-                                        <div style={{ padding: '8px 16px', border: '1px solid #2563eb', borderRadius: 6, cursor: 'pointer', background: '#eff6ff', color: '#2563eb', fontWeight: 600 }}>M</div>
+                                        <div style={{ padding: '8px 16px', border: '1px solid #673DE6', borderRadius: 6, cursor: 'pointer', background: '#F3E8FF', color: '#673DE6', fontWeight: 600 }}>M</div>
                                         <div style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 6, cursor: 'pointer', background: 'white' }}>L</div>
                                     </div>
 
@@ -145,7 +145,7 @@ export default function DemoStore() {
                         <>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                                 <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1e293b' }}>Nouveautés</h3>
-                                <span style={{ fontSize: 13, color: '#2563eb', cursor: 'pointer', fontWeight: 500 }}>Voir tout</span>
+                                <span style={{ fontSize: 13, color: '#673DE6', cursor: 'pointer', fontWeight: 500 }}>Voir tout</span>
                             </div>
 
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>

@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { User, Lock, LogOut, CreditCard, Trash2, AlertTriangle, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
 import styles from './page.module.css'
 
 export default function SettingsPage() {

@@ -98,7 +98,7 @@ export default function MarketingWhatsAppPage() {
                             </p>
                         </div>
                         <Link href="/billing">
-                            <Button className={styles.upgradeBtn} variant="outline">
+                            <Button size="lg">
                                 Mettre à niveau
                             </Button>
                         </Link>

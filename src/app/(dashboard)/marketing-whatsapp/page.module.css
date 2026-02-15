@@ -1,0 +1,152 @@
+/* Header Minimalist */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.heading {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #0F172A;
+}
+
+.subheading {
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* Container */
+.container {
+    padding-bottom: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Card Style */
+.card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cardDescription {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* Form Styles */
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0F172A;
+}
+
+.label span {
+    color: #ef4444;
+    /* Red asterisk if needed */
+}
+
+/* Badges */
+.badgeAgency {
+    background: #F3E8FF;
+    /* Violet Pale */
+    color: #7C3AED;
+    /* Violet Text */
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Locked State */
+.lockedBox {
+    margin-top: 32px;
+    padding: 24px;
+    background: linear-gradient(to right, #F5F3FF, #FFFFFF);
+    /* Violet Gradient */
+    border: 1px solid #DDD6FE;
+    /* Violet Border */
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.lockedText {
+    font-size: 15px;
+    color: #5B21B6;
+    /* Deep Violet */
+    margin-bottom: 5px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.lockedSubText {
+    font-size: 14px;
+    color: #7C3AED;
+    margin: 0;
+}
+
+.upgradeBtn {
+    background: white;
+    color: #7C3AED;
+    border: 1px solid #7C3AED;
+    font-weight: 600;
+}
+
+.upgradeBtn:hover {
+    background: #F5F3FF;
+}
+
+.saveBtn {
+    background: #7C3AED;
+    color: white;
+    font-weight: 600;
+}
+
+.saveBtn:hover {
+    background: #6D28D9;
+}
+
+.saveBtn:disabled {
+    background: #CBD5E1;
+    cursor: not-allowed;
+}
+
+/* Future Feature Info */
+.infoBox {
+    background: #F8FAFC;
+    border: 1px dashed #CBD5E1;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 32px;
+}

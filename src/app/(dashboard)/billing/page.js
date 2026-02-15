@@ -18,7 +18,7 @@ const PLANS = [
     },
     {
         id: 'pro',
-        name: 'Croissance',
+        name: 'Pro',
         price: '49€/mois',
         features: ['10 Chatbots', 'Messages illimités', 'Email Marketing', 'Nom du Bot Personnalisé', 'Photos Produits', 'Relance Panier'],
         link: 'https://test.lemonsqueezy.com/checkout/...' // Placeholder
@@ -238,7 +238,7 @@ export default function BillingPage() {
                         }}>
                             <p style={{ margin: 0, color: '#92400e', fontSize: 14 }}>
                                 ⚠️ Vous devez supprimer <strong>{requiredDeletions}</strong> chatbot(s) pour passer au plan{' '}
-                                <strong>{targetPlan === 'free' ? 'Gratuit' : 'Croissance'}</strong>.
+                                <strong>{targetPlan === 'free' ? 'Gratuit' : 'Pro'}</strong>.
                             </p>
                             <p style={{ margin: '8px 0 0 0', color: '#92400e', fontSize: 13 }}>
                                 Sélectionnés: {selectedChatbots.length} / {requiredDeletions} minimum

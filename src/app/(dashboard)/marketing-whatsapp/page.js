@@ -6,6 +6,8 @@ import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
+import { Lock } from 'lucide-react'
+import styles from './page.module.css'
 
 export default function MarketingWhatsAppPage() {
     const { user } = useAuth()
@@ -32,22 +34,26 @@ export default function MarketingWhatsAppPage() {
     const isLocked = profile?.plan_tier !== 'agency'
 
     return (
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: 24 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8 }}>Marketing WhatsApp</h1>
-            <p style={{ color: '#64748b', marginBottom: 32 }}>Envoyez des messages broadcast à vos clients sur WhatsApp.</p>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div>
+                    <h1 className={styles.heading}>Marketing WhatsApp</h1>
+                    <p className={styles.subheading}>Envoyez des messages broadcast à vos clients sur WhatsApp.</p>
+                </div>
+            </div>
 
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 24 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 600 }}>Configuration API Meta</h3>
-                    {isLocked && <span style={{ background: '#e2e8f0', color: '#64748b', fontSize: 12, padding: '4px 8px', borderRadius: 4, fontWeight: 'bold' }}>AGENCE UNIQUEMENT</span>}
+            <div className={styles.card}>
+                <div className={styles.cardTitle}>
+                    Configuration API Meta
+                    {isLocked && <span className={styles.badgeAgency}>AGENCE UNIQUEMENT</span>}
                 </div>
 
-                <p style={{ fontSize: 14, color: '#64748b', marginBottom: 24 }}>
+                <p className={styles.cardDescription}>
                     Pour envoyer des messages en masse, vous devez connecter votre compte WhatsApp Business API.
                 </p>
 
-                <div style={{ marginBottom: 16 }}>
-                    <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500 }}>Numéro de téléphone WhatsApp Business</label>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Numéro de téléphone WhatsApp Business</label>
                     <Input
                         placeholder="+1 234 567 890"
                         disabled={isLocked}
@@ -56,8 +62,8 @@ export default function MarketingWhatsAppPage() {
                     />
                 </div>
 
-                <div style={{ marginBottom: 16 }}>
-                    <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500 }}>ID du compte WhatsApp Business</label>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>ID du compte WhatsApp Business</label>
                     <Input
                         placeholder="1000..."
                         disabled={isLocked}
@@ -66,8 +72,8 @@ export default function MarketingWhatsAppPage() {
                     />
                 </div>
 
-                <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500 }}>Token d'accès API (Permanent)</label>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Token d'accès API (Permanent)</label>
                     <Input
                         type="password"
                         placeholder="EAAG..."
@@ -77,20 +83,32 @@ export default function MarketingWhatsAppPage() {
                     />
                 </div>
 
-                <Button disabled={isLocked}>Sauvegarder la configuration</Button>
+                <Button disabled={isLocked} className={styles.saveBtn}>Sauvegarder la configuration</Button>
 
                 {isLocked && (
-                    <div style={{ marginTop: 24, padding: 16, background: '#fee2e2', borderRadius: 8, border: '1px solid #fecaca' }}>
-                        <p style={{ fontSize: 14, color: '#dc2626', marginBottom: 8 }}>
-                            🔒 Cette fonctionnalité est réservée aux abonnements <strong>Agence (249€/mois)</strong>.
-                        </p>
+                    <div className={styles.lockedBox}>
+                        <div style={{ background: '#EDE9FE', padding: 12, borderRadius: '50%', color: '#7C3AED' }}>
+                            <Lock size={24} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div className={styles.lockedText}>
+                                Fonctionnalité Agence
+                            </div>
+                            <p className={styles.lockedSubText}>
+                                Cette fonctionnalité est réservée aux abonnements <strong>Agence</strong>.
+                            </p>
+                        </div>
                         <Link href="/billing">
-                            <Button variant="outline" style={{ borderColor: '#dc2626', color: '#dc2626' }}>
+                            <Button className={styles.upgradeBtn} variant="outline">
                                 Mettre à niveau
                             </Button>
                         </Link>
                     </div>
                 )}
+            </div>
+
+            <div className={styles.infoBox}>
+                Note : L'envoi de messages WhatsApp est soumis aux politiques de Meta et peut engendrer des coûts supplémentaires par conversation.
             </div>
         </div>
     )

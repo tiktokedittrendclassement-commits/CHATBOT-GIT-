@@ -1,14 +1,25 @@
-.loading {
-    padding: 24px;
-    color: #64748b;
+/* Header Minimalist */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
 }
 
 .heading {
     font-size: 28px;
     font-weight: 700;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
+    color: #0F172A;
 }
 
+.subheading {
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* List Style Pro */
 .list {
     display: flex;
     flex-direction: column;
@@ -18,52 +29,101 @@
 .item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    background: var(--background);
-    border: 1px solid var(--border);
-    padding: 16px;
-    border-radius: var(--radius);
-    transition: all 0.2s;
+    gap: 20px;
+    background: white;
+    border: 1px solid #E2E8F0;
+    padding: 20px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .item:hover {
-    border-color: var(--primary);
+    border-color: #CBD5E1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 .icon {
-    width: 40px;
-    height: 40px;
-    background: var(--muted);
-    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    background: #F1F5F9;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
+    flex-shrink: 0;
 }
 
 .info {
     flex: 1;
+    min-width: 0;
 }
 
 .meta {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 4px;
 }
 
 .botName {
-    font-weight: 600;
     font-size: 16px;
+    font-weight: 600;
+    color: #0F172A;
 }
 
 .date {
-    font-size: 12px;
+    font-size: 13px;
     color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.visitor {
+.messagePreview {
+    color: #475569;
     font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+}
+
+.badges {
+    display: flex;
+    gap: 8px;
+}
+
+/* Status Badges */
+.badge {
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badgeNew {
+    background: #eff6ff;
+    color: #3b82f6;
+    border: 1px solid #dbeafe;
+}
+
+.empty {
+    padding: 80px 20px;
+    text-align: center;
+    background: white;
+    border-radius: 16px;
+    border: 2px dashed #E2E8F0;
     color: #64748b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
 }
 
 .empty {

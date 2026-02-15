@@ -121,8 +121,7 @@ export default function WalletPage() {
                                 <Button
                                     onClick={handleTopUp}
                                     disabled={processing || parseFloat(amount) < 5}
-                                    className={styles.payBtn}
-                                    style={{ background: '#673DE6', borderColor: '#673DE6', color: 'white' }}
+                                    size="lg"
                                 >
                                     {processing ? 'Traitement...' : `Payer ${amount || 0}€`}
                                 </Button>

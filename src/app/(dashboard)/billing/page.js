@@ -161,10 +161,10 @@ export default function BillingPage() {
 
                             <div className={styles.action}>
                                 {isCurrent ? (
-                                    <Button disabled className={styles.currentBtn}>Plan Actuel</Button>
+                                    <Button disabled size="md" className={styles.currentBtn}>Plan Actuel</Button>
                                 ) : (
                                     <a href={plan.link || '#'} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                                        <Button className={plan.id === 'agency' ? styles.primaryBtn : styles.actionBtn}>
+                                        <Button size="md">
                                             Choisir {plan.name}
                                         </Button>
                                     </a>

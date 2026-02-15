@@ -81,7 +81,7 @@ export default function ChatbotsPage() {
                         </Button>
                     )}
                     <Link href="/chatbots/new">
-                        <Button>
+                        <Button size="lg">
                             <Plus size={18} style={{ marginRight: 8 }} />
                             Nouveau Chatbot
                         </Button>

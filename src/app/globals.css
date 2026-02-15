@@ -1,46 +1,45 @@
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #F8FAFC;
+  /* Slate 50/Muted */
+  --foreground: #0F172A;
   /* Slate 900 */
 
-  --primary: #673DE6;
-  /* Violet (SaaS Primary) */
-  --primary-dark: #5B21B6;
-  /* Violet Dark */
+  --primary: #6366F1;
+  /* Indigo 500 (Premium SaaS) */
+  --primary-dark: #4F46E5;
+  /* Indigo 600 */
 
-  --secondary: #f1f5f9;
+  --secondary: #FFFFFF;
+  /* Pure White (For cards) */
+  --secondary-dark: #F1F5F9;
   /* Slate 100 */
-  --secondary-dark: #e2e8f0;
-  /* Slate 200 */
 
-  --muted: #f8fafc;
-  /* Slate 50 */
-  --border: #e2e8f0;
-  /* Slate 200 */
+  --muted: #F8FAFC;
+  --border: #E2E8F0;
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
+  /* Smoother corners */
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 [data-theme='dark'] {
-  --background: #0f172a;
-  /* Slate 900 */
-  --foreground: #f8fafc;
-  /* Slate 50 */
+  --background: #020617;
+  /* Deepest Navy */
+  --foreground: #F8FAFC;
 
-  --primary: #8B5CF6;
-  /* Violet 500 (Lighter for Dark Mode) */
-  --primary-dark: #7C3AED;
-  /* Violet 600 */
+  --primary: #818CF8;
+  /* Indigo 400 */
+  --primary-dark: #6366F1;
 
-  --secondary: #1e293b;
-  /* Slate 800 */
-  --secondary-dark: #334155;
-  /* Slate 700 */
+  --secondary: #0F172A;
+  --secondary-dark: #1E293B;
 
-  --muted: #0f172a;
-  /* Slate 900 */
-  --border: #1e293b;
-  /* Slate 800 */
+  --muted: #0F172A;
+  --border: #1E293B;
 }
 
 * {
@@ -52,7 +51,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -63,4 +62,12 @@ a {
 
 button {
   font-family: inherit;
+}
+
+/* Custom Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

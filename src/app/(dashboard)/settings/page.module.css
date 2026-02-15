@@ -1,106 +1,118 @@
 /* Container */
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    padding-bottom: 40px;
+    padding-bottom: 60px;
 }
 
 /* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+}
+
 .heading {
-    font-size: 28px;
-    font-weight: 700;
-    color: #0F172A;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
+    letter-spacing: -1px;
 }
 
 .subheading {
     font-size: 16px;
     color: #64748b;
     font-weight: 400;
-    margin-bottom: 32px;
 }
 
 /* Section Card */
 .section {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
     overflow: hidden;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.section:hover {
+    box-shadow: var(--shadow);
 }
 
 .sectionHeader {
-    padding: 20px 24px;
+    padding: 24px 32px;
     border-bottom: 1px solid #F1F5F9;
     background: white;
-    /* Clean white header */
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .iconWrapper {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    /* Slightly squared for "clean" look */
-    background: #F1F5F9;
-    /* Gray-100 */
-    color: #0F172A;
-    /* Black/Slate-900 */
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid #F1F5F9;
 }
 
 .sectionTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0F172A;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--foreground);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 .sectionContent {
-    padding: 24px;
+    padding: 32px;
 }
 
 /* Forms */
 .formGrid {
     display: grid;
-    gap: 20px;
+    gap: 24px;
 }
 
 .fieldGroup {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 700;
     color: #475569;
+    letter-spacing: 0.3px;
 }
 
-
-
 .helperText {
-    font-size: 12px;
+    font-size: 13px;
     color: #64748b;
     margin: 0;
+    font-weight: 500;
 }
 
 .actions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .twoCols {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
 }
 
 @media (max-width: 640px) {
@@ -111,48 +123,55 @@
 
 /* Buttons */
 .saveBtn {
-    background: #673DE6;
-    border-color: #673DE6;
+    background: var(--primary);
+    border-color: var(--primary);
     color: white;
-    font-weight: 500;
+    font-weight: 800;
+    border-radius: 12px;
+    height: 48px;
+    padding: 0 24px;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .saveBtn:hover {
-    background: #5B21B6;
-    border-color: #5B21B6;
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -5px rgba(99, 102, 241, 0.3);
 }
 
 .outlineBtn {
-    border-color: #E2E8F0;
-    color: #673DE6;
-    /* Enforce Violet Text */
+    border: 1px solid var(--border);
+    color: #64748b;
     background: white;
-    font-weight: 500;
+    font-weight: 700;
+    border-radius: 12px;
+    height: 44px;
+    padding: 0 20px;
 }
 
 .outlineBtn:hover {
-    background: #F3E8FF;
-    /* Violet-50 */
-    border-color: #DDD6FE;
-    color: #5B21B6;
+    background: #F5F3FF;
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 /* Messages */
 .message {
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 24px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-bottom: 32px;
     display: flex;
     align-items: center;
     gap: 12px;
     font-size: 14px;
+    font-weight: 600;
 }
 
 .successMessage {
-    background: #F3E8FF;
-    /* Violet-100 */
-    color: #673DE6;
-    border: 1px solid #DDD6FE;
+    background: #F5F3FF;
+    color: var(--primary);
+    border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .errorMessage {
@@ -173,60 +192,64 @@
 
 .planName {
     text-transform: capitalize;
-    color: #673DE6;
-    font-weight: 700;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 18px;
 }
 
-/* Danger Zone - Now consistent White Card */
+/* Danger Zone */
 .dangerSection {
     background: white;
     border: 1px solid #FECACA;
-    /* Red border to distinguish */
-    border-radius: 12px;
+    border-radius: 24px;
     overflow: hidden;
-    margin-top: 40px;
-    /* Separate it a bit more */
+    margin-top: 48px;
+    box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.05);
 }
 
 .dangerHeader {
     background: white;
-    /* White header */
     border-bottom: 1px solid #F1F5F9;
-    padding: 20px 24px;
+    padding: 24px 32px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .dangerIconWrapper {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     background: #FEF2F2;
-    /* Red-50 */
     display: flex;
     align-items: center;
     justify-content: center;
     color: #DC2626;
+    border: 1px solid #FECACA;
 }
 
 .dangerTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0F172A;
-    /* Standard Text Color */
+    font-size: 18px;
+    font-weight: 800;
+    color: #DC2626;
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 .deleteBtn {
     background: white;
     color: #DC2626;
     border: 1px solid #FECACA;
-    font-weight: 500;
+    font-weight: 800;
+    border-radius: 12px;
+    height: 44px;
+    padding: 0 20px;
+    transition: all 0.2s;
 }
 
 .deleteBtn:hover {
-    background: #FEF2F2;
+    background: #DC2626;
     border-color: #DC2626;
-    color: #B91C1C;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.2);
 }

@@ -1,35 +1,41 @@
 /* Container & Header */
 .container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding-bottom: 40px;
+    padding-bottom: 60px;
 }
 
 .header {
-    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
 }
 
 .heading {
-    font-size: 28px;
-    font-weight: 700;
-    color: #0F172A;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
+    letter-spacing: -1px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .subheading {
-    font-size: 16px;
     color: #64748b;
+    font-size: 16px;
     font-weight: 400;
 }
 
 /* Layout */
 .grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 32px;
 }
 
 @media (max-width: 1024px) {
@@ -41,116 +47,136 @@
 .mainColumn {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
 }
 
 .sideColumn {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
 }
 
 /* Cards */
 .card {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow);
 }
 
 .cardTitle {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0F172A;
-    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    letter-spacing: -0.5px;
 }
 
-/* Balance Card (Flat Violet or Subtle Gradient based on request) */
-/* Balance Card (Flat Violet) */
+/* Balance Card (Premium Indigo Gradient) */
 .balanceCard {
-    background: #673DE6;
-    /* Exact match requested */
-    border-radius: 16px;
-    padding: 32px;
+    background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+    border-radius: 28px;
+    padding: 40px;
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 10px 15px -3px rgba(103, 61, 230, 0.3);
-    border: 1px solid #5B21B6;
+    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.balanceCard:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 40px -10px rgba(99, 102, 241, 0.4);
 }
 
 .balanceLabel {
-    font-size: 14px;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     opacity: 0.9;
-    margin-bottom: 4px;
-    font-weight: 500;
+    margin-bottom: 8px;
+    font-weight: 700;
 }
 
 .balanceAmount {
-    font-size: 42px;
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -2px;
 }
 
 .balanceSub {
-    font-size: 13px;
+    font-size: 14px;
     opacity: 0.8;
-    margin-top: 8px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    font-weight: 600;
 }
 
 .balanceIcon {
-    background: rgba(255, 255, 255, 0.15);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 32px;
+    transition: all 0.3s;
+}
+
+.balanceCard:hover .balanceIcon {
+    transform: rotate(10deg) scale(1.1);
 }
 
 /* Info Box */
 .infoBox {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
 }
 
 .infoTitle {
-    font-size: 15px;
-    font-weight: 600;
-    color: #0F172A;
-    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .infoList {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .infoItem {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 15px;
     color: #64748b;
-    padding-bottom: 12px;
+    padding: 16px 0;
     border-bottom: 1px solid #F1F5F9;
+    font-weight: 500;
 }
 
 .infoItem:last-child {
@@ -159,40 +185,37 @@
 }
 
 .infoItem strong {
-    color: #0F172A;
-    font-weight: 600;
+    color: var(--foreground);
+    font-weight: 700;
 }
 
-/* Help Box (Neutral/Violet) */
+/* Help Box */
 .helpBox {
     background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 20px;
+    border: 1px solid #F1F5F9;
+    border-radius: 20px;
+    padding: 24px;
 }
 
 .helpTitle {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0F172A;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--foreground);
     margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .helpText {
-    font-size: 13px;
+    font-size: 14px;
     color: #64748b;
     line-height: 1.6;
     margin: 0;
+    font-weight: 500;
 }
 
 /* Top Up Form */
-.topUpSection {
-    background: white;
-}
-
 .inputWrapper {
     position: relative;
     flex: 1;
@@ -200,109 +223,97 @@
 
 .currencySymbol {
     position: absolute;
-    left: 12px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #64748b;
-    font-weight: 500;
+    color: #94A3B8;
+    font-weight: 800;
 }
 
 .amountInput {
-    padding-left: 28px !important;
-    font-size: 16px;
-    font-weight: 600;
+    padding-left: 36px !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    border-radius: 14px !important;
+    height: 52px !important;
 }
 
 .quickAmounts {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 24px;
 }
 
 .amountBtn {
     flex: 1;
-    min-width: 80px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0;
+    min-width: 90px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
     background: white;
     color: #64748b;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .amountBtn:hover {
-    border-color: #673DE6;
-    color: #673DE6;
-    background: #F3E8FF;
+    border-color: var(--primary);
+    color: var(--primary);
+    background: #F5F3FF;
+    transform: translateY(-2px);
 }
 
 .amountBtnActive {
-    background: #673DE6;
-    border-color: #673DE6;
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 4px 6px -1px rgba(103, 61, 230, 0.2);
-}
-
-.amountBtnActive:hover {
-    background: #5B21B6;
-    color: white;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+    font-weight: 800 !important;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2) !important;
 }
 
 /* Action Button */
 .payBtn {
-    background: #673DE6;
-    border-color: #673DE6;
-    color: white;
-    font-weight: 600;
-    padding: 0 24px;
-    transition: all 0.2s;
-}
-
-.payBtn:hover {
-    background: #5B21B6;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(103, 61, 230, 0.3);
+    height: 52px !important;
+    border-radius: 14px !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2) !important;
 }
 
 .transparencyBox {
-    background: #F3E8FF;
-    /* Violet-100 */
-    border: 1px solid #DDD6FE;
-    /* Violet-200 */
-    border-radius: 12px;
-    padding: 16px;
+    background: #F5F3FF;
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    border-radius: 20px;
+    padding: 24px;
     display: flex;
-    gap: 16px;
+    gap: 20px;
     align-items: flex-start;
 }
 
 .transparencyIcon {
-    color: #673DE6;
-    /* Dashboard Violet */
+    color: var(--primary);
     flex-shrink: 0;
     margin-top: 2px;
 }
 
 .transparencyTitle {
-    font-size: 15px;
-    font-weight: 600;
-    color: #5B21B6;
-    /* Deep Violet */
-    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
 }
 
 .transparencyText {
     font-size: 14px;
-    color: #673DE6;
-    /* Violet Text */
-    line-height: 1.5;
+    color: #4F46E5;
+    line-height: 1.6;
     margin: 0;
+    font-weight: 500;
 }

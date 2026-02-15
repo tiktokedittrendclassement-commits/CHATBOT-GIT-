@@ -2,15 +2,18 @@
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
 }
 
 .heading {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
-    color: #0F172A;
+    letter-spacing: -1px;
 }
 
 .subheading {
@@ -21,36 +24,43 @@
 
 /* Container */
 .container {
-    padding-bottom: 40px;
-    max-width: 800px;
+    padding-bottom: 60px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 /* Card Style */
 .card {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 32px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow);
 }
 
 .cardTitle {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0F172A;
-    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    letter-spacing: -0.5px;
 }
 
 .cardDescription {
-    font-size: 14px;
-    color: #64748b;
-    margin-bottom: 24px;
-    line-height: 1.5;
+    font-size: 15px;
+    color: #475569;
+    margin-bottom: 32px;
+    line-height: 1.6;
+    font-weight: 500;
 }
 
 /* List Items */
@@ -58,7 +68,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 0;
+    padding: 20px 0;
     border-bottom: 1px solid #F1F5F9;
 }
 
@@ -67,33 +77,34 @@
 }
 
 .botName {
-    font-weight: 600;
-    font-size: 15px;
-    color: #0F172A;
-    margin-bottom: 2px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--foreground);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
 }
 
 .botId {
-    font-size: 12px;
+    font-size: 13px;
     color: #94a3b8;
     font-family: monospace;
+    font-weight: 500;
 }
 
 /* Actions */
 .actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .status {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .statusActive {
-    color: #7C3AED;
-    /* Violet pour Activé */
+    color: var(--primary);
 }
 
 .statusInactive {
@@ -101,10 +112,9 @@
 }
 
 .checkbox {
-    width: 18px;
-    height: 18px;
-    accent-color: #7C3AED;
-    /* Violet Checkbox */
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
     cursor: pointer;
 }
 
@@ -115,74 +125,79 @@
 
 /* Badges */
 .badgePro {
-    background: #F3E8FF;
-    /* Violet Pale */
-    color: #7C3AED;
-    /* Violet Text */
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 700;
+    background: #F5F3FF;
+    color: var(--primary);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 800;
     letter-spacing: 0.5px;
+    border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 /* Locked State */
 .lockedBox {
-    margin-top: 24px;
-    padding: 24px;
-    background: linear-gradient(to right, #F5F3FF, #FFFFFF);
-    /* Violet Gradient */
-    border: 1px solid #DDD6FE;
-    /* Violet Border */
-    border-radius: 12px;
+    margin-top: 32px;
+    padding: 32px;
+    background: linear-gradient(135deg, #F5F3FF 0%, #FFFFFF 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 24px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    box-shadow: var(--shadow-sm);
 }
 
 .lockedText {
-    font-size: 15px;
-    color: #5B21B6;
-    /* Deep Violet */
-    margin-bottom: 5px;
-    font-weight: 600;
-    line-height: 1.5;
+    font-size: 16px;
+    color: var(--foreground);
+    margin-bottom: 4px;
+    font-weight: 700;
+    line-height: 1.4;
 }
 
 .lockedSubText {
     font-size: 14px;
-    color: #7C3AED;
+    color: #4F46E5;
     margin: 0;
+    font-weight: 500;
 }
 
 .upgradeBtn {
-    background: white;
-    color: #7C3AED;
-    border: 1px solid #7C3AED;
-    font-weight: 600;
+    background: white !important;
+    color: var(--primary) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    padding: 10px 20px !important;
+    transition: all 0.3s !important;
 }
 
 .upgradeBtn:hover {
-    background: #F5F3FF;
+    background: #F5F3FF !important;
+    border-color: var(--primary) !important;
+    transform: translateY(-2px);
 }
 
 /* Future Feature */
 .futureBox {
     background: #F8FAFC;
-    border: 1px dashed #CBD5E1;
-    border-radius: 12px;
-    padding: 32px;
+    border: 2px dashed var(--border);
+    border-radius: 24px;
+    padding: 48px;
     text-align: center;
 }
 
 .futureTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #475569;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
+    letter-spacing: -0.5px;
 }
 
 .futureText {
-    font-size: 14px;
+    font-size: 15px;
     color: #94a3b8;
+    font-weight: 500;
 }

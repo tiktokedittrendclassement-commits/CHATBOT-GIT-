@@ -1,19 +1,25 @@
 .loading {
-    padding: 24px;
+    padding: 40px;
+    text-align: center;
     color: #64748b;
+    font-weight: 500;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 32px;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
 }
 
 .heading {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
+    letter-spacing: -1px;
 }
 
 .subheading {
@@ -25,51 +31,49 @@
 /* Grille de Chatbots */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
-    /* Reduced gap */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
 }
 
-/* Card Style Pro Compact */
+/* Card Style Premium */
 .card {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 16px;
-    /* Reduced padding from 24px */
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
     position: relative;
     height: 100%;
 }
 
 .card:hover {
-    border-color: #CBD5E1;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(99, 102, 241, 0.2);
 }
 
 .cardHeader {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 12px;
-    /* Reduced margin */
+    gap: 16px;
+    margin-bottom: 20px;
 }
 
 /* Icône du Bot */
 .botIcon {
-    width: 40px;
-    /* Smaller icon */
-    height: 40px;
-    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 20px;
+    box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.2);
 }
 
 .botInfo {
@@ -81,22 +85,22 @@
 }
 
 .botName {
-    font-size: 15px;
-    /* Slightly smaller */
-    font-weight: 600;
-    color: #0F172A;
-    margin-bottom: 2px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    letter-spacing: -0.5px;
 }
 
 .botMeta {
-    font-size: 12px;
+    font-size: 13px;
     color: #64748b;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 /* Stats integrated nicely */
@@ -105,15 +109,21 @@
     align-items: center;
     gap: 4px;
     background: #F1F5F9;
-    padding: 2px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     color: #475569;
+    transition: all 0.2s;
+}
+
+.card:hover .compactStat {
+    background: #E2E8F0;
+    color: var(--foreground);
 }
 
 .footer {
-    padding-top: 12px;
+    padding-top: 20px;
     margin-top: auto;
     border-top: 1px solid #F1F5F9;
     display: flex;
@@ -123,35 +133,40 @@
 .emptyState {
     grid-column: 1 / -1;
     text-align: center;
-    padding: 80px 20px;
+    padding: 80px 40px;
     background: white;
-    border-radius: 16px;
+    border-radius: 24px;
     border: 2px dashed #E2E8F0;
     color: #64748b;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
 }
 
 .emptyState h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0F172A;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--foreground);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 /* Boutons spécifiques */
 .editBtn {
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #475569 !important;
-    font-weight: 600 !important;
-    transition: all 0.2s !important;
+    background: white !important;
+    border: 1px solid var(--border) !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
+    padding: 10px 20px !important;
+    border-radius: 12px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .editBtn:hover {
-    border-color: #94a3b8 !important;
-    color: #0F172A !important;
-    background: #F8FAFC !important;
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: #F5F3FF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.1);
 }

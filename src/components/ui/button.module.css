@@ -18,15 +18,14 @@
 .primary {
   background-color: var(--primary);
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(103, 61, 230, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
   border: 1px solid transparent;
-  /* Ensure consistent sizing */
 }
 
 .primary:hover {
   background-color: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 6px 10px -2px rgba(103, 61, 230, 0.3);
+  box-shadow: 0 6px 10px -2px rgba(99, 102, 241, 0.3);
 }
 
 .secondary {

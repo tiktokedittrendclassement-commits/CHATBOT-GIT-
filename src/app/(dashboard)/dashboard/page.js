@@ -132,33 +132,19 @@ export default function DashboardPage() {
             <div className={styles.header}>
                 <div>
                     <h1 className={styles.heading}>
-                        Bonjour, {profile?.full_name?.split(' ')[0] || 'Cher Client'}
-                        <span style={{
-                            fontSize: '14px',
-                            verticalAlign: 'middle',
-                            marginLeft: '12px',
-                            background: '#F1F5F9',
-                            color: '#475569',
-                            padding: '4px 12px',
-                            borderRadius: '20px',
-                            border: '1px solid #E2E8F0',
-                            fontWeight: '600',
-                            textTransform: 'capitalize'
-                        }}>
-                            {profile?.plan_tier || 'Gratuit'}
-                        </span>
+                        Hello, {profile?.full_name?.split(' ')[0] || 'Premium Member'}
                     </h1>
-                    <p className={styles.subheading}>Voici ce qu'il se passe sur vos chatbots aujourd'hui.</p>
+                    <p className={styles.subheading}>Here is your business overview for today.</p>
                 </div>
                 <div className={styles.headerActions}>
                     <Link href="/billing">
                         <Button variant="outline" size="lg">
-                            <CreditCard size={16} style={{ marginRight: 8 }} /> Mon Abonnement
+                            <CreditCard size={18} style={{ marginRight: 8 }} /> Abonnement
                         </Button>
                     </Link>
                     <Link href="/chatbots/new">
                         <Button size="lg">
-                            <Plus size={16} style={{ marginRight: 8 }} /> Nouveau Chatbot
+                            <Plus size={18} style={{ marginRight: 8 }} /> Nouveau Assistant
                         </Button>
                     </Link>
                 </div>

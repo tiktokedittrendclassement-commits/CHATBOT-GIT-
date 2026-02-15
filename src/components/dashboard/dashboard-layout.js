@@ -17,7 +17,11 @@ import {
     LogOut,
     Menu,
     X,
-    Users
+    Users,
+    TrendingUp,
+    ChevronRight,
+    Bell,
+    User
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -25,7 +29,7 @@ const navItems = [
     { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
     { href: '/chatbots', label: 'Mes Chatbots', icon: Bot },
     { href: '/conversations', label: 'Conversations', icon: MessageSquare },
-    { href: '/statistics', label: 'Statistiques IA', icon: MessageSquare }, // Using MessageSquare for now, or create/import ChartBar/PieChart if available
+    { href: '/statistics', label: 'Statistiques IA', icon: TrendingUp },
     { href: '/wallet', label: 'Portefeuille', icon: Wallet },
     { href: '/billing', label: 'Abonnement', icon: CreditCard },
     { href: '/settings', label: 'Paramètres', icon: Settings },
@@ -36,6 +40,14 @@ export default function DashboardLayout({ children }) {
     const { user } = useAuth()
     const router = useRouter()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+    // Breadcrumbs logic
+    const pathParts = pathname.split('/').filter(part => part)
+    const breadcrumbs = pathParts.map((part, index) => {
+        const href = `/${pathParts.slice(0, index + 1).join('/')}`
+        const label = part.charAt(0).toUpperCase() + part.slice(1).replace('-', ' ')
+        return { href, label, isLast: index === pathParts.length - 1 }
+    })
     const [profile, setProfile] = useState(null)
 
     useEffect(() => {
@@ -111,12 +123,45 @@ export default function DashboardLayout({ children }) {
 
             {/* Main Content */}
             <main className={styles.main}>
-                {/* Mobile Header */}
-                <header className={styles.mobileHeader}>
-                    <button onClick={() => setMobileMenuOpen(true)}>
-                        <Menu size={24} />
-                    </button>
-                    <div className={styles.logoMobile}>Vendo</div>
+                {/* TopBar (Premium) */}
+                <header className={styles.topBar}>
+                    <div className={styles.topBarLeft}>
+                        <button className={styles.mobileMenuBtn} onClick={() => setMobileMenuOpen(true)}>
+                            <Menu size={20} />
+                        </button>
+                        <div className={styles.breadcrumbs}>
+                            <LayoutDashboard size={14} className={styles.breadcrumbIcon} />
+                            {breadcrumbs.length > 0 ? (
+                                breadcrumbs.map((crumb, idx) => (
+                                    <div key={idx} className={styles.breadcrumbItem}>
+                                        <ChevronRight size={14} className={styles.breadcrumbSeparator} />
+                                        <Link href={crumb.href} className={crumb.isLast ? styles.breadcrumbActive : styles.breadcrumbLink}>
+                                            {crumb.label}
+                                        </Link>
+                                    </div>
+                                ))
+                            ) : (
+                                <>
+                                    <ChevronRight size={14} className={styles.breadcrumbSeparator} />
+                                    <span className={styles.breadcrumbActive}>Dashboard</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className={styles.topBarRight}>
+                        <button className={styles.topBarAction}>
+                            <Bell size={20} />
+                            <span className={styles.notificationDot} />
+                        </button>
+                        <div className={styles.topBarDivider} />
+                        <div className={styles.profileSummary}>
+                            <div className={styles.profileAvatar}>
+                                <User size={18} />
+                            </div>
+                            <span className={styles.profileName}>{user?.email?.split('@')[0]}</span>
+                        </div>
+                    </div>
                 </header>
 
                 <div className={styles.content}>

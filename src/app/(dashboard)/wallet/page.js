@@ -138,8 +138,7 @@ export default function WalletPage() {
                                         onClick={() => setAmount(val.toString())}
                                         variant={parseFloat(amount) === val ? 'primary' : 'outline'}
                                         size="sm"
-                                        className={styles.amountBtn}
-                                        style={parseFloat(amount) === val ? { background: '#673DE6', borderColor: '#673DE6' } : {}}
+                                        className={`${styles.amountBtn} ${parseFloat(amount) === val ? styles.amountBtnActive : ''}`}
                                     >
                                         {val}€
                                     </Button>

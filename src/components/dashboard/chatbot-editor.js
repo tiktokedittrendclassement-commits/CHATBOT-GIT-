@@ -137,7 +137,7 @@ export default function ChatbotEditor({ botId = null }) {
                 ) : (
                     <div style={{ display: 'flex', gap: 8 }}>
 
-                        <Button onClick={handleSubmit} disabled={loading}>
+                        <Button onClick={handleSubmit} disabled={loading} size="md">
                             <Save size={16} style={{ marginRight: 8 }} />
                             {loading ? 'Sauvegarde...' : 'Sauvegarder'}
                         </Button>

@@ -1,292 +1,295 @@
 /* Main Layout */
 .container {
-    padding-bottom: 40px;
+    padding-bottom: 60px;
 }
 
 /* Header Minimalist */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
 }
 
 .heading {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
-    color: #1e293b;
+    letter-spacing: -1px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .subheading {
     color: #64748b;
+    font-size: 16px;
+    font-weight: 400;
 }
 
 .headerActions {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     align-items: center;
 }
 
 .select {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
     outline: none;
     font-size: 14px;
     background: white;
-    color: #334155;
+    color: var(--foreground);
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
 }
 
+.select:hover {
+    border-color: var(--primary);
+}
 
 .analyzeBtn {
-    background: #673DE6;
-    /* Dashboard inline color */
+    background: var(--primary);
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    /* Dashboard font-size */
-    padding: 10px 20px;
-    /* Dashboard padding */
-    border-radius: 8px;
-    /* Dashboard border-radius */
-    border: 1px solid #673DE6;
-    /* Dashboard styling */
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--primary);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    /* Dashboard shadow (black) */
-    transition: all 0.2s ease;
+    gap: 10px;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 }
 
 .analyzeBtn:hover {
-    background: #673DE6;
-    /* Kept constant */
-    border-color: #673DE6;
-    transform: translateY(-1px);
-    /* Only transform on hover */
-    /* No shadow change in original dashboard button */
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -5px rgba(99, 102, 241, 0.3);
 }
 
 .analyzeBtn:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
-    background: #CBD5E1;
-    /* Slate-300 */
+    background: #E2E8F0;
+    border-color: #E2E8F0;
+    color: #94A3B8;
     box-shadow: none;
     transform: none;
 }
 
-
 /* Badges */
 .badgePro {
     font-size: 12px;
-    background: #F3E8FF;
-    color: #673DE6;
-    /* Dashboard Violet */
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 700;
-    vertical-align: middle;
+    background: #F5F3FF;
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
-/* Locked / Free Plan State (Violet) */
+/* Locked / Free Plan State (Indigo) */
 .lockedBox {
-    background: linear-gradient(to right, #F5F3FF, #FFFFFF);
-    /* Violet Gradient */
-    border: 1px solid #DDD6FE;
-    /* Violet Border */
-    border-radius: 12px;
-    padding: 24px;
-    /* Increased padding to match Marketing Email */
-    margin-bottom: 24px;
+    background: linear-gradient(135deg, #F5F3FF 0%, #FFFFFF 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 40px;
     display: flex;
     align-items: center;
-    gap: 20px;
-    /* Increased gap */
+    gap: 24px;
+    box-shadow: var(--shadow-sm);
 }
 
 .lockedBoxIcon {
-    background: #EDE9FE;
-    /* Violet-100 */
-    padding: 12px;
-    /* Increased padding */
-    border-radius: 50%;
-    color: #673DE6;
-    /* Dashboard Violet */
+    background: white;
+    padding: 16px;
+    border-radius: 18px;
+    color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.05);
 }
 
 .lockedText {
-    font-size: 15px;
-    color: #5B21B6;
-    /* Deep Violet */
-    margin-bottom: 5px;
-    font-weight: 600;
-    line-height: 1.5;
+    font-size: 16px;
+    color: var(--foreground);
+    margin-bottom: 4px;
+    font-weight: 700;
+    line-height: 1.4;
 }
 
 .lockedSubText {
     font-size: 14px;
-    color: #673DE6;
-    /* Dashboard Violet */
+    color: #64748b;
     margin: 0;
+    font-weight: 500;
 }
 
-/* Analysis Results */
 /* Analysis Results */
 .analysisContainer {
-    animation: fadeIn 0.5s ease;
+    animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Unified Card Style (Matches Marketing WhatsApp) */
+/* Unified Card Style */
 .summaryCard,
 .card {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 32px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow);
+    border-color: rgba(99, 102, 241, 0.1);
 }
 
 .cardHeader {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .iconBox {
-    padding: 8px;
-    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-
-.iconBoxBlue {
-    background: #F1F5F9;
-    /* Slate-100 */
+    background: #F8FAFC;
     color: #64748B;
-    /* Slate-500 */
+    border: 1px solid #F1F5F9;
 }
-
-.iconBoxViolet {
-    background: #F1F5F9;
-    /* Slate-100 */
-    color: #64748B;
-    /* Slate-500 */
-}
-
-.iconBoxGreen {
-    background: #F1F5F9;
-    /* Slate-100 */
-    color: #64748B;
-    /* Slate-500 */
-}
-
 
 .cardTitle {
-    font-size: 18px;
-    font-weight: 600;
-    /* Adjusted to 600 to match WhatsApp */
-    color: #0F172A;
-    /* Slate-900 */
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--foreground);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 .cardText {
-    line-height: 1.6;
-    color: #64748b;
-    /* Slate-500 */
+    line-height: 1.7;
+    color: #475569;
     font-size: 15px;
 }
 
 .gridTwo {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 32px;
+    gap: 32px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+    .gridTwo {
+        grid-template-columns: 1fr;
+    }
 }
 
 .list {
     padding-left: 20px;
     margin: 0;
     color: #475569;
+    list-style-type: none;
 }
 
 .listItem {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 24px;
+}
+
+.listItem::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: 800;
 }
 
 /* Recommendations Title */
 .recommendationsTitle {
-    font-size: 13px;
-    color: #0F172A;
-    /* Slate-900 (Black) */
+    font-size: 14px;
+    color: var(--foreground);
     display: block;
-    margin-bottom: 4px;
-    font-weight: 600;
+    margin-bottom: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .promptBox {
-    font-size: 13px;
+    font-size: 14px;
     color: #64748b;
-    background: #f8fafc;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px dashed #cbd5e1;
-    margin-top: 4px;
+    background: #F8FAFC;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px dashed var(--border);
+    margin-top: 12px;
+    line-height: 1.6;
 }
 
-/* Empty State / CTA (Aligned with Card Style) */
+/* Empty State / CTA */
 .emptyState {
     text-align: center;
-    padding: 60px;
+    padding: 80px 40px;
     background: white;
-    border: 1px solid #E2E8F0;
-    /* Solid border instead of dashed */
-    border-radius: 12px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    /* Added shadow */
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .emptyIcon {
-    color: #cbd5e1;
-    margin-bottom: 16px;
+    color: #E2E8F0;
+    margin-bottom: 24px;
 }
 
 .emptyTitle {
-    font-size: 18px;
-    font-weight: 600;
-    color: #0F172A;
-    margin-bottom: 8px;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
 }
 
 .emptyText {
     color: #64748b;
-    max-width: 400px;
-    margin: 0 auto 24px auto;
+    font-size: 16px;
+    max-width: 500px;
+    margin: 0 auto 32px auto;
+    line-height: 1.6;
 }
 
 /* Keyframes */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
 
     to {
@@ -307,15 +310,18 @@
 
 /* Upgrade Button */
 .upgradeBtn {
-    background: white;
-    color: #7C3AED;
-    border: 1px solid #DDD6FE;
-    /* Lighter border */
-    font-weight: 600;
-    transition: all 0.2s;
+    background: white !important;
+    color: var(--primary) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    font-weight: 800 !important;
+    padding: 12px 28px !important;
+    border-radius: 14px !important;
+    transition: all 0.3s !important;
 }
 
 .upgradeBtn:hover {
-    background: #F5F3FF;
-    border-color: #7C3AED;
+    background: #F5F3FF !important;
+    border-color: var(--primary) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
 }

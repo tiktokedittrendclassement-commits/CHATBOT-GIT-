@@ -2,18 +2,21 @@
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
 }
 
 .heading {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 8px;
-    color: #0F172A;
+    letter-spacing: -1px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .subheading {
@@ -22,150 +25,164 @@
     font-weight: 400;
 }
 
-/* Badge Agency - Violet */
+/* Badge Agency - Indigo Theme */
 .badgeAgency {
-    font-size: 11px;
-    background: #F3E8FF;
-    /* Violet-100 */
-    color: #673DE6;
-    /* Dashboard Violet */
-    padding: 4px 8px;
-    border-radius: 99px;
-    font-weight: 700;
+    font-size: 12px;
+    background: #F5F3FF;
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 800;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
-/* Agency Banner - Violet Theme */
+/* Agency Banner - Indigo Theme */
 .banner {
-    background: linear-gradient(to right, #F5F3FF, #FFFFFF);
-    /* Violet Gradient */
-    border: 1px solid #DDD6FE;
-    /* Violet Border */
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 32px;
+    background: linear-gradient(135deg, #F5F3FF 0%, #FFFFFF 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 48px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    box-shadow: var(--shadow-sm);
 }
 
 .bannerIcon {
-    width: 48px;
-    height: 48px;
-    background: #EDE9FE;
-    /* Violet-100 */
-    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    background: white;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #673DE6;
-    /* Dashboard Violet */
+    color: var(--primary);
     flex-shrink: 0;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
 }
 
 .bannerContent h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: #5B21B6;
-    /* Deep Violet */
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--foreground);
     margin-bottom: 4px;
+    letter-spacing: -0.5px;
 }
 
 .bannerContent p {
     font-size: 14px;
-    color: #673DE6;
-    /* Violet Text */
+    color: #4F46E5;
     margin: 0;
+    font-weight: 500;
 }
 
 .upgradeBtn {
     margin-left: auto;
-    background: #673DE6;
-    /* Dashboard Violet */
+    background: var(--primary);
     color: white;
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 8px 16px;
-    border: 1px solid #673DE6;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 12px 24px;
+    border: 1px solid var(--primary);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
 }
 
 .upgradeBtn:hover {
-    background: #5B21B6;
-    border-color: #5B21B6;
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -5px rgba(99, 102, 241, 0.3);
 }
 
 /* Grid Layout */
 .grid {
     display: grid;
     grid-template-columns: 1fr 2fr;
-    gap: 24px;
+    gap: 32px;
+}
+
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Cards */
 .card {
     background: white;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow);
 }
 
 .cardTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0F172A;
-    margin-bottom: 24px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-bottom: 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    letter-spacing: -0.5px;
 }
 
 /* Stats */
 .statRow {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
     margin-bottom: 24px;
 }
 
 .statIcon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: #F1F5F9;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: #F8FAFC;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #64748b;
+    border: 1px solid #F1F5F9;
 }
 
 .statLabel {
-    font-size: 13px;
+    font-size: 14px;
     color: #64748b;
-    font-weight: 500;
+    font-weight: 600;
+    margin-bottom: 2px;
 }
 
 .statValue {
     font-size: 28px;
-    font-weight: 700;
-    color: #0f172a;
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -1px;
 }
 
 .infoBox {
-    padding: 16px;
+    padding: 20px;
     background: #F8FAFC;
-    border-radius: 8px;
+    border-radius: 16px;
     color: #64748b;
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.6;
+    border: 1px solid #F1F5F9;
 }
 
 /* List Items */
 .listItem {
-    padding: 16px 0;
+    padding: 20px 0;
     border-bottom: 1px solid #F1F5F9;
     display: flex;
     align-items: center;
@@ -177,64 +194,59 @@
 }
 
 .rank {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     background: #F1F5F9;
-    border-radius: 50%;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
     color: #64748b;
-    margin-right: 16px;
+    margin-right: 20px;
     flex-shrink: 0;
 }
 
 .urlLink {
-    color: #673DE6;
-    /* Dashboard Violet */
-    font-weight: 500;
-    font-size: 14px;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 15px;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    transition: all 0.2s;
 }
 
 .urlLink:hover {
     text-decoration: underline;
+    opacity: 0.8;
 }
 
 .lastVisit {
-    font-size: 12px;
+    font-size: 13px;
     color: #94a3b8;
-    margin-top: 2px;
+    margin-top: 4px;
+    font-weight: 500;
 }
 
 .countBadge {
-    background: #F3E8FF;
-    /* Violet-100 */
-    color: #673DE6;
-    /* Dashboard Violet */
-    padding: 4px 10px;
-    border-radius: 99px;
-    font-size: 12px;
-    font-weight: 600;
+    background: #F5F3FF;
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+    border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .emptyState {
-    padding: 60px 20px;
+    padding: 80px 40px;
     text-align: center;
     color: #94a3b8;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-}
-
-@media (max-width: 1024px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
+    gap: 20px;
 }

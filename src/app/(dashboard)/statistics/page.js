@@ -150,7 +150,7 @@ export default function StatisticsPage() {
                             </Button>
                         </Link>
                     ) : (
-                        <Button onClick={handleRunAnalysis} disabled={analyzing} className={styles.analyzeBtn} style={{ background: '#673DE6', borderColor: '#673DE6', color: 'white' }}>
+                        <Button onClick={handleRunAnalysis} disabled={analyzing} className={styles.analyzeBtn}>
                             {analyzing ? (
                                 <>
                                     <Sparkles size={16} className={styles.spin} style={{ marginRight: 8 }} />
@@ -256,7 +256,7 @@ export default function StatisticsPage() {
                     <p className={styles.emptyText}>
                         L&apos;IA va lire vos dernières conversations pour détecter les tendances, les questions fréquentes et les points d&apos;amélioration.
                     </p>
-                    <Button onClick={isFreePlan ? handleRunAnalysis : runAnalysis} disabled={analyzing} className={styles.analyzeBtn} style={isFreePlan ? { opacity: 0.8, background: '#673DE6', borderColor: '#673DE6', color: 'white' } : { background: '#673DE6', borderColor: '#673DE6', color: 'white' }}>
+                    <Button onClick={isFreePlan ? handleRunAnalysis : runAnalysis} disabled={analyzing} className={styles.analyzeBtn}>
                         {isFreePlan ? <><Lock size={16} style={{ marginRight: 8 }} /> Analyse Verrouillée (Pro)</> : "Commencer l'analyse"}
                     </Button>
                 </div>

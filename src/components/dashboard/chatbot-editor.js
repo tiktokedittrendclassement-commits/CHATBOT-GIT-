@@ -130,7 +130,7 @@ export default function ChatbotEditor({ botId = null }) {
 
                 {!botId && !canCreate ? (
                     <Link href="/billing">
-                        <Button variant="outline" style={{ borderColor: 'red', color: 'red' }}>
+                        <Button variant="destructive" className="w-full">
                             Limite Atteinte (Mettre à niveau)
                         </Button>
                     </Link>

@@ -134,13 +134,16 @@ export default function WalletPage() {
                             <label style={{ fontSize: 13, fontWeight: 500, color: '#64748b' }}>Montants rapides :</label>
                             <div className={styles.quickAmounts}>
                                 {[10, 20, 50, 100].map(val => (
-                                    <button
+                                    <Button
                                         key={val}
                                         onClick={() => setAmount(val.toString())}
-                                        className={`${styles.amountBtn} ${parseFloat(amount) === val ? styles.amountBtnActive : ''}`}
+                                        variant={parseFloat(amount) === val ? 'primary' : 'outline'}
+                                        size="sm"
+                                        className={styles.amountBtn}
+                                        style={parseFloat(amount) === val ? { background: '#673DE6', borderColor: '#673DE6' } : {}}
                                     >
                                         {val}€
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>

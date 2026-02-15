@@ -102,7 +102,7 @@ export default function InsightsPage() {
                         </p>
                     </div>
                     <Link href="/billing" style={{ marginLeft: 'auto' }}>
-                        <Button className={styles.upgradeBtn} style={{ background: '#673DE6', borderColor: '#673DE6', color: 'white' }}>Upgrader</Button>
+                        <Button size="lg">Mettre à niveau</Button>
                     </Link>
                 </div>
             )}

@@ -108,7 +108,7 @@ export default function MarketingEmailPage() {
                             </p>
                         </div>
                         <Link href="/billing">
-                            <Button className={styles.upgradeBtn} variant="outline">
+                            <Button size="lg">
                                 Mettre à niveau
                             </Button>
                         </Link>

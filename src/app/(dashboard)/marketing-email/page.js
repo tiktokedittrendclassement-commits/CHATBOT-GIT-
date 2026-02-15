@@ -5,7 +5,9 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Lock } from 'lucide-react'
 import Link from 'next/link'
+import styles from './page.module.css'
 
 export default function MarketingEmailPage() {
     const { user } = useAuth()
@@ -46,50 +48,68 @@ export default function MarketingEmailPage() {
     const isLocked = profile?.plan_tier === 'free'
 
     return (
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: 24 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8 }}>Marketing Email</h1>
-            <p style={{ color: '#64748b', marginBottom: 32 }}>Collectez des leads et envoyez des campagnes.</p>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div>
+                    <h1 className={styles.heading}>Marketing Email</h1>
+                    <p className={styles.subheading}>Collectez des leads et envoyez des campagnes.</p>
+                </div>
+            </div>
 
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 24 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 600 }}>Collecte de Leads</h3>
-                    {isLocked && <span style={{ background: '#e2e8f0', color: '#64748b', fontSize: 12, padding: '4px 8px', borderRadius: 4, fontWeight: 'bold' }}>PRO & AGENCE</span>}
+            <div className={styles.card}>
+                <div className={styles.cardTitle}>
+                    Collecte de Leads
+                    {isLocked && <span className={styles.badgePro}>PRO & AGENCE</span>}
                 </div>
 
-                <p style={{ fontSize: 14, color: '#64748b', marginBottom: 24 }}>Activez la collecte d'emails sur vos chatbots pour construire votre liste de contacts.</p>
+                <p className={styles.cardDescription}>
+                    Activez la collecte d'emails sur vos chatbots pour construire votre liste de contacts automatiquement lors des discussions.
+                </p>
 
-                {chatbots.map(bot => (
-                    <div key={bot.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #f1f5f9' }}>
-                        <div>
-                            <div style={{ fontWeight: 500 }}>{bot.name}</div>
-                            <div style={{ fontSize: 12, color: '#94a3b8' }}>ID: {bot.id}</div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{ fontSize: 14, color: bot.collect_emails && !isLocked ? '#16a34a' : '#64748b' }}>
-                                {bot.collect_emails && !isLocked ? 'Activé' : 'Désactivé'}
-                            </span>
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={bot.collect_emails || false}
-                                    onChange={() => toggleEmailCollection(bot.id, bot.collect_emails)}
-                                    disabled={isLocked}
-                                    style={{ width: 16, height: 16, cursor: isLocked ? 'not-allowed' : 'pointer' }}
-                                />
+                {chatbots.length > 0 ? (
+                    <div>
+                        {chatbots.map(bot => (
+                            <div key={bot.id} className={styles.listItem}>
+                                <div>
+                                    <div className={styles.botName}>{bot.name}</div>
+                                    <div className={styles.botId}>ID: {bot.id}</div>
+                                </div>
+                                <div className={styles.actions}>
+                                    <span className={`${styles.status} ${bot.collect_emails && !isLocked ? styles.statusActive : styles.statusInactive}`}>
+                                        {bot.collect_emails && !isLocked ? 'Activé' : 'Désactivé'}
+                                    </span>
+                                    <input
+                                        type="checkbox"
+                                        className={styles.checkbox}
+                                        checked={!!(bot.collect_emails && !isLocked)}
+                                        onChange={() => !isLocked && toggleEmailCollection(bot.id, bot.collect_emails)}
+                                        disabled={isLocked}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
-                ))}
-
-                {chatbots.length === 0 && <p className="text-gray-500">Vous n'avez aucun chatbot.</p>}
+                ) : (
+                    <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
+                        Vous n'avez aucun chatbot. <Link href="/chatbots/new" style={{ color: '#673DE6', fontWeight: 600 }}>Créez-en un</Link> pour commencer.
+                    </p>
+                )}
 
                 {isLocked && (
-                    <div style={{ marginTop: 24, padding: 16, background: '#fee2e2', borderRadius: 8, border: '1px solid #fecaca' }}>
-                        <p style={{ fontSize: 14, color: '#dc2626', marginBottom: 8 }}>
-                            🔒 Cette fonctionnalité n'est pas disponible dans le plan Gratuit.
-                        </p>
+                    <div className={styles.lockedBox}>
+                        <div style={{ background: '#EDE9FE', padding: 12, borderRadius: '50%', color: '#7C3AED' }}>
+                            <Lock size={24} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div className={styles.lockedText}>
+                                Fonctionnalité Premium
+                            </div>
+                            <p className={styles.lockedSubText}>
+                                La collecte d'emails est réservée aux plans Pro et Agence.
+                            </p>
+                        </div>
                         <Link href="/billing">
-                            <Button variant="outline" style={{ borderColor: '#dc2626', color: '#dc2626' }}>
+                            <Button className={styles.upgradeBtn} variant="outline">
                                 Mettre à niveau
                             </Button>
                         </Link>
@@ -97,9 +117,9 @@ export default function MarketingEmailPage() {
                 )}
             </div>
 
-            <div style={{ marginTop: 32, background: '#f8fafc', padding: 24, borderRadius: 8, textAlign: 'center' }}>
-                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Campagnes Email (Bientôt)</h3>
-                <p style={{ fontSize: 14, color: '#64748b' }}>L'envoi de newsletters sera disponible prochainement.</p>
+            <div className={styles.futureBox}>
+                <h3 className={styles.futureTitle}>Campagnes Email (Bientôt)</h3>
+                <p className={styles.futureText}>L'envoi de newsletters et séquences automatisées sera disponible prochainement.</p>
             </div>
         </div>
     )

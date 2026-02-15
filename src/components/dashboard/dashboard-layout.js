@@ -16,7 +16,8 @@ import {
     Settings,
     LogOut,
     Menu,
-    X
+    X,
+    Users
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -54,7 +55,7 @@ export default function DashboardLayout({ children }) {
         items.splice(4, 0, { href: '/marketing-whatsapp', label: 'Marketing WhatsApp', icon: MessageSquare })
 
         // Add Insights (Visible to all, locked for non-agency)
-        items.splice(3, 0, { href: '/insights', label: 'Visiteurs (Insights)', icon: Wallet }) // Using Wallet icon temporarily, or Globe/Map if available
+        items.splice(3, 0, { href: '/insights', label: 'Visiteurs', icon: Users }) // Changed to Users icon
 
         return items
     }

@@ -153,7 +153,7 @@ export default function SettingsPage() {
                                 <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>
                             </div>
                             <div className={styles.actions}>
-                                <Button type="submit" disabled={saving} size="md" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+                                <Button type="submit" disabled={saving} size="md" style={{ minWidth: '220px' }}>
                                     {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
                                 </Button>
                             </div>
@@ -196,7 +196,7 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                             <div className={styles.actions}>
-                                <Button type="submit" size="md" disabled={saving || !passwords.newPassword} style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+                                <Button type="submit" size="md" disabled={saving || !passwords.newPassword} style={{ minWidth: '220px' }}>
                                     Mettre à jour le mot de passe
                                 </Button>
                             </div>
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                             <p className={styles.helperText}>Gérez votre abonnement, factures et méthode de paiement.</p>
                         </div>
                         <Link href="/billing">
-                            <Button size="md" style={{ paddingLeft: '16px', paddingRight: '16px' }}>Gérer / Se désabonner</Button>
+                            <Button size="md" style={{ minWidth: '220px' }}>Gérer / Se désabonner</Button>
                         </Link>
                     </div>
 
@@ -231,7 +231,7 @@ export default function SettingsPage() {
                             <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Changer de compte</div>
                             <p className={styles.helperText}>Déconnectez-vous pour utiliser un autre compte.</p>
                         </div>
-                        <Button size="md" onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: '16px', paddingRight: '16px' }}>
+                        <Button size="md" onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: '220px', justifyContent: 'center' }}>
                             <LogOut size={16} />
                             Déconnexion
                         </Button>

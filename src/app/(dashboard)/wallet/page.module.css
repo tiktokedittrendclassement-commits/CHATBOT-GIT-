@@ -1,85 +1,261 @@
-.loading {
-    padding: 24px;
-    color: #64748b;
+/* Container & Header */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.header {
+    margin-bottom: 40px;
 }
 
 .heading {
     font-size: 28px;
     font-weight: 700;
+    color: #0F172A;
     margin-bottom: 8px;
-}
-
-.subheading {
-    color: #64748b;
-    margin-bottom: 48px;
-}
-
-.balanceCard {
-    background: var(--primary);
-    color: white;
-    padding: 40px;
-    border-radius: var(--radius);
-    max-width: 800px;
-}
-
-.balanceHeader {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    opacity: 0.9;
 }
 
-.amount {
-    font-size: 48px;
-    font-weight: 800;
-    margin-bottom: 16px;
+.subheading {
+    font-size: 16px;
+    color: #64748b;
+    font-weight: 400;
 }
 
-.note {
-    font-size: 14px;
-    opacity: 0.8;
-    margin-bottom: 40px;
-}
-
-.topUpGrid {
+/* Layout */
+.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: 2fr 1fr;
     gap: 24px;
 }
 
-.topUpOption {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 24px;
-    border-radius: var(--radius);
-    text-align: center;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    transition: transform 0.2s ease;
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.topUpAmount {
-    font-size: 20px;
-    font-weight: 700;
+.mainColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.sideColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Cards */
+.card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Balance Card (Violet Gradient) */
+.balanceCard {
+    background: linear-gradient(135deg, #673DE6 0%, #4C1D95 100%);
+    border-radius: 16px;
+    padding: 32px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 15px -3px rgba(103, 61, 230, 0.3);
+    border: 1px solid #5B21B6;
+}
+
+.balanceLabel {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.balanceAmount {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.balanceSub {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.balanceIcon {
+    background: rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Info Box */
+.infoBox {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.infoTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.infoList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.infoItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #64748b;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #E2E8F0;
+}
+
+.infoItem:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.infoItem strong {
+    color: #334155;
+}
+
+/* Top Up Form */
+.topUpSection {
+    background: white;
+}
+
+.inputWrapper {
+    position: relative;
+    flex: 1;
+}
+
+.currencySymbol {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-weight: 500;
+}
+
+.amountInput {
+    padding-left: 28px !important;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.quickAmounts {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.amountBtn {
+    padding: 8px 16px;
+    border-radius: 99px;
+    border: 1px solid #E2E8F0;
+    background: white;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.amountBtn:hover {
+    border-color: #673DE6;
+    color: #673DE6;
+}
+
+.amountBtnActive {
+    background: #F3E8FF;
+    border-color: #673DE6;
+    color: #673DE6;
+    font-weight: 600;
+}
+
+/* Action Button */
+.payBtn {
+    background: #673DE6;
+    border-color: #673DE6;
+    color: white;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.payBtn:hover {
+    background: #5B21B6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(103, 61, 230, 0.3);
+}
+
+.transparencyBox {
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.transparencyIcon {
+    color: #2563EB;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.transparencyTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1E40AF;
     margin-bottom: 4px;
 }
 
-.topUpPrice {
-    font-size: 16px;
-    margin-bottom: 16px;
-    opacity: 0.9;
-}
-
-.buyBtn {
-    background: white;
-    color: var(--primary);
-    width: 100%;
-    border: none;
-}
-
-.buyBtn:hover {
-    background: #f8fafc;
+.transparencyText {
+    font-size: 14px;
+    color: #1E3A8A;
+    line-height: 1.5;
+    margin: 0;
 }

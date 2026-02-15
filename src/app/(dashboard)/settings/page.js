@@ -240,21 +240,24 @@ export default function SettingsPage() {
             </div>
 
             {/* Danger Zone */}
-            <div className={`${styles.section} ${styles.dangerSection}`}>
-                <div className={styles.dangerHeader}>
-                    <div className={styles.dangerIconWrapper}>
+
+            {/* Account Deletion - Clean Style */}
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <div className={styles.iconWrapper}>
                         <Trash2 size={18} />
                     </div>
-                    <h2 className={styles.dangerTitle}>Zone de Danger</h2>
+                    <h2 className={styles.sectionTitle}>Zone de Danger</h2>
                 </div>
                 <div className={styles.sectionContent}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: '#991b1b', marginBottom: 4 }}>Supprimer le compte</div>
-                            <p style={{ fontSize: 13, color: '#ef4444', margin: 0 }}>Cette action est irréversible. Toutes vos données seront effacées.</p>
+                            <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', marginBottom: 4 }}>Supprimer le compte</div>
+                            <p className={styles.helperText}>Cette action est irréversible. Toutes vos données seront effacées.</p>
                         </div>
                         <Button
-                            className={styles.deleteBtn}
+                            variant="ghost"
+                            style={{ color: '#ef4444', backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}
                             onClick={() => {
                                 if (confirm('Êtes-vous ABSOLUMENT sûr ? Cette action est irréversible.')) {
                                     alert('Veuillez contacter le support pour supprimer définitivement votre compte par mesure de sécurité.')

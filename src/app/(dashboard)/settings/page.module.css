@@ -33,7 +33,8 @@
 .sectionHeader {
     padding: 20px 24px;
     border-bottom: 1px solid #F1F5F9;
-    background: #F8FAFC;
+    background: white;
+    /* Clean white header */
     display: flex;
     align-items: center;
     gap: 12px;
@@ -42,14 +43,15 @@
 .iconWrapper {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    background: #F3E8FF;
-    /* Violet-100 */
+    border-radius: 8px;
+    /* Slightly squared for "clean" look */
+    background: #F1F5F9;
+    /* Gray-100 */
+    color: #0F172A;
+    /* Black/Slate-900 */
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #673DE6;
-    /* Violet */
 }
 
 .sectionTitle {
@@ -122,11 +124,17 @@
 
 .outlineBtn {
     border-color: #E2E8F0;
-    color: #0F172A;
+    color: #673DE6;
+    /* Enforce Violet Text */
+    background: white;
+    font-weight: 500;
 }
 
 .outlineBtn:hover {
-    background: #F8FAFC;
+    background: #F3E8FF;
+    /* Violet-50 */
+    border-color: #DDD6FE;
+    color: #5B21B6;
 }
 
 /* Messages */
@@ -141,15 +149,16 @@
 }
 
 .successMessage {
-    background: #ecfdf5;
-    color: #059669;
-    border: 1px solid #a7f3d0;
+    background: #F3E8FF;
+    /* Violet-100 */
+    color: #673DE6;
+    border: 1px solid #DDD6FE;
 }
 
 .errorMessage {
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
 }
 
 /* Plan Display */
@@ -165,20 +174,24 @@
 .planName {
     text-transform: capitalize;
     color: #673DE6;
-    font-weight: 600;
+    font-weight: 700;
 }
 
-/* Danger Zone */
+/* Danger Zone - Now consistent White Card */
 .dangerSection {
-    background: #FEF2F2;
+    background: white;
     border: 1px solid #FECACA;
+    /* Red border to distinguish */
     border-radius: 12px;
     overflow: hidden;
+    margin-top: 40px;
+    /* Separate it a bit more */
 }
 
 .dangerHeader {
-    background: #FFE4E6;
-    border-bottom: 1px solid #FECACA;
+    background: white;
+    /* White header */
+    border-bottom: 1px solid #F1F5F9;
     padding: 20px 24px;
     display: flex;
     align-items: center;
@@ -189,7 +202,8 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #FECACA;
+    background: #FEF2F2;
+    /* Red-50 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -199,17 +213,20 @@
 .dangerTitle {
     font-size: 16px;
     font-weight: 600;
-    color: #991B1B;
+    color: #0F172A;
+    /* Standard Text Color */
     margin: 0;
 }
 
 .deleteBtn {
-    background: #DC2626;
-    color: white;
-    border-color: #DC2626;
+    background: white;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+    font-weight: 500;
 }
 
 .deleteBtn:hover {
-    background: #B91C1C;
-    border-color: #B91C1C;
+    background: #FEF2F2;
+    border-color: #DC2626;
+    color: #B91C1C;
 }

@@ -22,10 +22,13 @@
     font-weight: 400;
 }
 
+/* Badge Agency - Violet */
 .badgeAgency {
     font-size: 11px;
-    background: #e0e7ff;
-    color: #4338ca;
+    background: #F3E8FF;
+    /* Violet-100 */
+    color: #673DE6;
+    /* Dashboard Violet */
     padding: 4px 8px;
     border-radius: 99px;
     font-weight: 700;
@@ -33,10 +36,12 @@
     text-transform: uppercase;
 }
 
-/* Agency Banner */
+/* Agency Banner - Violet Theme */
 .banner {
-    background: linear-gradient(to right, #eff6ff, #ffffff);
-    border: 1px solid #dbeafe;
+    background: linear-gradient(to right, #F5F3FF, #FFFFFF);
+    /* Violet Gradient */
+    border: 1px solid #DDD6FE;
+    /* Violet Border */
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 32px;
@@ -48,37 +53,48 @@
 .bannerIcon {
     width: 48px;
     height: 48px;
-    background: #dbeafe;
+    background: #EDE9FE;
+    /* Violet-100 */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #2563eb;
+    color: #673DE6;
+    /* Dashboard Violet */
     flex-shrink: 0;
 }
 
 .bannerContent h3 {
     font-size: 16px;
     font-weight: 700;
-    color: #1e3a8a;
+    color: #5B21B6;
+    /* Deep Violet */
     margin-bottom: 4px;
 }
 
 .bannerContent p {
     font-size: 14px;
-    color: #1e40af;
+    color: #673DE6;
+    /* Violet Text */
     margin: 0;
 }
 
 .upgradeBtn {
     margin-left: auto;
-    background: #2563eb;
+    background: #673DE6;
+    /* Dashboard Violet */
     color: white;
     font-weight: 600;
     border-radius: 8px;
     padding: 8px 16px;
-    border: none;
+    border: 1px solid #673DE6;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upgradeBtn:hover {
+    background: #5B21B6;
+    border-color: #5B21B6;
 }
 
 /* Grid Layout */
@@ -176,7 +192,8 @@
 }
 
 .urlLink {
-    color: #2563eb;
+    color: #673DE6;
+    /* Dashboard Violet */
     font-weight: 500;
     font-size: 14px;
     text-decoration: none;
@@ -196,8 +213,10 @@
 }
 
 .countBadge {
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: #F3E8FF;
+    /* Violet-100 */
+    color: #673DE6;
+    /* Dashboard Violet */
     padding: 4px 10px;
     border-radius: 99px;
     font-size: 12px;

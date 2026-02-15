@@ -29,9 +29,9 @@ export default function DemoChatStore({ context }) {
             // Contextual proactive message
             let proactiveMsg = ""
             if (context.category === "Chaussures") {
-                proactiveMsg = `Excellent choix ! Les ${context.name} sont notre best-seller du mois. Elles taillent normalement. Besoin d'aide pour la taille ? 👟`
+                proactiveMsg = `Excellent choix ! Les ${context.name} sont notre best-seller. Elles taillent normalement. Besoin d'aide ? 👟`
             } else if (context.category === "Accessoires") {
-                proactiveMsg = `Cette montre est magnifique. Saviez-vous qu'elle est livrée avec un écrin de protection offert ? ⌚`
+                proactiveMsg = `Cette montre est magnifique. Saviez-vous qu'elle est livrée avec une extension de garantie offerte ? ⌚`
             } else {
                 proactiveMsg = `Vous regardez le ${context.name}. C'est une pièce très demandée !`
             }
@@ -111,25 +111,25 @@ export default function DemoChatStore({ context }) {
                     <button
                         onClick={() => setIsOpen(true)}
                         style={{
-                            width: 60,
-                            height: 60,
+                            width: 64,
+                            height: 64,
                             borderRadius: '50%',
-                            background: '#0f172a',
+                            background: '#6366F1',
                             color: 'white',
                             border: 'none',
-                            boxShadow: '0 4px 20px rgba(15, 23, 42, 0.4)',
+                            boxShadow: '0 20px 40px rgba(99, 102, 241, 0.4)',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.2s',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1) translateY(-4px)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1) translateY(0)'}
                     >
-                        <MessageCircle size={30} />
+                        <MessageCircle size={32} />
                     </button>
-                    <div style={{ position: 'absolute', top: -5, right: -5, width: 14, height: 14, background: '#22c55e', borderRadius: '50%', border: '2px solid white' }}></div>
+                    <div style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, background: '#22C55E', borderRadius: '50%', border: '3px solid white' }}></div>
                 </div>
             )}
 
@@ -149,21 +149,21 @@ export default function DemoChatStore({ context }) {
                     transformOrigin: 'bottom right'
                 }}>
                     {/* Header */}
-                    <div style={{ background: '#0f172a', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ background: '#0F172A', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                             <div style={{ position: 'relative' }}>
-                                <div style={{ background: 'white', padding: 8, borderRadius: '50%', color: '#0f172a' }}>
-                                    <Bot size={20} />
+                                <div style={{ background: '#6366F1', padding: 8, borderRadius: 12, color: 'white' }}>
+                                    <Bot size={22} />
                                 </div>
-                                <div style={{ position: 'absolute', bottom: 0, right: 0, width: 10, height: 10, background: '#22c55e', borderRadius: '50%', border: '2px solid #0f172a' }}></div>
+                                <div style={{ position: 'absolute', bottom: -4, right: -4, width: 12, height: 12, background: '#22C55E', borderRadius: '50%', border: '2px solid #0F172A' }}></div>
                             </div>
                             <div>
-                                <div style={{ fontWeight: 700, fontSize: 15, color: 'white' }}>Mon Assistant Vendo</div>
-                                <div style={{ fontSize: 11, color: '#94a3b8' }}>En ligne</div>
+                                <div style={{ fontWeight: 800, fontSize: 16, color: 'white', letterSpacing: '-0.3px' }}>VENDO AI</div>
+                                <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>Support Client Ultra-Rapide</div>
                             </div>
                         </div>
-                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', cursor: 'pointer', padding: 6, borderRadius: 6 }}>
-                            <X size={18} />
+                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', cursor: 'pointer', padding: 8, borderRadius: 10, transition: 'all 0.2s' }}>
+                            <X size={20} />
                         </button>
                     </div>
 
@@ -219,24 +219,26 @@ export default function DemoChatStore({ context }) {
                     </div>
 
                     {/* Input Area */}
-                    < form onSubmit={handleSend} style={{ padding: 16, background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', gap: 10 }}>
+                    <form onSubmit={handleSend} style={{ padding: 20, background: 'white', borderTop: '1px solid #F1F5F9', display: 'flex', gap: 12 }}>
                         <input
                             value={input}
                             onChange={e => setInput(e.target.value)}
-                            placeholder="Écrivez votre message..."
+                            placeholder="Posez votre question..."
                             style={{
                                 flex: 1,
-                                border: '1px solid #e2e8f0',
-                                borderRadius: 24,
-                                padding: '10px 16px',
-                                fontSize: 14,
+                                border: '1px solid #E2E8F0',
+                                borderRadius: 16,
+                                padding: '12px 18px',
+                                fontSize: 15,
                                 outline: 'none',
-                                background: '#f8fafc',
-                                color: '#0f172a'
+                                background: '#F8FAFC',
+                                color: '#0F172A',
+                                fontWeight: 500,
+                                transition: 'all 0.2s'
                             }}
                         />
-                        <button type="submit" style={{ background: '#673DE6', color: 'white', width: 40, height: 40, borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(103, 61, 230, 0.4)' }}>
-                            <Send size={18} />
+                        <button type="submit" style={{ background: '#6366F1', color: 'white', width: 48, height: 48, borderRadius: 16, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(99, 102, 241, 0.3)', transition: 'all 0.2s' }}>
+                            <Send size={20} />
                         </button>
                     </form>
                 </div>

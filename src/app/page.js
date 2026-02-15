@@ -22,10 +22,13 @@ export default function Home() {
       {/* Hero Section */}
       <header className={styles.hero}>
         <div className={styles.heroContent}>
+          <div className={styles.badgeLine}>
+            <span>Nouveau : Vendo v2.0 est arrivé ✨</span>
+          </div>
           <h1 className={styles.title}>
             Chatbots IA pour <span className={styles.highlight}>Shopify</span> & <span className={styles.highlight}>WordPress</span>
           </h1>
-          <div style={{ fontSize: 24, fontWeight: 600, color: '#673DE6', marginBottom: 16 }}>
+          <div className={styles.tagline}>
             "Le bon vendeur, au bon moment."
           </div>
           <p className={styles.subtitle}>
@@ -33,10 +36,10 @@ export default function Home() {
           </p>
           <div className={styles.heroButtons}>
             <Link href="/register">
-              <Button size="lg" className={styles.ctaBtn}>Essai Gratuit</Button>
+              <Button size="lg" className={styles.ctaBtn}>Commencer gratuitement</Button>
             </Link>
             <Link href="#features">
-              <Button variant="outline" size="lg">Comment ça marche</Button>
+              <Button variant="outline" size="lg" className={styles.secondaryBtn}>Comment ça marche</Button>
             </Link>
           </div>
         </div>
@@ -69,26 +72,29 @@ export default function Home() {
       </section>
 
       {/* DEMO SECTION */}
-      <section style={{ padding: '80px 20px', background: '#f8fafc', textAlign: 'center' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 16, color: '#0f172a' }}>Testez une "Vraie" Intégration</h2>
-          <p style={{ color: '#64748b', marginBottom: 48, fontSize: 18 }}>
-            Voici une boutique de démonstration. Cliquez sur un produit, et voyez comment le chatbot (en bas à droite) connaît le contexte et aide à la vente.
-          </p>
+      <section className={styles.demoSection}>
+        <div className={styles.demoContainer}>
+          <div className={styles.sectionHeader}>
+            <h2>Testez une "Vraie" Intégration</h2>
+            <p>
+              Voici une boutique de démonstration. Cliquez sur un produit, et voyez comment le chatbot (en bas à droite) connaît le contexte et aide à la vente.
+            </p>
+          </div>
 
-          <DemoStore />
+          <div className={styles.demoWrapper}>
+            <DemoStore />
+          </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section className={styles.pricing}>
+      <section id="pricing" className={styles.pricing}>
         <div className={styles.sectionHeader}>
-          <h2>Tarification Simple et Transparente</h2>
+          <h2>Tarification Simple</h2>
           <p>Choisissez le plan adapté à votre activité.</p>
-          <div style={{ marginTop: 16, padding: '12px 24px', background: '#F3E8FF', borderRadius: 8, color: '#673DE6', display: 'inline-block', fontSize: 14, textAlign: 'left' }}>
-            💡 <strong>Note :</strong> Les abonnements couvrent les fonctionnalités (nombre de bots, marketing, etc.).<br />
-            La consommation de l'IA est payée à l'usage : <strong>~0.0001€ / message</strong>.<br />
-            <span style={{ fontSize: 13, opacity: 0.9 }}>Soit environ 50 messages pour seulement 0.005€ (un demi-centime).</span>
+          <div className={styles.pricingNote}>
+            💡 <strong>Note :</strong> Les abonnements couvrent les fonctionnalités.
+            La consommation de l'IA est payée à l'usage : <strong>~0.0001€ / message</strong>.
           </div>
         </div>
 

@@ -50,31 +50,31 @@ export default function DemoStore() {
     return (
         <div style={{
             background: 'white',
-            borderRadius: 12,
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
-            border: '1px solid #e2e8f0',
+            borderRadius: 32,
+            boxShadow: '0 40px 100px -20px rgba(0,0,0,0.15)',
+            border: '1px solid #E2E8F0',
             overflow: 'hidden',
             position: 'relative',
-            height: 650,
+            height: 700,
             display: 'flex',
             flexDirection: 'column',
             fontFamily: "'Inter', sans-serif"
         }}>
             {/* Top Bar Branding */}
-            <header style={{ padding: '16px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', zIndex: 10 }}>
+            <header style={{ padding: '24px 32px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', zIndex: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <Menu size={20} color="#64748b" style={{ cursor: 'pointer' }} />
-                    <div style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.5px', color: '#0f172a' }}>
-                        LUMINA<span style={{ color: '#673DE6' }}>.</span>
+                    <Menu size={20} color="#64748B" style={{ cursor: 'pointer' }} />
+                    <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: '-1px', color: '#0F172A' }}>
+                        LUMINA<span style={{ color: '#6366F1' }}>.</span>
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-                    <Search size={20} color="#64748b" style={{ cursor: 'pointer' }} />
+                <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+                    <Search size={20} color="#64748B" style={{ cursor: 'pointer' }} />
                     <div style={{ position: 'relative', cursor: 'pointer' }}>
-                        <ShoppingBag size={20} color="#0f172a" />
+                        <ShoppingBag size={20} color="#0F172A" />
                         {cartCount > 0 && (
-                            <span style={{ position: 'absolute', top: -5, right: -5, background: '#673DE6', color: 'white', fontSize: 10, width: 14, height: 14, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartCount}</span>
+                            <span style={{ position: 'absolute', top: -6, right: -6, background: '#6366F1', color: 'white', fontSize: 10, width: 16, height: 16, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{cartCount}</span>
                         )}
                     </div>
                 </div>
@@ -108,28 +108,28 @@ export default function DemoStore() {
                                 </div>
 
                                 <div>
-                                    <div style={{ fontSize: 12, color: '#673DE6', fontWeight: 600, textTransform: 'uppercase', marginBottom: 8 }}>{selectedProduct.category}</div>
-                                    <h3 style={{ fontSize: 26, fontWeight: 'bold', marginBottom: 12, color: '#1e293b' }}>{selectedProduct.name}</h3>
-                                    <div style={{ fontSize: 24, color: '#0f172a', fontWeight: 700, marginBottom: 16 }}>{selectedProduct.price}</div>
+                                    <div style={{ fontSize: 12, color: '#6366F1', fontWeight: 800, textTransform: 'uppercase', marginBottom: 12, letterSpacing: '1px' }}>{selectedProduct.category}</div>
+                                    <h3 style={{ fontSize: 32, fontWeight: 900, marginBottom: 16, color: '#0F172A', letterSpacing: '-1px' }}>{selectedProduct.name}</h3>
+                                    <div style={{ fontSize: 28, color: '#0F172A', fontWeight: 900, marginBottom: 20 }}>{selectedProduct.price}</div>
 
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 20 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 24 }}>
                                         {[...Array(5)].map((_, i) => (
-                                            <Star key={i} size={16} fill={i < selectedProduct.rating ? "#fbbf24" : "#e2e8f0"} color={i < selectedProduct.rating ? "#fbbf24" : "#e2e8f0"} />
+                                            <Star key={i} size={16} fill={i < selectedProduct.rating ? "#FBBF24" : "#E2E8F0"} color={i < selectedProduct.rating ? "#FBBF24" : "#E2E8F0"} />
                                         ))}
-                                        <span style={{ fontSize: 13, color: '#64748b', marginLeft: 8 }}>(124 avis)</span>
+                                        <span style={{ fontSize: 14, color: '#64748B', marginLeft: 8, fontWeight: 500 }}>(124 avis)</span>
                                     </div>
 
-                                    <p style={{ color: '#475569', marginBottom: 24, lineHeight: 1.6 }}>
+                                    <p style={{ color: '#475569', marginBottom: 32, lineHeight: 1.6, fontSize: 15, fontWeight: 500 }}>
                                         {selectedProduct.description}
                                     </p>
 
-                                    <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-                                        <div style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 6, cursor: 'pointer', background: 'white' }}>S</div>
-                                        <div style={{ padding: '8px 16px', border: '1px solid #673DE6', borderRadius: 6, cursor: 'pointer', background: '#F3E8FF', color: '#673DE6', fontWeight: 600 }}>M</div>
-                                        <div style={{ padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 6, cursor: 'pointer', background: 'white' }}>L</div>
+                                    <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
+                                        <div style={{ padding: '10px 18px', border: '1px solid #E2E8F0', borderRadius: 12, cursor: 'pointer', background: 'white', fontWeight: 600 }}>S</div>
+                                        <div style={{ padding: '10px 18px', border: '1px solid #6366F1', borderRadius: 12, cursor: 'pointer', background: '#EEF2FF', color: '#6366F1', fontWeight: 700 }}>M</div>
+                                        <div style={{ padding: '10px 18px', border: '1px solid #E2E8F0', borderRadius: 12, cursor: 'pointer', background: 'white', fontWeight: 600 }}>L</div>
                                     </div>
 
-                                    <Button size="lg" className="w-full" onClick={addToCart} disabled={!selectedProduct.stock} style={{ background: selectedProduct.stock ? '#673DE6' : '#94a3b8' }}>
+                                    <Button size="lg" className="w-full" onClick={addToCart} disabled={!selectedProduct.stock} style={{ background: selectedProduct.stock ? '#6366F1' : '#94A3B8', height: 54, borderRadius: 16, fontWeight: 800 }}>
                                         {selectedProduct.stock ? 'Ajouter au panier' : 'Rupture de stock'}
                                     </Button>
 

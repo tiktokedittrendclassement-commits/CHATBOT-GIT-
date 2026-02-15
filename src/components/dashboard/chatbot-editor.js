@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import styles from './editor.module.css'
-import { ArrowLeft, Save, Trash } from 'lucide-react'
+import { ArrowLeft, Save } from 'lucide-react'
 
 // This component handles both Creating and Editing
 export default function ChatbotEditor({ botId = null }) {
@@ -20,7 +20,7 @@ export default function ChatbotEditor({ botId = null }) {
 
     const [formData, setFormData] = useState({
         name: '',
-        color: '#4f46e5',
+        color: '#673DE6',
         system_prompt: 'You are a helpful assistant.',
         data_sources: ''
     })
@@ -136,28 +136,7 @@ export default function ChatbotEditor({ botId = null }) {
                     </Link>
                 ) : (
                     <div style={{ display: 'flex', gap: 8 }}>
-                        {botId && (
-                            <Button
-                                variant="destructive"
-                                onClick={async () => {
-                                    if (!confirm('Êtes-vous sûr de vouloir supprimer ce chatbot ? Cette action est irréversible.')) return
-                                    setLoading(true)
-                                    try {
-                                        const { error } = await supabase.from('chatbots').delete().eq('id', botId)
-                                        if (error) throw error
-                                        router.push('/chatbots')
-                                        router.refresh()
-                                    } catch (err) {
-                                        alert('Erreur lors de la suppression : ' + err.message)
-                                        setLoading(false)
-                                    }
-                                }}
-                                disabled={loading}
-                                style={{ backgroundColor: '#fee2e2', color: '#dc2626', borderColor: '#fecaca' }}
-                            >
-                                <Trash size={16} />
-                            </Button>
-                        )}
+
                         <Button onClick={handleSubmit} disabled={loading}>
                             <Save size={16} style={{ marginRight: 8 }} />
                             {loading ? 'Sauvegarde...' : 'Sauvegarder'}

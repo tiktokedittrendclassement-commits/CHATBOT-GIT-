@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import styles from './page.module.css'
 import Link from 'next/link'
-import { Plus, Bot, MoreVertical, Edit, Trash, Settings } from 'lucide-react'
+import { Plus, Bot, Trash, ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 
@@ -81,8 +81,8 @@ export default function ChatbotsPage() {
                         </Button>
                     )}
                     <Link href="/chatbots/new">
-                        <Button>
-                            <Plus size={20} style={{ marginRight: 8 }} />
+                        <Button style={{ background: '#673DE6', color: 'white', border: '1px solid #673DE6' }}>
+                            <Plus size={18} style={{ marginRight: 8 }} />
                             Nouveau Chatbot
                         </Button>
                     </Link>
@@ -100,63 +100,47 @@ export default function ChatbotsPage() {
                         }}
                     >
                         <div className={styles.cardHeader}>
-                            <input
-                                type="checkbox"
-                                checked={selectedChatbots.includes(bot.id)}
-                                onChange={(e) => {
-                                    if (e.target.checked) {
-                                        setSelectedChatbots([...selectedChatbots, bot.id])
-                                    } else {
-                                        setSelectedChatbots(selectedChatbots.filter(id => id !== bot.id))
-                                    }
-                                }}
-                                style={{ width: 18, height: 18, cursor: 'pointer', marginRight: 12 }}
-                            />
-                            <div className={styles.botIcon} style={{ background: bot.color || '#000' }}>
-                                <Bot size={24} color="white" />
-                            </div>
-                            <div className={styles.botInfo}>
-                                <h3 className={styles.botName}>{bot.name}</h3>
-                                <div className={styles.botMeta}>Créé le {new Date(bot.created_at).toLocaleDateString()}</div>
-                            </div>
-                            <div className={styles.actions}>
-                                <Link href={`/chatbots/${bot.id}`}>
-                                    <Button variant="ghost" size="sm"><Settings size={16} /></Button>
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className={styles.stats}>
-                            <div className={styles.stat}>
-                                <span className={styles.statLabel}>Total messages</span>
-                                <span className={styles.statValue}>{bot.total_messages || 0}</span>
-                            </div>
-                        </div>
-
-                        <div className={styles.footer}>
-                            <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-                                <Link href={`/chatbots/${bot.id}`} style={{ flex: 1 }}>
-                                    <Button variant="outline" className={styles.editBtn} style={{ width: '100%' }}>
-                                        Modifier / Intégrer
-                                    </Button>
-                                </Link>
-                                <Button
-                                    variant="destructive"
-                                    size="icon"
-                                    style={{ backgroundColor: '#fee2e2', color: '#dc2626', borderColor: '#fecaca' }}
-                                    onClick={async () => {
-                                        if (!confirm('Êtes-vous sûr de vouloir supprimer ce chatbot ?')) return
-                                        const { error } = await supabase.from('chatbots').delete().eq('id', bot.id)
-                                        if (error) {
-                                            alert('Erreur: ' + error.message)
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedChatbots.includes(bot.id)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setSelectedChatbots([...selectedChatbots, bot.id])
                                         } else {
-                                            setChatbots(chatbots.filter(b => b.id !== bot.id))
+                                            setSelectedChatbots(selectedChatbots.filter(id => id !== bot.id))
                                         }
                                     }}
-                                >
-                                    <Trash size={16} />
-                                </Button>
+                                    style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#0F172A' }}
+                                />
+                                <div className={styles.botIcon} style={{ background: bot.color || '#000' }}>
+                                    <Bot size={20} color="white" />
+                                </div>
+                                <div className={styles.botInfo}>
+                                    <h3 className={styles.botName}>{bot.name}</h3>
+                                    <div className={styles.botMeta}>
+                                        <span>{new Date(bot.created_at).toLocaleDateString()}</span>
+                                        <span className={styles.compactStat}>
+                                            {bot.total_messages || 0} msgs
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+
+                        {/* Ultra Compact Footer */}
+                        <div className={styles.footer}>
+                            <Link href={`/chatbots/${bot.id}`} style={{
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                color: '#0F172A',
+                                textDecoration: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                            }}>
+                                Configurer <ArrowUpRight size={14} />
+                            </Link>
                         </div>
                     </div>
                 ))}

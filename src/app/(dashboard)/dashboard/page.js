@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import styles from './page.module.css'
-import { MessageSquare, Zap, CreditCard, ChevronRight, DollarSign, TrendingUp } from 'lucide-react'
+import { MessageSquare, Zap, CreditCard, ChevronRight, DollarSign, TrendingUp, Plus, User, ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default function DashboardPage() {
@@ -41,29 +41,24 @@ export default function DashboardPage() {
                     .select('id, name', { count: 'exact' })
                     .eq('user_id', user.id)
 
-                // Conversations count (via chatbots)
-                const { count: conversationsCount } = await supabase
-                    .from('conversations')
-                    .select('*', { count: 'exact', head: true })
-                // This assumes RLS filters conversations to only those owned by user's chatbots
-                // If not, we'd need to filter by chatbot_id in (myBots IDs)
-
-                // Messages count using RPC function
+                // Messages count using RPC
                 const { data: messagesCount } = await supabase
                     .rpc('get_user_message_count', { p_user_id: user.id })
 
                 // Fetch Sales Data
                 let totalRevenue = 0
                 let botRevenueMap = {}
+                let convsCount = 0
 
                 if (myBots?.length) {
                     const botIds = myBots.map(b => b.id)
 
-                    // Initialize map
+                    // Init map
                     myBots.forEach(bot => {
                         botRevenueMap[bot.id] = { name: bot.name, amount: 0, count: 0 }
                     })
 
+                    // Get sales
                     const { data: salesData } = await supabase
                         .from('sales')
                         .select('amount, chatbot_id')
@@ -78,6 +73,13 @@ export default function DashboardPage() {
                             }
                         })
                     }
+
+                    // Count conversations
+                    const { count } = await supabase
+                        .from('conversations')
+                        .select('*', { count: 'exact', head: true })
+                        .in('chatbot_id', botIds)
+                    convsCount = count || 0
 
                     // Recent Conversations
                     const { data: recentConvs } = await supabase
@@ -96,7 +98,7 @@ export default function DashboardPage() {
                 }
 
                 setStats({
-                    conversations: conversationsCount || 0,
+                    conversations: convsCount,
                     chatbots: chatbotsCount || 0,
                     messages: messagesCount || 0,
                     revenue: totalRevenue
@@ -105,7 +107,6 @@ export default function DashboardPage() {
                 // Convert map to array for display
                 const revenueArray = Object.values(botRevenueMap)
                     .sort((a, b) => b.amount - a.amount)
-                    .filter(item => item.amount > 0) // Only show bots with revenue? Or all? Let's show all if needed, but top earners first.
 
                 setRevenueByBot(revenueArray)
 
@@ -119,161 +120,208 @@ export default function DashboardPage() {
         fetchData()
     }, [user])
 
-    if (loading) return <div className={styles.loading}>Loading dashboard...</div>
+    if (loading) return <div className={styles.loading}>Chargement du tableau de bord...</div>
+
+    // Calculate max revenue for chart scaling
+    const maxRevenue = Math.max(...revenueByBot.map(b => b.amount), 100)
 
     return (
-        <div>
-            <h1 className={styles.heading}>Tableau de bord</h1>
-            <p className={styles.subheading}>Bon retour, {profile?.full_name || user?.email}</p>
-
-            <div className={styles.grid}>
-                {/* Active Chatbots Card */}
-                <div className={styles.card}>
-                    <div className={styles.cardHeader}>
-                        <span className={styles.cardTitle}>Chatbots Actifs</span>
-                        <MessageSquare size={20} className={styles.iconBlue} />
-                    </div>
-                    <div className={styles.cardValue}>{stats.chatbots}</div>
-                    <div className={styles.cardDesc}>
-                        <Link href="/chatbots" className={styles.link}>Gérer mes assistants</Link>
-                    </div>
+        <div className={styles.container}>
+            {/* Header / Welcome Banner - Style Minimaliste Pro */}
+            <div className={styles.header}>
+                <div>
+                    <h1 className={styles.heading}>
+                        Bonjour, {profile?.full_name?.split(' ')[0] || 'Cher Client'}
+                        <span style={{
+                            fontSize: '14px',
+                            verticalAlign: 'middle',
+                            marginLeft: '12px',
+                            background: '#F1F5F9',
+                            color: '#475569',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            border: '1px solid #E2E8F0',
+                            fontWeight: '600',
+                            textTransform: 'capitalize'
+                        }}>
+                            {profile?.plan_tier || 'Gratuit'}
+                        </span>
+                    </h1>
+                    <p className={styles.subheading}>Voici ce qu'il se passe sur vos chatbots aujourd'hui.</p>
                 </div>
-
-                {/* Total Revenue Card */}
-                <div className={styles.card}>
-                    <div className={styles.cardHeader}>
-                        <span className={styles.cardTitle}>Revenus Générés</span>
-                        <DollarSign size={20} className={styles.iconGreen} />
-                    </div>
-                    <div className={styles.cardValue}>{stats.revenue.toFixed(2)} €</div>
-                    <div className={styles.cardDesc}>Total des ventes via chatbots</div>
-                </div>
-
-                {/* Solde Restant (Credits) Card - RESTORED */}
-                <div className={styles.card}>
-                    <div className={styles.cardHeader}>
-                        <span className={styles.cardTitle}>Solde Restant</span>
-                        <Zap size={20} className={styles.iconYellow} />
-                    </div>
-                    <div className={styles.cardValue}>{((profile?.credits_balance || 0) / 1000000).toFixed(2)} €</div>
-                    <div className={styles.cardDesc}>Recharge le mois prochain</div>
-                </div>
-
-                {/* Plan Card */}
-                <div className={styles.card}>
-                    <div className={styles.cardHeader}>
-                        <span className={styles.cardTitle}>Plan Actuel</span>
-                        <CreditCard size={20} className={styles.iconPurple} />
-                    </div>
-                    <div className={styles.cardValue} style={{ textTransform: 'capitalize' }}>
-                        {profile?.plan_tier || 'Gratuit'}
-                    </div>
-                    <div className={styles.cardDesc}>
-                        <Link href="/billing" className={styles.link}>Gérer l&apos;abonnement</Link>
-                    </div>
-                </div>
-
-                {/* Message Usage Card */}
-                <div className={styles.card}>
-                    <div className={styles.cardHeader}>
-                        <span className={styles.cardTitle}>Messages Envoyés</span>
-                        <MessageSquare size={20} className={styles.iconBlue} />
-                    </div>
-                    {profile?.plan_tier === 'free' || !profile?.plan_tier ? (
-                        <>
-                            <div className={styles.cardValue}>
-                                {stats.messages} / 1000
-                            </div>
-                            <div style={{ marginTop: 12, marginBottom: 8 }}>
-                                <div style={{
-                                    width: '100%',
-                                    height: 8,
-                                    background: '#e2e8f0',
-                                    borderRadius: 4,
-                                    overflow: 'hidden'
-                                }}>
-                                    <div style={{
-                                        width: `${Math.min((stats.messages / 1000) * 100, 100)}%`,
-                                        height: '100%',
-                                        background: stats.messages >= 1000 ? '#ef4444' : stats.messages >= 800 ? '#f59e0b' : '#3b82f6',
-                                        transition: 'width 0.3s ease'
-                                    }} />
-                                </div>
-                            </div>
-                            <div className={styles.cardDesc}>
-                                {Math.round((stats.messages / 1000) * 100)}% utilisé
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <div className={styles.cardValue}>{stats.messages}</div>
-                            <div className={styles.cardDesc}>Messages illimités ✨</div>
-                        </>
-                    )}
+                <div className={styles.headerActions}>
+                    <Link href="/billing" className={styles.actionBtn} style={{ background: 'white', color: '#0F172A', border: '1px solid #E2E8F0' }}>
+                        <CreditCard size={16} /> Mon Abonnement
+                    </Link>
+                    <Link href="/chatbots/new" className={styles.actionBtn} style={{ background: '#673DE6', color: 'white', border: '1px solid #673DE6' }}>
+                        <Plus size={16} /> Nouveau Chatbot
+                    </Link>
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginTop: 32 }}>
-
-                {/* Revenue Breakdown */}
-                <div className={styles.section} style={{ marginTop: 0 }}>
-                    <div className={styles.sectionHeader}>
-                        <h2>Revenus par Chatbot</h2>
+            {/* Main Stats Grid */}
+            <div className={styles.grid}>
+                {/* Revenue Card */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div>
+                            <div className={styles.cardTitle}>Revenus Totaux</div>
+                            <div className={styles.cardValue}>{stats.revenue.toFixed(2)} €</div>
+                        </div>
+                        <div className={styles.iconBox}>
+                            <DollarSign size={24} />
+                        </div>
                     </div>
-                    <div className={styles.card} style={{ padding: 0, overflow: 'hidden' }}>
-                        {revenueByBot.length > 0 ? (
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: 13, color: '#64748b' }}>Chatbot</th>
-                                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: 13, color: '#64748b' }}>Ventes</th>
-                                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: 13, color: '#64748b' }}>Revenu</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {revenueByBot.map((bot, idx) => (
-                                        <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                            <td style={{ padding: '12px 16px', fontWeight: 500 }}>{bot.name}</td>
-                                            <td style={{ padding: '12px 16px', textAlign: 'right' }}>{bot.count}</td>
-                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: '#10b981' }}>{bot.amount.toFixed(2)} €</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <div style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>
-                                <TrendingUp size={32} style={{ marginBottom: 8, opacity: 0.5 }} />
-                                <p>Aucun revenu enregistré pour le moment.</p>
+                    {/* Suppression du +12% fictif */}
+                </div>
+
+                {/* Wallet Balance Card (New) */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div>
+                            <div className={styles.cardTitle}>Solde Compte</div>
+                            <div className={styles.cardValue}>
+                                {((profile?.credits_balance || 0) / 1000000).toFixed(2)} €
                             </div>
-                        )}
+                        </div>
+                        <div className={styles.iconBox}>
+                            {/* Wallet icon not imported, using CreditCard as placeholder or if imported previously */}
+                            <div style={{ fontWeight: 'bold', fontSize: '18px' }}>€</div>
+                        </div>
+                    </div>
+                    <div className={styles.cardDesc}>
+                        <Link href="/wallet" style={{ color: '#64748b', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            Recharger <ArrowUpRight size={16} />
+                        </Link>
                     </div>
                 </div>
 
-                {/* Recent Conversations */}
-                <div className={styles.section} style={{ marginTop: 0 }}>
-                    <div className={styles.sectionHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h2>Conversations</h2>
-                        <Link href="/conversations" className={styles.link}>
-                            Voir tout <ChevronRight size={16} style={{ display: 'inline', verticalAlign: 'middle' }} />
+                {/* Msg Credit Card */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div>
+                            <div className={styles.cardTitle}>Messages Envoyés</div>
+                            <div className={styles.cardValue}>{stats.messages} <span style={{ fontSize: 20, color: '#94a3b8', fontWeight: 400 }}>/ {profile?.plan_tier === 'free' ? '1000' : '∞'}</span></div>
+                        </div>
+                        <div className={styles.iconBox}>
+                            <MessageSquare size={24} />
+                        </div>
+                    </div>
+
+                    {profile?.plan_tier === 'free' && (
+                        <>
+                            <div className={styles.progressContainer}>
+                                <div
+                                    className={styles.progressBar}
+                                    style={{ width: `${Math.min((stats.messages / 1000) * 100, 100)}%` }}
+                                />
+                            </div>
+                            <div className={styles.cardDesc}>
+                                <span>Renouvellement le 1er du mois</span>
+                            </div>
+                        </>
+                    )}
+                    {profile?.plan_tier !== 'free' && (
+                        <div className={styles.cardDesc} style={{ marginTop: 12 }}>
+                            <span style={{ color: '#64748b', fontWeight: 500, fontSize: '13px' }}>Volume illimité activé</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Chatbots Card */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div>
+                            <div className={styles.cardTitle}>Chatbots Actifs</div>
+                            <div className={styles.cardValue}>{stats.chatbots}</div>
+                        </div>
+                        <div className={styles.iconBox}>
+                            <Zap size={24} />
+                        </div>
+                    </div>
+                    <div className={styles.cardDesc}>
+                        <Link href="/chatbots" style={{ color: '#64748b', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
+                            Gérer mes bots <ArrowUpRight size={16} />
                         </Link>
                     </div>
-                    <div className={styles.conversationsList}>
+                </div>
+            </div>
+
+            {/* Split Section: Revenue Chart & Recent Convs */}
+            <div className={styles.mainLayout}>
+                {/* Left: Revenue Visualization */}
+                <div className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <h2>Performance par Chatbot</h2>
+                    </div>
+
+                    {/* Visual Bar Chart */}
+                    <div className={styles.chartContainer}>
+                        {revenueByBot.length > 0 ? (
+                            revenueByBot.slice(0, 5).map((bot, idx) => (
+                                <div key={idx} className={styles.chartBarWrapper}>
+                                    <div className={styles.chartValue}>{bot.amount}€</div>
+                                    <div
+                                        className={`${styles.chartBar} ${idx === 0 ? styles.active : ''}`}
+                                        style={{ height: `${(bot.amount / maxRevenue) * 100}%` }}
+                                        title={`${bot.name}: ${bot.amount}€`}
+                                    />
+                                    <div className={styles.chartLabel}>{bot.name.substring(0, 10)}</div>
+                                </div>
+                            ))
+                        ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                                Pas de données de vente
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={{ marginTop: 'auto' }}>
+                        <Link href="/insights" className={styles.link}>
+                            Voir les statistiques détaillées <ChevronRight size={16} />
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Right: Recent Activity */}
+                <div className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <h2>Activité Récente</h2>
+                    </div>
+
+                    <div className={styles.list}>
                         {recentConversations.length > 0 ? (
                             recentConversations.map(conv => (
-                                <Link key={conv.id} href={`/conversations/${conv.id}`} className={styles.conversationItem}>
-                                    <div className={styles.conversationIcon}>
-                                        <MessageSquare size={20} />
+                                <Link key={conv.id} href={`/conversations/${conv.id}`} className={styles.listItem}>
+                                    <div className={styles.navIcon}>
+                                        <User size={18} />
                                     </div>
-                                    <div className={styles.conversationInfo}>
-                                        <div className={styles.conversationBot}>{conv.chatbots?.name || 'Chatbot'}</div>
-                                        <div className={styles.conversationVisitor}>Visiteur: {conv.visitor_id?.substring(0, 8) || 'Anonyme'}</div>
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemTitle}>
+                                            {conv.visitor_id ? `Visiteur #${conv.visitor_id.substring(0, 4)}` : 'Nouveau Visiteur'}
+                                        </div>
+                                        <div className={styles.itemSub}>
+                                            sur {conv.chatbots?.name} • {new Date(conv.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
                                     </div>
+                                    <ChevronRight size={16} color="#cbd5e1" />
                                 </Link>
                             ))
                         ) : (
-                            <div className={styles.emptyState}>Aucune conversation</div>
+                            <div className={styles.emptyState}>
+                                <MessageSquare size={32} style={{ marginBottom: 8, opacity: 0.3 }} />
+                                <p>En attente de conversations...</p>
+                            </div>
                         )}
                     </div>
+
+                    {recentConversations.length > 0 && (
+                        <div style={{ marginTop: 24, textAlign: 'center' }}>
+                            <Link href="/conversations" className={styles.link} style={{ justifyContent: 'center' }}>
+                                Accéder à la boîte de réception
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { User, Lock, LogOut, CreditCard, Trash2, AlertTriangle, CheckCircle } from 'lucide-react'
-import Link from 'next/link'
+import styles from './page.module.css'
 
 export default function SettingsPage() {
     const { user, signOut } = useAuth()
@@ -64,10 +61,6 @@ export default function SettingsPage() {
 
             if (profileError) throw profileError
 
-            // Determine if email changed (complex flow, usually requires re-confirmation)
-            // For MVP, we might skip email update or warn user. 
-            // supabase.auth.updateUser({ email: ... }) sends confirmation to BOTH emails.
-
             setMessage({ type: 'success', text: 'Profil mis à jour avec succès !' })
         } catch (error) {
             setMessage({ type: 'error', text: error.message })
@@ -111,62 +104,52 @@ export default function SettingsPage() {
         router.push('/login')
     }
 
-    if (loading) return <div style={{ padding: 40 }}>Chargement...</div>
+    if (loading) return <div style={{ padding: 40 }}>Chargement des paramètres...</div>
 
     return (
-        <div style={{ maxWidth: 800, margin: '0 auto', paddingBottom: 40 }}>
-            <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8, color: '#1e293b' }}>Paramètres</h1>
-            <p style={{ color: '#64748b', marginBottom: 32 }}>Gérez votre profil, votre sécurité et vos préférences.</p>
+        <div className={styles.container}>
+            <h1 className={styles.heading}>Paramètres</h1>
+            <p className={styles.subheading}>Gérez votre profil, votre sécurité et vos préférences.</p>
 
             {message && (
-                <div style={{
-                    padding: '12px 16px',
-                    borderRadius: 8,
-                    marginBottom: 24,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    background: message.type === 'success' ? '#ecfdf5' : '#fef2f2',
-                    color: message.type === 'success' ? '#059669' : '#dc2626',
-                    border: `1px solid ${message.type === 'success' ? '#a7f3d0' : '#fecaca'}`
-                }}>
+                <div className={`${styles.message} ${message.type === 'success' ? styles.successMessage : styles.errorMessage}`}>
                     {message.type === 'success' ? <CheckCircle size={20} /> : <AlertTriangle size={20} />}
                     {message.text}
                 </div>
             )}
 
             {/* Profile Section */}
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', overflow: 'hidden', marginBottom: 24 }}>
-                <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-                            <User size={18} />
-                        </div>
-                        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>Profil Personnel</h2>
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <div className={styles.iconWrapper}>
+                        <User size={18} />
                     </div>
+                    <h2 className={styles.sectionTitle}>Profil Personnel</h2>
                 </div>
-                <div style={{ padding: 24 }}>
+                <div className={styles.sectionContent}>
                     <form onSubmit={handleUpdateProfile}>
-                        <div style={{ display: 'grid', gap: 20 }}>
-                            <div>
-                                <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#475569', marginBottom: 6 }}>Nom complet</label>
+                        <div className={styles.formGrid}>
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.label}>Nom complet</label>
                                 <Input
                                     value={profile.full_name}
                                     onChange={e => setProfile({ ...profile, full_name: e.target.value })}
                                     placeholder="Jean Dupont"
+                                    className={styles.input}
                                 />
                             </div>
-                            <div>
-                                <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#475569', marginBottom: 6 }}>Email</label>
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.label}>Email</label>
                                 <Input
                                     value={profile.email}
                                     disabled
                                     style={{ background: '#f1f5f9', color: '#64748b' }}
+                                    className={styles.input}
                                 />
-                                <p style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>L&apos;adresse email ne peut pas être modifiée ici.</p>
+                                <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button type="submit" disabled={saving}>
+                            <div className={styles.actions}>
+                                <Button type="submit" disabled={saving} className={styles.saveBtn}>
                                     {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
                                 </Button>
                             </div>
@@ -176,40 +159,40 @@ export default function SettingsPage() {
             </div>
 
             {/* Security Section */}
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', overflow: 'hidden', marginBottom: 24 }}>
-                <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-                            <Lock size={18} />
-                        </div>
-                        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>Sécurité</h2>
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <div className={styles.iconWrapper}>
+                        <Lock size={18} />
                     </div>
+                    <h2 className={styles.sectionTitle}>Sécurité</h2>
                 </div>
-                <div style={{ padding: 24 }}>
+                <div className={styles.sectionContent}>
                     <form onSubmit={handleUpdatePassword}>
-                        <div style={{ display: 'grid', gap: 20 }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                                <div>
-                                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#475569', marginBottom: 6 }}>Nouveau mot de passe</label>
+                        <div className={styles.formGrid}>
+                            <div className={styles.twoCols}>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.label}>Nouveau mot de passe</label>
                                     <Input
                                         type="password"
                                         value={passwords.newPassword}
                                         onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })}
                                         placeholder="••••••••"
+                                        className={styles.input}
                                     />
                                 </div>
-                                <div>
-                                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#475569', marginBottom: 6 }}>Confirmer le mot de passe</label>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.label}>Confirmer le mot de passe</label>
                                     <Input
                                         type="password"
                                         value={passwords.confirmPassword}
                                         onChange={e => setPasswords({ ...passwords, confirmPassword: e.target.value })}
                                         placeholder="••••••••"
+                                        className={styles.input}
                                     />
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button type="submit" variant="outline" disabled={saving || !passwords.newPassword}>
+                            <div className={styles.actions}>
+                                <Button type="submit" className={styles.outlineBtn} disabled={saving || !passwords.newPassword}>
                                     Mettre à jour le mot de passe
                                 </Button>
                             </div>
@@ -219,32 +202,32 @@ export default function SettingsPage() {
             </div>
 
             {/* Subscription & Account Section */}
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', overflow: 'hidden', marginBottom: 24 }}>
-                <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-                            <CreditCard size={18} />
-                        </div>
-                        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>Abonnement et Compte</h2>
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <div className={styles.iconWrapper}>
+                        <CreditCard size={18} />
                     </div>
+                    <h2 className={styles.sectionTitle}>Abonnement et Compte</h2>
                 </div>
-                <div style={{ padding: 24 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid #f1f5f9' }}>
+                <div className={styles.sectionContent}>
+                    <div className={styles.planRow}>
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Plan Actuel : <span style={{ textTransform: 'capitalize', color: '#2563eb' }}>{profile.plan_tier}</span></div>
-                            <p style={{ fontSize: 13, color: '#64748b' }}>Gérez votre abonnement, factures et méthode de paiement.</p>
+                            <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>
+                                Plan Actuel : <span className={styles.planName}>{profile.plan_tier}</span>
+                            </div>
+                            <p className={styles.helperText}>Gérez votre abonnement, factures et méthode de paiement.</p>
                         </div>
                         <Link href="/billing">
-                            <Button variant="outline">Gérer / Se désabonner</Button>
+                            <Button className={styles.outlineBtn}>Gérer / Se désabonner</Button>
                         </Link>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                             <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Changer de compte</div>
-                            <p style={{ fontSize: 13, color: '#64748b' }}>Déconnectez-vous pour utiliser un autre compte.</p>
+                            <p className={styles.helperText}>Déconnectez-vous pour utiliser un autre compte.</p>
                         </div>
-                        <Button variant="outline" onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Button className={styles.outlineBtn} onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <LogOut size={16} />
                             Déconnexion
                         </Button>
@@ -253,24 +236,21 @@ export default function SettingsPage() {
             </div>
 
             {/* Danger Zone */}
-            <div style={{ background: '#fff1f2', borderRadius: 12, border: '1px solid #fecaca', overflow: 'hidden' }}>
-                <div style={{ padding: '20px 24px', borderBottom: '1px solid #fecaca', background: '#ffe4e6' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#fecaca', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626' }}>
-                            <Trash2 size={18} />
-                        </div>
-                        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#991b1b' }}>Zone de Danger</h2>
+            <div className={`${styles.section} ${styles.dangerSection}`}>
+                <div className={styles.dangerHeader}>
+                    <div className={styles.dangerIconWrapper}>
+                        <Trash2 size={18} />
                     </div>
+                    <h2 className={styles.dangerTitle}>Zone de Danger</h2>
                 </div>
-                <div style={{ padding: 24 }}>
+                <div className={styles.sectionContent}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                             <div style={{ fontSize: 14, fontWeight: 600, color: '#991b1b', marginBottom: 4 }}>Supprimer le compte</div>
-                            <p style={{ fontSize: 13, color: '#ef4444' }}>Cette action est irréversible. Toutes vos données seront effacées.</p>
+                            <p style={{ fontSize: 13, color: '#ef4444', margin: 0 }}>Cette action est irréversible. Toutes vos données seront effacées.</p>
                         </div>
                         <Button
-                            variant="destructive"
-                            style={{ background: '#dc2626', color: 'white' }}
+                            className={styles.deleteBtn}
                             onClick={() => {
                                 if (confirm('Êtes-vous ABSOLUMENT sûr ? Cette action est irréversible.')) {
                                     alert('Veuillez contacter le support pour supprimer définitivement votre compte par mesure de sécurité.')

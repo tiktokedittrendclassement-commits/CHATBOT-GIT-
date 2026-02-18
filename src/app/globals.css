@@ -4,10 +4,10 @@
   --foreground: #0F172A;
   /* Slate 900 */
 
-  --primary: #6366F1;
-  /* Indigo 500 (Premium SaaS) */
-  --primary-dark: #4F46E5;
-  /* Indigo 600 */
+  --primary: #673DE6;
+  /* Vendo Violet (SaaS Brand) */
+  --primary-dark: #5528d1;
+  /* Darker shade */
 
   --secondary: #FFFFFF;
   /* Pure White (For cards) */

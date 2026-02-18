@@ -5,9 +5,15 @@ import { MessageCircle, X, Send, Bot } from 'lucide-react'
 
 export default function DemoChatStore({ context }) {
     const [isOpen, setIsOpen] = useState(false)
-    const [messages, setMessages] = useState([
-        { role: 'assistant', content: 'Bienvenue chez AESTHETIX. Je suis votre concierge personnel. Comment puis-je vous assister dans votre sélection aujourd\'hui ?' }
-    ])
+    const [messages, setMessages] = useState(() => {
+        if (context?.knowledgeBase) {
+            // Check for specific persona name in system prompt or fallback
+            return [{ role: 'assistant', content: `Salut ! Je suis Léa 🌿 Tu cherches le bon soin ou tu as une question sur ta commande ?` }]
+        }
+        return [{ role: 'assistant', content: 'Bienvenue chez V-ATHLETICS. Je suis votre coach personnel Vendo. En quoi puis-je vous aider aujourd\'hui ?' }]
+    })
+
+
     const [input, setInput] = useState('')
     const [isTyping, setIsTyping] = useState(false)
 
@@ -60,14 +66,10 @@ export default function DemoChatStore({ context }) {
 
     const handleSend = async (e) => {
         e.preventDefault()
-        if (!input.trim()) return
+        if (!input.trim() || isTyping) return
 
         const userMsgContent = input
         setInput('')
-
-        // Prevent focus jump by NOT forcing focus elsewhere, but keeping input focused is default behavior usually.
-        // If the user meant "page scrolls up", it might be due to focus logic. 
-        // We do nothing specific here, focusing input is standard.
 
         const newMessages = [...messages, { role: 'user', content: userMsgContent }]
         setMessages(newMessages)
@@ -77,11 +79,76 @@ export default function DemoChatStore({ context }) {
             // Prepare messages for API
             let apiMessages = [...newMessages]
 
-            if (context) {
+            if (context || context?.knowledgeBase) {
+                let systemContext = ""
+                const kb = context?.knowledgeBase
+
+                if (kb && kb.system_prompt) {
+                    // USE CUSTOM SYSTEM PROMPT
+                    systemContext = kb.system_prompt
+
+                    // APPEND CONTEXT & DATA
+                    systemContext += `\n\n--- DONNÉES DU SITE (SOURCE DE VÉRITÉ) ---\n`
+
+                    // We re-inject the data so the LLM actually has the info the prompt refers to
+                    systemContext += `
+BRAND IDENTITY:
+Name: ${kb.brand.name}
+Values: ${kb.brand.values.join(', ')}
+
+PRODUCTS (${kb.products.length} items):
+${kb.products.map(p => `- ${p.name} (${p.price}€): ${p.short_description}. Ingredients: ${p.key_ingredients.map(i => `${i.name} (${i.concentration || ''})`).join(', ')}. Use: ${p.how_to_use}.`).join('\n')}
+
+SUPPORT POLICIES:
+Shipping: Free > ${kb.shipping.free_shipping_threshold}€. Carriers: ${kb.shipping.carriers.map(c => c.name).join(', ')}.
+Returns: ${kb.returns.return_window_days} days.
+FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
+`
+
+                    // APPEND CURRENT USER CONTEXT
+                    systemContext += `\n\n--- CONTEXTE UTILISATEUR ACTUEL ---\nExample: User is on ${context?.view || 'home'}. Cart: ${context?.cartTotal?.toFixed(2) || '0'}€. Viewed Product: ${context?.product?.name || 'None'}.`
+
+                } else {
+                    // FALLBACK LEGACY GENERATION
+                    systemContext = `CONTEXT IMMERSION: User is on ${context?.storeType || 'V-ATHLETICS'}. 
+Current View: ${context?.view || 'home'}.
+Cart Contents: ${context?.cart?.map(i => i.name).join(', ') || 'Empty'}.
+Cart Total: ${context?.cartTotal?.toFixed(2) || '0.00'} €.
+`;
+
+                    if (context?.knowledgeBase) {
+                        systemContext += `\nBRAND IDENTITY: ... (Legacy generation) ...`
+                        // (Simplified for brevity as this branch is for non-custom prompts)
+                        const kb = context.knowledgeBase
+                        systemContext += `
+BRAND IDENTITY:
+Name: ${kb.brand.name}
+Slogan: ${kb.brand.slogan}
+
+PRODUCTS KNOWLEDGE:
+${kb.products.map(p => `- ${p.name} (${p.price}€): ${p.short_description}.`).join('\n')}
+
+SUPPORT POLICIES:
+Shipping: Free > ${kb.shipping.free_shipping_threshold}€.
+Returns: ${kb.returns.return_window_days} days.
+`
+                    } else {
+                        systemContext += `
+KNOWLEDGE BASE:
+- Livraison: 24h.
+- Contact: Support privé.`;
+                    }
+
+                    if (context?.product) {
+                        systemContext += `\nCurrently viewing: ${context.product.name} (${context.product.price} €).`;
+                    }
+                    systemContext += `\nROLE: You are the expert consultant.`
+                }
+
                 apiMessages = [
                     {
                         role: 'system',
-                        content: `CONTEXT: User is currently viewing product: "${context.name}". Price: ${context.price}. Description: ${context.description}. Category: ${context.category}. Stock status: ${context.stock ? 'In Stock' : 'Out of Stock'}. Use this info to answer.`
+                        content: systemContext
                     },
                     ...apiMessages
                 ]
@@ -97,6 +164,8 @@ export default function DemoChatStore({ context }) {
                 })
             })
 
+            if (!response.ok) throw new Error('Network response was not ok');
+
             const data = await response.json()
 
             if (data.content) {
@@ -105,7 +174,8 @@ export default function DemoChatStore({ context }) {
                 setMessages(prev => [...prev, { role: 'assistant', content: "Désolé, j'ai eu un petit problème technique." }])
             }
         } catch (error) {
-            console.error(error)
+            if (error.name === 'AbortError') return;
+            console.error('Chat error:', error)
             setMessages(prev => [...prev, { role: 'assistant', content: "Oups, je n'arrive pas à joindre le serveur." }])
         } finally {
             setIsTyping(false)
@@ -121,13 +191,13 @@ export default function DemoChatStore({ context }) {
                     <button
                         onClick={() => setIsOpen(true)}
                         style={{
-                            width: 68,
-                            height: 68,
-                            borderRadius: 0,
-                            background: '#000',
+                            width: 64,
+                            height: 64,
+                            borderRadius: 20,
+                            background: context?.knowledgeBase ? 'linear-gradient(135deg, #c8a882 0%, #a88b68 100%)' : 'linear-gradient(135deg, #000 0%, #333 100%)',
                             color: 'white',
                             border: 'none',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -137,76 +207,83 @@ export default function DemoChatStore({ context }) {
                         onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
-                        <MessageCircle size={34} />
+                        <div style={{ position: 'relative', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 16 }}>
+                            {context?.knowledgeBase?.brand?.logo_url === 'ICON:BOT' ? (
+                                <Bot size={32} />
+                            ) : context?.knowledgeBase?.brand?.logo_url && (context.knowledgeBase.brand.logo_url.startsWith('http') || context.knowledgeBase.brand.logo_url.startsWith('/') || context.knowledgeBase.brand.logo_url.startsWith('data:')) ? (
+                                <img src={context.knowledgeBase.brand.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+                            ) : (
+                                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24 }}>
+                                    {context?.knowledgeBase?.brand?.logo_url || context?.knowledgeBase?.brand?.name?.charAt(0) || 'V'}
+                                </span>
+                            )}
+                            <div style={{ position: 'absolute', top: -4, right: -4, width: 10, height: 10, background: '#22C55E', borderRadius: '50%', border: '2px solid #000' }}></div>
+                        </div>
                     </button>
-                    <div style={{ position: 'absolute', bottom: -5, right: -5, width: 14, height: 14, background: '#000', borderRadius: '50%', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ width: 6, height: 6, background: '#fff', borderRadius: '50%' }}></div>
-                    </div>
                 </div>
             )}
 
             {/* Chat Window */}
             {isOpen && (
                 <div style={{
-                    width: 360,
-                    height: 500,
+                    width: 380,
+                    height: 580,
                     background: 'white',
-                    borderRadius: 16,
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                    borderRadius: 24,
+                    boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
                     display: 'flex',
                     flexDirection: 'column',
                     overflow: 'hidden',
-                    border: '1px solid #e2e8f0',
-                    animation: 'slideUp 0.3s cubic-bezier(0.2, 1, 0.3, 1)',
+                    border: '1px solid #f1f5f9',
+                    animation: 'slideUp 0.4s cubic-bezier(0.2, 1, 0.3, 1)',
                     transformOrigin: 'bottom right'
                 }}>
                     {/* Header */}
-                    <div style={{ background: '#000', padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ background: '#000', padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                             <div style={{ position: 'relative' }}>
-                                <div style={{ background: '#fff', padding: 8, borderRadius: 0, color: '#000' }}>
+                                <div style={{ background: context?.knowledgeBase ? 'linear-gradient(135deg, #c8a882 0%, #a88b68 100%)' : 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)', padding: 0, borderRadius: 12, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, overflow: 'hidden', fontSize: 20, fontWeight: 'bold' }}>
                                     <Bot size={24} />
                                 </div>
-                                <div style={{ position: 'absolute', bottom: -4, right: -4, width: 12, height: 12, background: '#22C55E', borderRadius: '50%', border: '2px solid #000' }}></div>
+                                <div style={{ position: 'absolute', bottom: -4, right: -4, width: 14, height: 14, background: '#22C55E', borderRadius: '50%', border: '3px solid #000' }}></div>
                             </div>
                             <div>
-                                <div style={{ fontWeight: 900, fontSize: 17, color: '#fff', letterSpacing: '1px' }}>CONCIERGE</div>
-                                <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>AESTHETIX PRIVATE ASSISTANT</div>
+                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.5px' }}>{context?.knowledgeBase ? `Conseiller ${context.knowledgeBase.brand.name}` : 'Coach Vendo'}</div>
+                                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{context?.knowledgeBase ? 'Assistant Expert' : 'V-ATHLETICS Assistant'}</div>
                             </div>
                         </div>
-                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: 8, borderRadius: 0, transition: 'all 0.2s' }}>
+                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: 10, borderRadius: 12, transition: 'all 0.2s' }}>
                             <X size={20} />
                         </button>
                     </div>
 
-                    {/* Messages Area - NOW USING REF HERE */}
+                    {/* Messages Area */}
                     <div
                         ref={messagesContainerRef}
-                        style={{ flex: 1, padding: 20, overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: 16 }}
+                        style={{ flex: 1, padding: '24px', overflowY: 'auto', background: '#fff', display: 'flex', flexDirection: 'column', gap: 20 }}
                     >
-                        <div style={{ textAlign: 'center', fontSize: 11, color: '#94a3b8', margin: '8px 0' }}>Aujourd'hui 10:23</div>
-
                         {messages.map((msg, idx) => (
                             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                                <div style={{ display: 'flex', gap: 8, flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', maxWidth: '85%' }}>
-                                    {msg.role === 'assistant' && msg.content && (
-                                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#673DE6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, marginTop: 4 }}>
-                                            <Bot size={14} />
+                                <div style={{ display: 'flex', gap: 12, flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', maxWidth: '90%' }}>
+                                    {msg.role === 'assistant' && (
+                                        <div style={{ width: 32, height: 32, borderRadius: 10, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', flexShrink: 0, marginTop: 4, overflow: 'hidden', fontWeight: 'bold', fontSize: 14 }}>
+                                            <Bot size={18} />
                                         </div>
                                     )}
                                     {msg.content && (
                                         <div style={{
-                                            padding: '12px 16px',
-                                            borderRadius: 12,
+                                            padding: '14px 18px',
+                                            borderRadius: 18,
                                             fontSize: 14,
-                                            lineHeight: '1.5',
-                                            color: msg.role === 'user' ? '#fff' : '#000',
-                                            background: msg.role === 'user' ? '#000' : '#fff',
-                                            boxShadow: msg.role === 'user' ? '0 10px 15px -3px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.05)',
-                                            borderRadius: 0,
-                                            border: msg.role === 'assistant' ? '1px solid #000' : 'none',
+                                            lineHeight: '1.6',
+                                            color: msg.role === 'user' ? '#fff' : '#1f2937',
+                                            background: msg.role === 'user' ? (context?.knowledgeBase ? '#c8a882' : '#000') : '#f3f4f6',
+                                            boxShadow: msg.role === 'user' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
+                                            borderTopLeftRadius: msg.role === 'assistant' ? 4 : 18,
+                                            borderTopRightRadius: msg.role === 'user' ? 4 : 18,
                                             whiteSpace: 'pre-wrap',
-                                            fontWeight: 600
+                                            fontWeight: 500,
+                                            border: 'none'
                                         }}>
                                             {msg.content}
                                         </div>
@@ -250,7 +327,7 @@ export default function DemoChatStore({ context }) {
                                 transition: 'all 0.2s'
                             }}
                         />
-                        <button type="submit" style={{ background: '#000', color: '#fff', width: 48, height: 48, borderRadius: 0, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }}>
+                        <button type="submit" style={{ background: context?.knowledgeBase ? '#c8a882' : '#000', color: '#fff', width: 48, height: 48, borderRadius: 0, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }}>
                             <Send size={20} />
                         </button>
                     </form>

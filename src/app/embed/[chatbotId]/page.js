@@ -33,7 +33,7 @@ export default function EmbedPage() {
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
-                .select('name, color') // Only public info
+                .select('name, color, welcome_message_new, welcome_message_returning') // Only public info
                 .eq('id', params.chatbotId)
                 .single()
 
@@ -41,11 +41,29 @@ export default function EmbedPage() {
                 setError('Chatbot introuvable')
             } else {
                 setBotConfig(data)
-                // Initial greeting
-                setMessages([{
-                    role: 'assistant',
-                    content: `Bonjour ! Je suis ${data.name}. Comment puis-je vous aider aujourd'hui ?`
-                }])
+
+                // Check for returning visitor
+                const isReturning = typeof window !== 'undefined' && localStorage.getItem(`vendo_returning_${params.chatbotId}`)
+
+                // Allow empty greeting if user cleared it in editor
+                let greeting = data.welcome_message_new
+
+                if (isReturning && data.welcome_message_returning) {
+                    greeting = data.welcome_message_returning
+                }
+
+                // Set returning flag for next time
+                if (typeof window !== 'undefined' && !isReturning) {
+                    localStorage.setItem(`vendo_returning_${params.chatbotId}`, 'true')
+                }
+
+                // Initial greeting - ONLY if string is not empty
+                if (greeting && greeting.trim().length > 0) {
+                    setMessages([{
+                        role: 'assistant',
+                        content: greeting
+                    }])
+                }
             }
         }
         fetchBot()
@@ -86,6 +104,7 @@ export default function EmbedPage() {
 
             setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
         } catch (err) {
+            if (err.name === 'AbortError') return;
             console.error(err)
             setMessages(prev => [...prev, { role: 'assistant', content: 'Désolé, une erreur est survenue.' }])
         } finally {

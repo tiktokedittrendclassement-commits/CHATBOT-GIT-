@@ -188,15 +188,7 @@ export default function WalletPage() {
                         </div>
                     </div>
 
-                    <div className={styles.helpBox}>
-                        <div className={styles.helpTitle}>
-                            <AlertCircle size={16} color="#673DE6" />
-                            Besoin d'aide ?
-                        </div>
-                        <p className={styles.helpText}>
-                            Si vous avez des questions sur la facturation ou besoin d'une facture détaillée, contactez le support.
-                        </p>
-                    </div>
+
                 </div>
             </div>
         </div>

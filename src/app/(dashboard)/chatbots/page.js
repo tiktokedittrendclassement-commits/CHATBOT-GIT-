@@ -20,14 +20,20 @@ export default function ChatbotsPage() {
         if (!user) return
 
         const fetchChatbots = async () => {
-            const { data } = await supabase
-                .from('chatbots')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
+            try {
+                const { data } = await supabase
+                    .from('chatbots')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
 
-            setChatbots(data || [])
-            setLoading(false)
+                setChatbots(data || [])
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error('Error fetching chatbots:', error)
+            } finally {
+                setLoading(false)
+            }
         }
 
         fetchChatbots()
@@ -113,8 +119,16 @@ export default function ChatbotsPage() {
                                     }}
                                     style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#0F172A' }}
                                 />
-                                <div className={styles.botIcon} style={{ background: bot.color || '#000' }}>
-                                    <Bot size={20} color="white" />
+                                <div className={styles.botIcon} style={{ background: bot.color || '#000', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 13, borderRadius: 14 }}>
+                                    {bot.logo_url === 'ICON:BOT' ? (
+                                        <Bot size={20} />
+                                    ) : bot.logo_url && (bot.logo_url.startsWith('http') || bot.logo_url.startsWith('/') || bot.logo_url.startsWith('data:')) ? (
+                                        <img src={bot.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8 }} />
+                                    ) : (
+                                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 16 }}>
+                                            {bot.logo_url || bot.name?.charAt(0) || 'V'}
+                                        </span>
+                                    )}
                                 </div>
                                 <div className={styles.botInfo}>
                                     <h3 className={styles.botName}>{bot.name}</h3>

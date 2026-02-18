@@ -69,6 +69,9 @@ export default function DashboardLayout({ children }) {
         // Add Insights (Visible to all, locked for non-agency)
         items.splice(3, 0, { href: '/insights', label: 'Visiteurs', icon: Users }) // Changed to Users icon
 
+        // Add Reseller link for Agency users
+        items.splice(3, 0, { href: '/reseller', label: 'Revendeur', icon: Users })
+
         return items
     }
 

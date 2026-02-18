@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { ShoppingBag, Star, X, Menu, Search } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { ShoppingBag, Star, X, Menu, Search, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import DemoChatStore from '@/components/demo-chat-store'
 
@@ -58,10 +58,19 @@ export default function DemoStore() {
     const [cart, setCart] = useState([])
     const [checkoutStatus, setCheckoutStatus] = useState('idle')
 
+    const cartTotal = cart.reduce((acc, item) => acc + item.price, 0)
+
+    const chatContext = useMemo(() => ({
+        product: selectedProduct,
+        cart,
+        view,
+        total: cartTotal
+    }), [selectedProduct?.id, cart.length, view, cartTotal]);
+
     // Close view helper
     const navigate = (v) => {
         setView(v);
-        setSelectedProduct(null);
+        if (v !== 'product') setSelectedProduct(null);
         // Scroll top in the internal container
         const container = document.getElementById('demo-content-area');
         if (container) container.scrollTop = 0;
@@ -77,7 +86,7 @@ export default function DemoStore() {
         setCart(prev => prev.filter(item => item.cartId !== cartId))
     }
 
-    const cartTotal = cart.reduce((acc, item) => acc + item.price, 0)
+
 
     const renderNavbar = () => (
         <header style={{ padding: '20px 32px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', zIndex: 10 }}>
@@ -137,7 +146,7 @@ export default function DemoStore() {
         <div style={{ animation: 'fadeIn 0.6s ease-out' }}>
             <div style={{ height: 400, background: '#000', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', padding: '0 64px' }}>
                 <div style={{ position: 'absolute', top: 0, right: 0, width: '50%', height: '100%', background: 'url(https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6 }}></div>
-                <div style={{ position: relative, zIndex: 2, maxWidth: 500 }}>
+                <div style={{ position: 'relative', zIndex: 2, maxWidth: 500 }}>
                     <div style={{ color: '#fff', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '3px', marginBottom: 20 }}>Winter Collection 2026.vv</div>
                     <h2 style={{ color: '#fff', fontSize: 56, fontWeight: 900, lineHeight: 0.9, marginBottom: 32, letterSpacing: '-3px' }}>FORME & FONCTION.</h2>
                     <Button onClick={() => navigate('shop')} style={{ background: '#fff', color: '#000', height: 50, padding: '0 32px', borderRadius: 0, fontWeight: 900 }}>DÉCOUVRIR L'ARCHIVE</Button>
@@ -145,7 +154,7 @@ export default function DemoStore() {
             </div>
             <div style={{ padding: '64px 32px' }}>
                 <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 40, borderBottom: '2px solid #000', display: 'inline-block', paddingBottom: 8 }}>Sélection Curatée</div>
-                <div style={{ display: grid, gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
                     {PRODUCTS.slice(0, 4).map(p => (
                         <div key={p.id} onClick={() => { setSelectedProduct(p); navigate('product'); }} style={{ cursor: 'pointer' }}>
                             <div style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden', marginBottom: 12 }}>
@@ -163,7 +172,7 @@ export default function DemoStore() {
     const renderShop = () => (
         <div style={{ padding: 40, animation: 'fadeIn 0.4s ease-out' }}>
             <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, letterSpacing: '-1px' }}>Toute la Collection.</div>
-            <div style={{ display: grid, gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
                 {PRODUCTS.map(p => (
                     <div key={p.id} onClick={() => { setSelectedProduct(p); navigate('product'); }} style={{ cursor: 'pointer' }}>
                         <div style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden', marginBottom: 16 }}>
@@ -178,45 +187,48 @@ export default function DemoStore() {
         </div>
     )
 
-    const renderProduct = () => (
-        <div style={{ padding: 64, animation: 'fadeIn 0.4s ease-out' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 64 }}>
-                <div style={{ background: '#f5f5f5', aspectRatio: '3/4' }}>
-                    <img src={selectedProduct.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#666', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 12 }}>{selectedProduct.category}</div>
-                    <h1 style={{ fontSize: 48, fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, marginBottom: 24 }}>{selectedProduct.name}</h1>
-                    <div style={{ fontSize: 32, fontWeight: 800, marginBottom: 32 }}>{selectedProduct.price.toFixed(2)} €</div>
-                    <p style={{ fontSize: 16, lineHeight: 1.6, color: '#444', marginBottom: 40 }}>{selectedProduct.description}</p>
-
-                    <div style={{ marginBottom: 40 }}>
-                        <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 16 }}>Spécifications</div>
-                        {selectedProduct.specs.map((s, i) => (
-                            <div key={i} style={{ fontSize: 14, borderBottom: '1px solid #eee', padding: '12px 0' }}>{s}</div>
-                        ))}
+    const renderProduct = () => {
+        if (!selectedProduct) return null;
+        return (
+            <div style={{ padding: 64, animation: 'fadeIn 0.4s ease-out' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 64 }}>
+                    <div style={{ background: '#f5f5f5', aspectRatio: '3/4' }}>
+                        <img src={selectedProduct.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
+                    <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#666', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 12 }}>{selectedProduct.category}</div>
+                        <h1 style={{ fontSize: 48, fontWeight: 900, letterSpacing: '-2px', lineHeight: 1, marginBottom: 24 }}>{selectedProduct.name}</h1>
+                        <div style={{ fontSize: 32, fontWeight: 800, marginBottom: 32 }}>{selectedProduct.price.toFixed(2)} €</div>
+                        <p style={{ fontSize: 16, lineHeight: 1.6, color: '#444', marginBottom: 40 }}>{selectedProduct.description}</p>
 
-                    <Button
-                        onClick={() => addToCart(selectedProduct)}
-                        style={{ background: '#000', color: '#fff', width: '100%', height: 60, borderRadius: 0, fontWeight: 900, fontSize: 16 }}>
-                        AJOUTER AU PANIER
-                    </Button>
+                        <div style={{ marginBottom: 40 }}>
+                            <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 16 }}>Spécifications</div>
+                            {selectedProduct.specs.map((s, i) => (
+                                <div key={i} style={{ fontSize: 14, borderBottom: '1px solid #eee', padding: '12px 0' }}>{s}</div>
+                            ))}
+                        </div>
+
+                        <Button
+                            onClick={() => addToCart(selectedProduct)}
+                            style={{ background: '#000', color: '#fff', width: '100%', height: 60, borderRadius: 0, fontWeight: 900, fontSize: 16 }}>
+                            AJOUTER AU PANIER
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 
     const renderCart = () => (
         <div style={{ padding: 64, animation: 'fadeIn 0.4s ease-out' }}>
             <h2 style={{ fontSize: 40, fontWeight: 900, marginBottom: 48, letterSpacing: '-1px' }}>Votre Panier ({cart.length})</h2>
             {cart.length === 0 ? (
-                <div style={{ textAlign: center, padding: '100px 0' }}>
+                <div style={{ textAlign: 'center', padding: '100px 0' }}>
                     <p style={{ fontSize: 18, color: '#666', marginBottom: 32 }}>Votre panier est vide.</p>
                     <Button onClick={() => navigate('shop')} style={{ background: '#000', color: '#fff', borderRadius: 0 }}>CONTINUER LE SHOPPING</Button>
                 </div>
             ) : (
-                <div style={{ display: grid, gridTemplateColumns: '1fr 350px', gap: 64 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: 64 }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
                         {cart.map(item => (
                             <div key={item.cartId} style={{ display: 'grid', gridTemplateColumns: '100px 1fr auto', gap: 24, borderBottom: '1px solid #eee', paddingBottom: 24 }}>
@@ -263,7 +275,7 @@ export default function DemoStore() {
                     </div>
                     <h3 style={{ fontSize: 32, fontWeight: 900 }}>Merci pour votre achat.</h3>
                     <p style={{ color: '#666', marginTop: 16 }}>Commande #AEX-2026-9901 confirmée.</p>
-                    <Button onClick={() => { setView('home'); setCart([]); setCheckoutStatus('idle'); }} style={{ background: '#000', color: '#fff', marginTop: 40, borderRadius: 0 }}>RETOUR À L'ACCUEIL</Button>
+                    <Button onClick={() => { navigate('home'); setCart([]); setCheckoutStatus('idle'); }} style={{ background: '#000', color: '#fff', marginTop: 40, borderRadius: 0 }}>RETOUR À L'ACCUEIL</Button>
                 </div>
             ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: 64 }}>
@@ -297,6 +309,31 @@ export default function DemoStore() {
         </div>
     )
 
+    const renderFAQ = () => (
+        <div style={{ padding: 64, animation: 'fadeIn 0.4s ease-out' }}>
+            <h2 style={{ fontSize: 40, fontWeight: 900, marginBottom: 48, letterSpacing: '-1px' }}>Aide & FAQ.</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32, maxWidth: 600 }}>
+                <div>
+                    <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 8 }}>Quels sont les délais de livraison ?</div>
+                    <p style={{ color: '#666', lineHeight: 1.6 }}>Nous expédions vos commandes sous 24h. La livraison prend généralement 3 à 5 jours ouvrés.</p>
+                </div>
+                <div>
+                    <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 8 }}>Puis-je retourner un article ?</div>
+                    <p style={{ color: '#666', lineHeight: 1.6 }}>Oui, vous avez 30 jours pour retourner tout article non porté dans son emballage d'origine.</p>
+                </div>
+            </div>
+        </div>
+    )
+
+    const renderPrivacy = () => (
+        <div style={{ padding: 64, animation: 'fadeIn 0.4s ease-out' }}>
+            <h2 style={{ fontSize: 40, fontWeight: 900, marginBottom: 48, letterSpacing: '-1px' }}>Confidentialité.</h2>
+            <div style={{ color: '#666', lineHeight: 2, maxWidth: 600 }}>
+                Vos données sont traitées avec le plus grand soin. Nous utilisons vos informations uniquement pour le traitement de vos commandes et l'amélioration de votre expérience sur AESTHETIX.
+            </div>
+        </div>
+    )
+
     return (
         <div style={{
             background: 'white',
@@ -326,9 +363,9 @@ export default function DemoStore() {
                 {renderFooter()}
             </div>
 
-            {/* Embedded Chat Widget */}
-            <div style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 100 }}>
-                <DemoChatStore context={{ product: selectedProduct, cart, view, total: cartTotal }} />
+            {/* Stable Chat Widget */}
+            <div style={{ position: 'absolute', bottom: 20, left: 20, zIndex: 100 }}>
+                <DemoChatStore context={chatContext} />
             </div>
 
             <style jsx>{`

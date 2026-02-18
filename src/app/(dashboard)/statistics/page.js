@@ -101,6 +101,7 @@ export default function StatisticsPage() {
             setAnalysis(result)
 
         } catch (err) {
+            if (err.name === 'AbortError') return;
             console.error(err)
             alert("Erreur lors de l'analyse: " + err.message)
         } finally {

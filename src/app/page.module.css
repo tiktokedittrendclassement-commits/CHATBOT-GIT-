@@ -113,22 +113,6 @@
   justify-content: center;
 }
 
-.badgeLine {
-  margin-bottom: 24px;
-}
-
-.badgeLine span {
-  display: inline-block;
-  padding: 8px 16px;
-  background: white;
-  border-radius: 100px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--primary);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(99, 102, 241, 0.1);
-}
-
 .tagline {
   font-size: 24px;
   font-weight: 700;
@@ -333,6 +317,9 @@
   background: white;
   box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border);
+  height: 850px;
+  overflow: hidden;
+  position: relative;
 }
 
 .pricingNote {
@@ -357,17 +344,122 @@
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .hero {
+    padding: 140px 24px 80px 24px;
+  }
+
   .title {
-    font-size: 48px;
+    font-size: clamp(40px, 7vw, 64px);
     letter-spacing: -2px;
   }
 
+  .pricingGrid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
   .popular {
-    transform: none;
+    transform: scale(1.02);
+  }
+}
+
+@media (max-width: 768px) {
+  .nav {
+    padding: 16px 20px;
+  }
+
+  .navLinks {
+    gap: 16px;
+  }
+
+  .navLinks a:first-child {
+    display: none;
+  }
+
+  .title {
+    font-size: 38px;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .tagline {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 32px;
   }
 
   .heroButtons {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .ctaBtn,
+  .secondaryBtn {
+    width: 100%;
+    height: 50px !important;
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .featureCard {
+    padding: 32px;
+    border-radius: 24px;
+  }
+
+  .pricingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .popular {
+    transform: none;
+    order: -1;
+  }
+
+  .sectionHeader h2 {
+    font-size: 32px;
+  }
+
+  .sectionHeader {
+    margin-bottom: 40px;
+  }
+
+  .features {
+    padding: 60px 20px;
+  }
+
+  .pricing {
+    padding: 60px 20px;
+  }
+
+  .demoSection {
+    padding: 60px 20px;
+  }
+
+  .demoWrapper {
+    border-radius: 20px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 24px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .price {
+    font-size: 48px;
   }
 }

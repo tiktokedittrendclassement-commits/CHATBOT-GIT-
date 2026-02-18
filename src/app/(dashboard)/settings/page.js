@@ -221,9 +221,56 @@ export default function SettingsPage() {
                             </div>
                             <p className={styles.helperText}>Gérez votre abonnement, factures et méthode de paiement.</p>
                         </div>
-                        <Link href="/billing">
-                            <Button size="md" style={{ minWidth: '220px' }}>Gérer / Se désabonner</Button>
-                        </Link>
+                        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                            {profile.plan_tier !== 'free' ? (
+                                <Button
+                                    size="md"
+                                    onClick={async () => {
+                                        if (!confirm('Êtes-vous sûr de vouloir résilier votre abonnement et repasser au plan Gratuit ?')) return;
+
+                                        setLoading(true);
+                                        try {
+                                            // Check limits
+                                            const { count } = await supabase
+                                                .from('chatbots')
+                                                .select('*', { count: 'exact', head: true })
+                                                .eq('user_id', user.id);
+
+                                            if (count > 1) {
+                                                alert(`Impossible de se désabonner : Vous avez ${count} chatbots. Le plan Gratuit n'en autorise qu'un seul. Veuillez en supprimer avant de résilier.`);
+                                                setLoading(false);
+                                                return;
+                                            }
+
+                                            // Downgrade
+                                            await supabase
+                                                .from('profiles')
+                                                .update({ plan_tier: 'free' })
+                                                .eq('id', user.id);
+
+                                            // Rename bot
+                                            await supabase
+                                                .from('chatbots')
+                                                .update({ name: 'Mon Assistant Vendo' })
+                                                .eq('user_id', user.id);
+
+                                            alert('Votre abonnement a été résilié. Vous êtes maintenant sur le plan Gratuit.');
+                                            window.location.reload();
+                                        } catch (err) {
+                                            alert('Erreur: ' + err.message);
+                                            setLoading(false);
+                                        }
+                                    }}
+                                    style={{ minWidth: '220px', justifyContent: 'center' }}
+                                >
+                                    Se désabonner
+                                </Button>
+                            ) : (
+                                <Link href="/billing">
+                                    <Button size="md" style={{ minWidth: '220px', justifyContent: 'center' }}>Gérer mon plan</Button>
+                                </Link>
+                            )}
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

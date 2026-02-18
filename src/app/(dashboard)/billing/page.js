@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import styles from './page.module.css'
-import { Check, CreditCard, Trash, X } from 'lucide-react'
+import { Check, CreditCard, Trash, X, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const PLANS = [
@@ -13,7 +13,7 @@ const PLANS = [
         id: 'free',
         name: 'Gratuit',
         price: '0€/mois',
-        features: ['1 Chatbot', '1000 messages/mois', 'Personnalisation Basique', 'Support Communautaire', 'Crédits à la demande'],
+        features: ['1 Chatbot', '1000 messages (Total)', 'Personnalisation Basique', 'Support Communautaire', 'Crédits à la demande'],
         current: true // Default logic handling below
     },
     {
@@ -126,7 +126,9 @@ export default function BillingPage() {
             <p className={styles.subheading}>Gérez votre forfait et vos limites.</p>
 
             <div className={styles.infoBox}>
-                <div className={styles.infoIcon}>ℹ️</div>
+                <div className={styles.infoIcon}>
+                    <AlertCircle size={20} color="#673DE6" />
+                </div>
                 <div className={styles.infoContent}>
                     <div className={styles.infoTitle}>Fonctionnement de l'abonnement</div>
                     <p className={styles.infoText}>

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import styles from './editor.module.css'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Save, Bot, Lock } from 'lucide-react'
 
 // This component handles both Creating and Editing
 export default function ChatbotEditor({ botId = null }) {
@@ -21,7 +21,10 @@ export default function ChatbotEditor({ botId = null }) {
     const [formData, setFormData] = useState({
         name: '',
         color: '#673DE6',
-        system_prompt: 'You are a helpful assistant.',
+        logo_url: 'ICON:BOT',
+        welcome_message_new: 'Bonjour ! 👋 Comment puis-je vous aider aujourd\'hui ?',
+        welcome_message_returning: 'Re-bonjour ! Ravi de vous revoir. 👋',
+        system_prompt: 'Tu es un assistant commercial humain, chaleureux et direct. Réponds de manière concise, sans utiliser de formatage complexe (pas d\'astérisques). Ta mission est d\'aider le visiteur avec bienveillance.',
         data_sources: ''
     })
 
@@ -34,12 +37,56 @@ export default function ChatbotEditor({ botId = null }) {
     const [profile, setProfile] = useState(null)
     const [canCreate, setCanCreate] = useState(true)
 
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert("L'image est trop lourde (Max 2MB).")
+            return
+        }
+
+        setUploading(true)
+        const uploadData = new FormData()
+        uploadData.append('file', file)
+
+        try {
+            // Client-side upload (uses existing session)
+            const fileExt = file.name.split('.').pop()
+            const fileName = `${user.id}-${Date.now()}.${fileExt}`
+            const filePath = `${fileName}`
+
+            const { error: uploadError } = await supabase.storage
+                .from('logos')
+                .upload(filePath, file)
+
+            if (uploadError) throw uploadError
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('logos')
+                .getPublicUrl(filePath)
+
+            setFormData(prev => ({ ...prev, logo_url: publicUrl }))
+        } catch (err) {
+            console.error(err)
+            alert(`Erreur upload: ${err.message}`)
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    // Initializer
     useEffect(() => {
         if (!user) return
 
         const init = async () => {
             const { data: prof } = await supabase.from('profiles').select('plan_tier').eq('id', user.id).single()
+            const userPlan = prof?.plan_tier || 'free'
             setProfile(prof || { plan_tier: 'free' })
+
+            if (!botId && userPlan === 'free') {
+                setFormData(prev => ({ ...prev, logo_url: 'ICON:BOT' }))
+            }
 
             if (!botId) {
                 const { count } = await supabase.from('chatbots').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
@@ -61,6 +108,10 @@ export default function ChatbotEditor({ botId = null }) {
                     setFormData({
                         name: data.name,
                         color: data.color,
+                        logo_url: data.logo_url || '',
+                        // Use ?? so that empty string "" is preserved and not replaced by default
+                        welcome_message_new: data.welcome_message_new ?? 'Bonjour ! 👋 Comment puis-je vous aider aujourd\'hui ?',
+                        welcome_message_returning: data.welcome_message_returning ?? 'Re-bonjour ! Ravi de vous revoir. 👋',
                         system_prompt: data.system_prompt,
                         data_sources: data.data_sources || ''
                     })
@@ -86,6 +137,9 @@ export default function ChatbotEditor({ botId = null }) {
             const payload = {
                 name: profile?.plan_tier === 'free' ? 'Mon Assistant Vendo' : formData.name,
                 color: formData.color,
+                logo_url: formData.logo_url,
+                welcome_message_new: formData.welcome_message_new,
+                welcome_message_returning: formData.welcome_message_returning,
                 system_prompt: formData.system_prompt,
                 data_sources: formData.data_sources
             }
@@ -109,6 +163,7 @@ export default function ChatbotEditor({ botId = null }) {
             router.push('/chatbots')
             router.refresh()
         } catch (error) {
+            if (error.name === 'AbortError') return;
             alert('Error saving chatbot: ' + error.message)
         } finally {
             setLoading(false)
@@ -184,6 +239,77 @@ export default function ChatbotEditor({ botId = null }) {
                                 />
                             </div>
                         </div>
+
+                        <div className={styles.field}>
+                            <label>Style de l'Avatar</label>
+                            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                                <div style={{
+                                    width: 44, height: 44, borderRadius: 14, overflow: 'hidden',
+                                    border: '1px solid #ddd', flexShrink: 0,
+                                    background: formData.color || '#C8A882',
+                                    color: '#fff',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontWeight: 'bold', fontSize: 18
+                                }}>
+                                    {formData.logo_url === 'ICON:BOT' ? (
+                                        <Bot size={24} />
+                                    ) : (
+                                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24 }}>
+                                            {formData.logo_url || formData.name?.charAt(0) || 'V'}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    <Button
+                                        type="button"
+                                        variant={formData.logo_url === 'ICON:BOT' ? 'default' : 'outline'}
+                                        onClick={() => setFormData({ ...formData, logo_url: 'ICON:BOT' })}
+                                        size="sm"
+                                        style={{ background: formData.logo_url === 'ICON:BOT' ? '#0F172A' : 'transparent', color: formData.logo_url === 'ICON:BOT' ? '#fff' : '#0F172A' }}
+                                    >
+                                        <Bot size={16} style={{ marginRight: 6 }} /> Robot
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={formData.logo_url === 'ICON:BOT' ? 'outline' : 'default'}
+                                        onClick={() => {
+                                            if (profile?.plan_tier === 'free') return
+                                            setFormData({ ...formData, logo_url: formData.name?.charAt(0) || 'V' })
+                                        }}
+                                        size="sm"
+                                        disabled={profile?.plan_tier === 'free'}
+                                        style={{
+                                            background: formData.logo_url !== 'ICON:BOT' ? '#0F172A' : 'transparent',
+                                            color: formData.logo_url !== 'ICON:BOT' ? '#fff' : '#0F172A',
+                                            opacity: profile?.plan_tier === 'free' ? 0.5 : 1,
+                                            cursor: profile?.plan_tier === 'free' ? 'not-allowed' : 'pointer'
+                                        }}
+                                    >
+                                        {profile?.plan_tier === 'free' && <Lock size={12} style={{ marginRight: 6 }} />}
+                                        Lettre
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {formData.logo_url !== 'ICON:BOT' && (
+                                <div style={{ marginTop: 10 }}>
+                                    <label style={{ fontSize: 12, marginBottom: 4, display: 'block' }}>Modifier la lettre :</label>
+                                    <Input
+                                        value={formData.logo_url}
+                                        onChange={(e) => setFormData({ ...formData, logo_url: e.target.value.slice(0, 2).toUpperCase() })}
+                                        placeholder="V"
+                                        maxLength={2}
+                                        style={{ width: 80, textAlign: 'center', fontWeight: 'bold' }}
+                                    />
+                                </div>
+                            )}
+                            {profile?.plan_tier === 'free' && (
+                                <p className={styles.hint} style={{ color: '#dc2626', marginTop: 8 }}>
+                                    <Link href="/billing" className={styles.upgradeLink}>Passer sur un plan payant</Link> pour choisir l'initiale.
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     <div className={styles.card}>
@@ -205,6 +331,27 @@ export default function ChatbotEditor({ botId = null }) {
                 <div className={styles.sideCol}>
                     <div className={styles.card}>
                         <h3 className={styles.cardTitle}>Comportement</h3>
+
+                        <div className={styles.field}>
+                            <label>Message de Bienvenue (nouveaux visiteurs)</label>
+                            <Input
+                                value={formData.welcome_message_new}
+                                onChange={(e) => setFormData({ ...formData, welcome_message_new: e.target.value })}
+                                placeholder=""
+                            />
+                            <p className={styles.hint}>Ce message s'affiche pour les nouveaux visiteurs. (Laisser vide pour désactiver)</p>
+                        </div>
+
+                        <div className={styles.field}>
+                            <label>Message de Bienvenue (Visiteurs de retour)</label>
+                            <Input
+                                value={formData.welcome_message_returning}
+                                onChange={(e) => setFormData({ ...formData, welcome_message_returning: e.target.value })}
+                                placeholder=""
+                            />
+                            <p className={styles.hint}>Ce message s'affiche quand un visiteur revient. (Laisser vide pour désactiver)</p>
+                        </div>
+
                         <div className={styles.field}>
                             <label>Prompt Système</label>
                             <textarea

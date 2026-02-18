@@ -1,0 +1,114 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top right, #673DE6 0%, #020617 40%);
+    background-color: #020617;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+}
+
+.content {
+    max-width: 800px;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 2rem;
+    letter-spacing: -0.05em;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.title {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.title span {
+    color: #818CF8;
+}
+
+.description {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    margin-bottom: 4rem;
+    line-height: 1.6;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.badge {
+    background: rgba(129, 140, 248, 0.1);
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #818CF8;
+    margin-bottom: 2rem;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    text-align: left;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 3rem;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.feature strong {
+    font-size: 1.125rem;
+    color: white;
+}
+
+.feature span {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.decorative {
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    background: #673DE6;
+    filter: blur(200px);
+    opacity: 0.15;
+    border-radius: 50%;
+    bottom: -400px;
+    left: -400px;
+}
+
+@media (max-width: 640px) {
+    .title {
+        font-size: 2.25rem;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}

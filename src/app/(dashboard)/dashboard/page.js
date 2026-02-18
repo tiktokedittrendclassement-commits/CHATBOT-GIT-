@@ -112,6 +112,7 @@ export default function DashboardPage() {
                 setRevenueByBot(revenueArray)
 
             } catch (error) {
+                if (error.name === 'AbortError') return;
                 console.error('Error fetching dashboard data:', error)
             } finally {
                 setLoading(false)
@@ -208,7 +209,7 @@ export default function DashboardPage() {
                                 />
                             </div>
                             <div className={styles.cardDesc}>
-                                <span>Renouvellement le 1er du mois</span>
+                                <span>Limite de 1000 messages (Non renouvelable)</span>
                             </div>
                         </>
                     )}

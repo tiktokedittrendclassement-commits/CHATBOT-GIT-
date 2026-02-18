@@ -3,7 +3,7 @@ import Link from 'next/link'
 import styles from './page.module.css'
 import { Bot, Zap, Globe, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import DemoStore from '@/components/demo-store'
+import GymsharkDemo from '@/components/gymshark-demo'
 
 export default function Home() {
   return (
@@ -22,9 +22,7 @@ export default function Home() {
       {/* Hero Section */}
       <header className={styles.hero}>
         <div className={styles.heroContent}>
-          <div className={styles.badgeLine}>
-            <span>Nouveau : Vendo v2.0 est arrivé ✨</span>
-          </div>
+
           <h1 className={styles.title}>
             Chatbots IA pour <span className={styles.highlight}>Shopify</span> & <span className={styles.highlight}>WordPress</span>
           </h1>
@@ -75,14 +73,14 @@ export default function Home() {
       <section className={styles.demoSection}>
         <div className={styles.demoContainer}>
           <div className={styles.sectionHeader}>
-            <h2>Testez une "Vraie" Intégration</h2>
+            <h2>Testez l'Intégration "V-ATHLETICS"</h2>
             <p>
-              Voici une boutique de démonstration. Cliquez sur un produit, et voyez comment le chatbot (en bas à droite) connaît le contexte et aide à la vente.
+              Plongez dans l'expérience V-ATHLETICS, notre marque de sport fictive ultra-premium. Notre coach IA est directement intégré pour aider vos clients à choisir leur équipement, vérifier les tailles ou finaliser leur achat.
             </p>
           </div>
 
           <div className={styles.demoWrapper}>
-            <DemoStore />
+            <GymsharkDemo />
           </div>
         </div>
       </section>
@@ -105,7 +103,7 @@ export default function Home() {
             <div className={styles.price}>0€<span>/mo</span></div>
             <ul className={styles.planFeatures}>
               <li><Check size={16} /> 1 Chatbot</li>
-              <li><Check size={16} /> 1000 messages/mois</li>
+              <li><Check size={16} /> 1000 messages (Total)</li>
               <li><Check size={16} /> Personnalisation Basique</li>
               <li><Check size={16} /> Support Communautaire</li>
             </ul>

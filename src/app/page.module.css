@@ -446,37 +446,10 @@
   }
 
   .demoWrapper {
+    height: 600px;
     border-radius: 20px;
-    padding: 10px;
-    height: auto;
-    min-height: 500px;
-  }
-
-  .nav {
-    position: relative;
-    padding: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-  }
-
-  .navLinks {
-    width: 100%;
-    justify-content: center;
-    order: 2;
-  }
-
-  .logo {
-    order: 1;
-  }
-
-  .sectionHeader h2 {
-    font-size: 28px;
-    letter-spacing: -1px;
-  }
-
-  .hero {
-    padding: 60px 20px 40px 20px;
+    padding: 8px;
+    margin: 0 10px;
   }
 }
 
@@ -486,12 +459,12 @@
   }
 
   .title {
-    font-size: 28px;
+    font-size: 28px !important;
     letter-spacing: -1px;
   }
 
   .price {
-    font-size: 44px;
+    font-size: 36px;
   }
 
   .pricingCard {

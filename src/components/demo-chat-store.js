@@ -187,7 +187,10 @@ KNOWLEDGE BASE:
 
             {/* Toggle Button */}
             {!isOpen && (
-                <div style={{ position: 'relative' }}>
+                <div
+                    className="demo-chat-toggle"
+                    style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 900 }}
+                >
                     <button
                         onClick={() => setIsOpen(true)}
                         style={{
@@ -225,19 +228,26 @@ KNOWLEDGE BASE:
 
             {/* Chat Window */}
             {isOpen && (
-                <div style={{
-                    width: 380,
-                    height: 580,
-                    background: 'white',
-                    borderRadius: 24,
-                    boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'hidden',
-                    border: '1px solid #f1f5f9',
-                    animation: 'slideUp 0.4s cubic-bezier(0.2, 1, 0.3, 1)',
-                    transformOrigin: 'bottom right'
-                }}>
+                <div
+                    className="demo-chat-window"
+                    style={{
+                        position: 'fixed',
+                        bottom: 30,
+                        right: 30,
+                        width: 380,
+                        height: 580,
+                        background: 'white',
+                        borderRadius: 24,
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        border: '1px solid #f1f5f9',
+                        animation: 'slideUp 0.4s cubic-bezier(0.2, 1, 0.3, 1)',
+                        transformOrigin: 'bottom right',
+                        zIndex: 1000
+                    }}
+                >
                     {/* Header */}
                     <div style={{ background: '#000', padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -334,7 +344,6 @@ KNOWLEDGE BASE:
                 </div>
             )
             }
-
             <style jsx global>{`
                 @keyframes slideUp {
                     from { opacity: 0; transform: translateY(20px) scale(0.95); }
@@ -344,7 +353,20 @@ KNOWLEDGE BASE:
                     0%, 100% { transform: translateY(0); }
                     50% { transform: translateY(-4px); }
                 }
+                @media (max-width: 768px) {
+                    .demo-chat-window {
+                        width: calc(100vw - 32px) !important;
+                        height: calc(100vh - 80px) !important;
+                        bottom: 16px !important;
+                        right: 16px !important;
+                        border-radius: 20px !important;
+                    }
+                    .demo-chat-toggle {
+                        bottom: 16px !important;
+                        right: 16px !important;
+                    }
+                }
             `}</style>
-        </div >
+        </div>
     )
 }

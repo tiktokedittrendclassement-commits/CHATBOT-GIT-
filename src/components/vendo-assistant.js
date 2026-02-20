@@ -47,24 +47,52 @@ export default function VendoAssistant() {
         // Implementation for markAsTyped if needed
     }
 
-    const handleSend = (e) => {
+    const handleSend = async (e) => {
         e.preventDefault()
-        if (!input.trim()) return
+        if (!input.trim() || isTyping) return
 
-        const newMessages = [...messages, { role: 'user', content: input }]
-        setMessages(newMessages)
+        const userMsgContent = input
         setInput('')
+
+        const newMessages = [...messages, { role: 'user', content: userMsgContent }]
+        setMessages(newMessages)
         setIsTyping(true)
 
-        // Mock response
-        setTimeout(() => {
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: newMessages,
+                    chatbotId: 'VENDO_SUPPORT',
+                    visitorId: 'vendo-visitor-' + Math.random().toString(36).substr(2, 9)
+                })
+            })
+
+            if (!response.ok) throw new Error('Erreur API')
+
+            const data = await response.json()
+
+            if (data.content) {
+                setMessages(prev => [...prev, {
+                    role: 'assistant',
+                    content: data.content,
+                    shouldType: true
+                }])
+            } else {
+                throw new Error('Contenu vide')
+            }
+        } catch (error) {
+            console.error('Chat error:', error)
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "Je suis une démo pour l'instant. Configurez-moi dans l'onglet 'Chatbots' !",
+                content: "Désolé, j'ai rencontré un problème pour me connecter. Vérifiez que la clé API DeepSeek est bien configurée dans .env.local.",
                 shouldType: true
             }])
+        } finally {
             setIsTyping(false)
-        }, 1000)
+            setTimeout(scrollToBottom, 100)
+        }
     }
 
     // Proactive Welcome Message & Event Listeners
@@ -142,7 +170,7 @@ export default function VendoAssistant() {
     )
 
     return (
-        <div style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 9999, fontFamily: "'Inter', sans-serif" }}>
+        <div className="vendo-assistant-root">
 
             {/* Premium Invite Card for Vendo Assistant */}
             {!isOpen && (
@@ -150,9 +178,9 @@ export default function VendoAssistant() {
                     onClick={() => setIsOpen(true)}
                     className="vendo-invite-card"
                     style={{
-                        position: 'absolute',
-                        bottom: 80,
-                        right: 0,
+                        position: 'fixed',
+                        bottom: 110,
+                        right: 30,
                         width: 320,
                         background: 'rgba(255, 255, 255, 0.8)',
                         backdropFilter: 'blur(20px)',
@@ -226,6 +254,9 @@ export default function VendoAssistant() {
                     onClick={() => setIsOpen(true)}
                     className="vendo-toggle-btn"
                     style={{
+                        position: 'fixed',
+                        bottom: 30,
+                        right: 30,
                         width: 64,
                         height: 64,
                         borderRadius: '20px',
@@ -237,6 +268,7 @@ export default function VendoAssistant() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        zIndex: 9999,
                         transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                     }}
                     onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)'}
@@ -260,8 +292,12 @@ export default function VendoAssistant() {
                 <div
                     className="vendo-chat-window"
                     style={{
+                        position: 'fixed',
+                        bottom: 30,
+                        right: 30,
                         width: 400,
                         height: 600,
+                        zIndex: 9999,
                         background: '#FFFFFF',
                         borderRadius: 28,
                         boxShadow: '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
@@ -489,21 +525,22 @@ export default function VendoAssistant() {
 
                 @media (max-width: 768px) {
                     .vendo-chat-window {
-                        width: calc(100vw - 32px) !important;
-                        height: 70vh !important;
-                        bottom: 16px !important;
-                        right: 16px !important;
+                        width: calc(100vw - 24px) !important;
+                        height: calc(100vh - 24px) !important;
+                        bottom: 12px !important;
+                        right: 12px !important;
+                        border-radius: 20px !important;
                     }
                     .vendo-toggle-btn {
-                        bottom: 16px !important;
-                        right: 16px !important;
+                        bottom: 20px !important;
+                        right: 20px !important;
                         width: 56px !important;
                         height: 56px !important;
                     }
                     .vendo-invite-card {
-                        width: calc(100vw - 32px) !important;
-                        bottom: 80px !important;
-                        right: 16px !important;
+                        width: calc(100vw - 40px) !important;
+                        bottom: 90px !important;
+                        right: 20px !important;
                     }
                 }
             `}</style>

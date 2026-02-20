@@ -177,27 +177,30 @@ const CSS_STYLES = `
         .demo-nav { padding: 0 20px; }
         .nav-links { display: none; }
         .hero { grid-template-columns: 1fr; }
-        .hero-text { padding: 60px 24px; text-align: center; align-items: center; order: 2; }
-        .hero-visual { height: 400px; order: 1; }
-        .hero-sub { margin-left: auto; margin-right: auto; }
-        .trust-bar { gap: 24px; padding: 32px 20px; }
-        .products-grid { grid-template-columns: repeat(2, 1fr); padding: 0 20px; }
-        .products-section { padding: 60px 0; }
-        .diagnostic { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
+        .hero-text { padding: 40px 24px; text-align: center; align-items: center; order: 2; }
+        .hero-title { font-size: 32px; }
+        .hero-visual { height: 300px; order: 1; }
+        .hero-sub { margin-left: auto; margin-right: auto; font-size: 14px; }
+        .trust-bar { gap: 16px; padding: 24px 20px; overflow-x: auto; white-space: nowrap; }
+        .trust-item { flex-shrink: 0; }
+        .products-grid { grid-template-columns: repeat(2, 1fr); padding: 0 16px; gap: 16px; }
+        .products-section { padding: 40px 0; }
+        .section-title { font-size: 24px; }
+        .diagnostic { grid-template-columns: 1fr; padding: 40px 24px; gap: 32px; }
         .diagnostic-text .section-title { text-align: center; }
-        .diagnostic-text p { text-align: center; }
+        .diagnostic-text p { text-align: center; font-size: 14px; }
         .cart-sidebar { width: 100%; }
         .modal { grid-template-columns: 1fr; }
-        .modal-img { min-height: 300px; }
-        .modal-content { padding: 32px 24px; }
+        .modal-img { min-height: 250px; }
+        .modal-content { padding: 24px; }
     }
 
     @media (max-width: 480px) {
         .products-grid { grid-template-columns: 1fr; }
-        .hero-title { font-size: 48px; }
-        .top-banner { font-size: 10px; }
-        .nav-logo { font-size: 20px; }
-        .cart-btn { padding: 6px 12px; }
+        .hero-title { font-size: 28px; }
+        .top-banner { font-size: 9px; }
+        .nav-logo { font-size: 18px; }
+        .cart-btn { padding: 4px 8px; font-size: 12px; }
     }
 `;
 

@@ -89,7 +89,7 @@ export default function MarketingEmailPage() {
                         ))}
                     </div>
                 ) : (
-                    <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>
+                    <p style={{ color: '#334155', textAlign: 'center', padding: '20px' }}>
                         Vous n'avez aucun chatbot. <Link href="/chatbots/new" style={{ color: '#673DE6', fontWeight: 600 }}>Créez-en un</Link> pour commencer.
                     </p>
                 )}

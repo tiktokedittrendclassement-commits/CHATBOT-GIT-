@@ -126,7 +126,7 @@ const CSS_STYLES = `
     .product-badge { position: absolute; top: 12px; left: 12px; background: var(--black); color: var(--white); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; }
     .product-badge.new { background: var(--amber); }
     .product-category { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
-    .product-name { font-family: var(--font-serif); font-size: 18px; font-weight: 400; margin-bottom: 4px; line-height: 1.3; }
+    .product-name { font-family: var(--font-serif); font-size: 18px; font-weight: 500; margin-bottom: 4px; line-height: 1.3; }
     .product-desc-short { font-size: 12px; color: var(--gray); margin-bottom: 12px; line-height: 1.6; }
     .product-footer { display: flex; align-items: center; justify-content: space-between; }
     .product-price { font-size: 14px; font-weight: 500; }
@@ -150,7 +150,7 @@ const CSS_STYLES = `
     .cart-sidebar { position: absolute; top: 0; right: 0; width: 420px; height: 100%; background: var(--white); z-index: 201; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94); display: flex; flex-direction: column; }
     .cart-sidebar.open { transform: translateX(0); }
     .cart-header { padding: 24px 32px; border-bottom: 1px solid var(--light-gray); display: flex; justify-content: space-between; align-items: center; }
-    .cart-header h3 { font-family: var(--font-serif); font-size: 22px; font-weight: 400; }
+    .cart-header h3 { font-family: var(--font-serif); font-size: 22px; font-weight: 500; }
     .cart-close { font-size: 22px; color: var(--gray); transition: color 0.2s; }
     .cart-item { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--light-gray); }
     .cart-item-img { width: 72px; height: 96px; background: var(--cream); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -200,6 +200,7 @@ export default function NaturelSkinDemo() {
 
         return () => ref?.removeEventListener('scroll', handleScroll)
     }, [])
+
 
     const startQuiz = () => {
         // Scroll to quiz

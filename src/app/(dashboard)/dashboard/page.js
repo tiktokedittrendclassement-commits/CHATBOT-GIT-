@@ -182,7 +182,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                     <div className={styles.cardDesc}>
-                        <Link href="/wallet" style={{ color: '#64748b', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Link href="/wallet" style={{ color: '#334155', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
                             Recharger <ArrowUpRight size={16} />
                         </Link>
                     </div>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                     <div className={styles.cardHeader}>
                         <div>
                             <div className={styles.cardTitle}>Messages Envoyés</div>
-                            <div className={styles.cardValue}>{stats.messages} <span style={{ fontSize: 20, color: '#94a3b8', fontWeight: 400 }}>/ {profile?.plan_tier === 'free' ? '1000' : '∞'}</span></div>
+                            <div className={styles.cardValue}>{stats.messages} <span style={{ fontSize: 20, color: '#334155', fontWeight: 500 }}>/ {profile?.plan_tier === 'free' ? '1000' : '∞'}</span></div>
                         </div>
                         <div className={styles.iconBox}>
                             <MessageSquare size={24} />
@@ -215,7 +215,7 @@ export default function DashboardPage() {
                     )}
                     {profile?.plan_tier !== 'free' && (
                         <div className={styles.cardDesc} style={{ marginTop: 12 }}>
-                            <span style={{ color: '#64748b', fontWeight: 500, fontSize: '13px' }}>Volume illimité activé</span>
+                            <span style={{ color: '#334155', fontWeight: 500, fontSize: '13px' }}>Volume illimité activé</span>
                         </div>
                     )}
                 </div>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                     <div className={styles.cardDesc}>
-                        <Link href="/chatbots" style={{ color: '#64748b', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
+                        <Link href="/chatbots" style={{ color: '#334155', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
                             Gérer mes bots <ArrowUpRight size={16} />
                         </Link>
                     </div>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                                 </div>
                             ))
                         ) : (
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#334155' }}>
                                 Pas de données de vente
                             </div>
                         )}

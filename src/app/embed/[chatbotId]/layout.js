@@ -1,5 +1,5 @@
 
-import '../globals.css' // Import global styles for the widget
+import '../../globals.css' // Import global styles for the widget
 
 export const metadata = {
     title: 'Découvrez ce chatbot',

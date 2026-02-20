@@ -17,9 +17,9 @@
 }
 
 .subheading {
-    color: #64748b;
+    color: #334155;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 /* Container */
@@ -86,7 +86,7 @@
 
 .botId {
     font-size: 13px;
-    color: #94a3b8;
+    color: #334155;
     font-family: monospace;
     font-weight: 500;
 }
@@ -108,7 +108,7 @@
 }
 
 .statusInactive {
-    color: #64748b;
+    color: #334155;
 }
 
 .checkbox {
@@ -198,6 +198,6 @@
 
 .futureText {
     font-size: 15px;
-    color: #94a3b8;
+    color: #334155;
     font-weight: 500;
 }

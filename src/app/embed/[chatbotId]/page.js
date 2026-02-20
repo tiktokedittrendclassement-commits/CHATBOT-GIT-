@@ -33,7 +33,7 @@ export default function EmbedPage() {
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
-                .select('name, color, welcome_message_new, welcome_message_returning') // Only public info
+                .select('name, color, welcome_message_new, welcome_message_returning, triggers') // Only public info
                 .eq('id', params.chatbotId)
                 .single()
 
@@ -45,16 +45,36 @@ export default function EmbedPage() {
                 // Check for returning visitor
                 const isReturning = typeof window !== 'undefined' && localStorage.getItem(`vendo_returning_${params.chatbotId}`)
 
-                // Allow empty greeting if user cleared it in editor
+                // --- SMART WELCOME LOGIC ---
                 let greeting = data.welcome_message_new
+                let status = 'new_visitor'
 
+                // 1. Check for Returning Visitor
                 if (isReturning && data.welcome_message_returning) {
                     greeting = data.welcome_message_returning
+                    status = 'returning_visitor'
                 }
 
-                // Set returning flag for next time
-                if (typeof window !== 'undefined' && !isReturning) {
-                    localStorage.setItem(`vendo_returning_${params.chatbotId}`, 'true')
+                // 2. Check for Context (Test/Demo Page)
+                const isTestPage = typeof document !== 'undefined' && (
+                    document.referrer.includes('demo') ||
+                    document.referrer.includes('test') ||
+                    document.referrer.includes('localhost')
+                );
+
+                if (params.chatbotId === '00f3e398-49df-4492-b1cf-f681cc9d7196' && isTestPage) {
+                    greeting = "Bonjour ! 👋 Je suis l'assistant Vendo. C'est ici que vous pouvez tester mon intégration."
+                    status = 'demo_mode'
+                }
+
+                // SEND INIT DATA TO PARENT (Triggers, etc.)
+                // We send this immediately so the parent script can set up listeners
+                if (typeof window !== 'undefined') {
+                    window.parent.postMessage({
+                        type: 'vendo-init-triggers',
+                        chatbotId: params.chatbotId,
+                        triggers: data.triggers || []
+                    }, '*');
                 }
 
                 // Initial greeting - ONLY if string is not empty
@@ -63,6 +83,17 @@ export default function EmbedPage() {
                         role: 'assistant',
                         content: greeting
                     }])
+
+                    // Proactive Trigger: Send message to parent window (the embedding site)
+                    setTimeout(() => {
+                        window.parent.postMessage({
+                            type: 'vendo-proactive-message',
+                            chatbotId: params.chatbotId,
+                            message: greeting,
+                            sender: data.name || 'Assistant',
+                            avatar: data.logo_url // Corrected field name from avatar_url
+                        }, '*');
+                    }, 2000);
                 }
             }
         }

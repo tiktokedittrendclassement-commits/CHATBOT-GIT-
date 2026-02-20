@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, memo } from 'react'
 import { MessageCircle, X, Send, Bot, Sparkles, HelpCircle } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 const Typewriter = memo(({ text, speed = 8, onComplete }) => {
     const [displayedText, setDisplayedText] = useState('')
@@ -23,72 +24,199 @@ const Typewriter = memo(({ text, speed = 8, onComplete }) => {
 })
 
 export default function VendoAssistant() {
+    const pathname = usePathname()
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
         { role: 'assistant', content: "Bienvenue sur Vendo. ✨\n\nJe suis votre **Concierge IA**. Je peux vous présenter la puissance de notre plateforme ou **forger le System Prompt d'élite** pour votre futur chatbot.\n\nQuelle est votre mission aujourd'hui ?", shouldType: false }
     ])
-    const [input, setInput] = useState('')
-    const [isTyping, setIsTyping] = useState(false)
+    const [teaserText, setTeaserText] = useState(null)
     const messagesContainerRef = useRef(null)
+    const [isTyping, setIsTyping] = useState(false)
+    const [input, setInput] = useState('')
 
     const scrollToBottom = () => {
         if (messagesContainerRef.current) {
-            const { scrollHeight, clientHeight } = messagesContainerRef.current
-            messagesContainerRef.current.scrollTop = scrollHeight - clientHeight
+            messagesContainerRef.current.scrollTo({
+                top: messagesContainerRef.current.scrollHeight,
+                behavior: 'smooth'
+            })
         }
     }
 
     const markAsTyped = (index) => {
-        setMessages(prev => prev.map((msg, i) => i === index ? { ...msg, shouldType: false } : msg));
+        // Implementation for markAsTyped if needed
     }
 
-    useEffect(() => {
-        scrollToBottom()
-        const timeout = setTimeout(scrollToBottom, 50)
-        return () => clearTimeout(timeout)
-    }, [messages.length, isOpen, isTyping])
-
-    const handleSend = async (e) => {
+    const handleSend = (e) => {
         e.preventDefault()
-        if (!input.trim() || isTyping) return
+        if (!input.trim()) return
 
-        const userMsgContent = input
-        setInput('')
-
-        const newMessages = [...messages, { role: 'user', content: userMsgContent, shouldType: false }]
+        const newMessages = [...messages, { role: 'user', content: input }]
         setMessages(newMessages)
+        setInput('')
         setIsTyping(true)
 
-        try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: newMessages.map(({ role, content }) => ({ role, content })),
-                    chatbotId: 'VENDO_SUPPORT',
-                    visitorId: 'vendo-internal-visitor'
-                })
-            })
-
-            if (!response.ok) throw new Error('Network response was not ok');
-            const data = await response.json()
-
-            if (data.content) {
-                setMessages(prev => [...prev, { role: 'assistant', content: data.content, shouldType: true }])
-            } else {
-                setMessages(prev => [...prev, { role: 'assistant', content: "Désolé, j'ai rencontré une petite erreur.", shouldType: true }])
-            }
-        } catch (error) {
-            if (error.name === 'AbortError') return;
-            console.error('Vendo Assistant Error:', error)
-            setMessages(prev => [...prev, { role: 'assistant', content: "Connexion impossible avec mon cerveau central.", shouldType: true }])
-        } finally {
+        // Mock response
+        setTimeout(() => {
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: "Je suis une démo pour l'instant. Configurez-moi dans l'onglet 'Chatbots' !",
+                shouldType: true
+            }])
             setIsTyping(false)
-        }
+        }, 1000)
     }
+
+    // Proactive Welcome Message & Event Listeners
+    useEffect(() => {
+        // Trigger welcome message after 1 second ONLY on the landing page
+        if (pathname !== '/') return
+
+        const timer = setTimeout(() => {
+            if (!isOpen) {
+                setTeaserText("Bonjour ! Je suis votre assistant IA. Je peux répondre à toutes vos questions sur Vendo. ✨")
+            }
+        }, 500)
+
+        const handleProactiveTrigger = (e) => {
+            if (e.detail?.message) {
+                setTeaserText(e.detail.message)
+                setIsOpen(false)
+            }
+        }
+
+        window.addEventListener('vendo-proactive-trigger', handleProactiveTrigger)
+
+        return () => {
+            clearTimeout(timer)
+            window.removeEventListener('vendo-proactive-trigger', handleProactiveTrigger)
+        }
+    }, [pathname])
+
+    // Simple Auto-dismiss (3 seconds)
+    useEffect(() => {
+        if (isOpen || !teaserText) return
+
+        const timer = setTimeout(() => {
+            setTeaserText(null)
+        }, 5000)
+
+        return () => clearTimeout(timer)
+    }, [isOpen, teaserText])
+
+    if (!teaserText && !isOpen) return (
+        <button
+            onClick={() => setIsOpen(true)}
+            style={{
+                position: 'fixed',
+                bottom: 30, right: 30,
+                width: 64,
+                height: 64,
+                borderRadius: '20px',
+                background: '#673DE6',
+                color: 'white',
+                border: 'none',
+                boxShadow: '0 20px 40px rgba(103, 61, 230, 0.3)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 9999,
+                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
+        >
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{
+                    fontSize: 32,
+                    fontWeight: 900,
+                    letterSpacing: '-2px',
+                    transform: 'skewX(-10deg)',
+                    textShadow: '2px 2px 0px rgba(0,0,0,0.1)'
+                }}>V</div>
+                <div style={{ position: 'absolute', top: -10, right: -15, width: 14, height: 14, background: '#10B981', border: '3px solid #673DE6', borderRadius: '50%' }}></div>
+            </div>
+        </button>
+    )
 
     return (
         <div style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 9999, fontFamily: "'Inter', sans-serif" }}>
+
+            {/* Premium Invite Card for Vendo Assistant */}
+            {!isOpen && (
+                <div
+                    onClick={() => setIsOpen(true)}
+                    style={{
+                        position: 'absolute',
+                        bottom: 80,
+                        right: 0,
+                        width: 320,
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: 'blur(20px)',
+                        borderRadius: 24,
+                        boxShadow: '0 20px 50px rgba(103, 61, 230, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
+                        fontFamily: "inherit",
+                        zIndex: 9998,
+                        cursor: 'pointer',
+                        transformOrigin: 'bottom right',
+                        animation: 'slideInUpPremium 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, float 4s ease-in-out infinite',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        padding: '4px'
+                    }}
+                >
+                    <div style={{ padding: '16px 18px', display: 'flex', gap: 14, alignItems: 'center' }}>
+                        <div style={{ position: 'relative', flexShrink: 0 }}>
+                            <div style={{
+                                width: 50,
+                                height: 50,
+                                background: 'linear-gradient(135deg, #673DE6 0%, #8B5CF6 100%)',
+                                borderRadius: 16,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                boxShadow: '0 8px 16px rgba(103, 61, 230, 0.2)'
+                            }}>
+                                <Bot size={26} />
+                            </div>
+                            <div style={{ position: 'absolute', bottom: -2, right: -2, width: 14, height: 14, background: '#10B981', border: '3px solid white', borderRadius: '50%' }}></div>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 13, fontWeight: 800, color: '#673DE6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Assistant Vendo</div>
+                            <div style={{ fontSize: 14.5, color: '#020617', fontWeight: 600, lineHeight: 1.5 }}>{teaserText}</div>
+                        </div>
+                    </div>
+                    <div style={{
+                        margin: '0 4px 4px',
+                        padding: '10px 16px',
+                        background: 'rgba(103, 61, 230, 0.05)',
+                        borderRadius: 18,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}>
+                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>Maintenant</span>
+                        <div style={{
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: '#673DE6',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: 'white',
+                            padding: '6px 12px',
+                            borderRadius: 12,
+                            boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+                        }}>
+                            Répondre <Send size={12} />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Toggle Button */}
             {!isOpen && (
@@ -112,7 +240,6 @@ export default function VendoAssistant() {
                     onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
                 >
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {/* Custom Vendo Logo (Stylized V) */}
                         <div style={{
                             fontSize: 32,
                             fontWeight: 900,
@@ -256,14 +383,14 @@ export default function VendoAssistant() {
                                 borderRadius: '12px',
                                 fontSize: 12,
                                 fontWeight: 700,
-                                color: '#64748B',
+                                color: '#334155',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
                             }}
                                 onClick={() => { setInput(label === 'Aide Prompt' ? "Aide moi à créer un prompt pour mon bot" : label); }}
                                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#673DE6'; e.currentTarget.style.color = '#673DE6'; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#64748B'; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#334155'; }}
                             >
                                 {label}
                             </button>
@@ -341,6 +468,22 @@ export default function VendoAssistant() {
                 @keyframes bounce {
                     0%, 100% { transform: translateY(0); }
                     50% { transform: translateY(-6px); }
+                }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                }
+                @keyframes slideInUpPremium {
+                    from { opacity: 0; transform: translateY(40px) scale(0.9) rotate(2deg); }
+                    to { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+                }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                }
+                @keyframes slideInUp {
+                    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
                 }
             `}</style>
         </div>

@@ -17,9 +17,9 @@
 }
 
 .subheading {
-    color: #64748b;
+    color: #334155;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 /* Container */
@@ -156,7 +156,7 @@
 
 .saveBtn:disabled {
     background: #E2E8F0;
-    color: #94A3B8;
+    color: #334155;
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
@@ -169,7 +169,7 @@
     border-radius: 24px;
     padding: 32px;
     text-align: center;
-    color: #64748b;
+    color: #334155;
     font-size: 15px;
     margin-top: 48px;
     font-weight: 500;

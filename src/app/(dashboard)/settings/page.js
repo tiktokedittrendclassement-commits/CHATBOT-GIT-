@@ -147,7 +147,7 @@ export default function SettingsPage() {
                                 <Input
                                     value={profile.email}
                                     disabled
-                                    style={{ background: '#f1f5f9', color: '#64748b' }}
+                                    style={{ background: '#f1f5f9', color: '#334155' }}
                                     className={styles.input}
                                 />
                                 <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>

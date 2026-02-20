@@ -48,7 +48,7 @@ export default function DemoChat() {
     }
 
     return (
-        <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 50, fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 50, fontFamily: 'inherit' }}>
 
             {/* Toggle Button */}
             {!isOpen && (
@@ -161,7 +161,7 @@ export default function DemoChat() {
                     </form>
 
                     {/* Branding */}
-                    <div style={{ background: '#f1f5f9', padding: '6px 0', textAlign: 'center', fontSize: 10, color: '#64748b' }}>
+                    <div style={{ background: '#f1f5f9', padding: '6px 0', textAlign: 'center', fontSize: 10, color: '#334155' }}>
                         Propulsé par <span style={{ fontWeight: 600 }}>Vendo</span>
                     </div>
                 </div>

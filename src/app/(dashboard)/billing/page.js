@@ -228,7 +228,7 @@ export default function BillingPage() {
                                     border: 'none',
                                     cursor: 'pointer',
                                     padding: 8,
-                                    color: '#64748b'
+                                    color: '#334155'
                                 }}
                             >
                                 <X size={24} />
@@ -281,7 +281,7 @@ export default function BillingPage() {
                                     />
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: 500, marginBottom: 4 }}>{bot.name}</div>
-                                        <div style={{ fontSize: 13, color: '#64748b' }}>
+                                        <div style={{ fontSize: 13, color: '#334155' }}>
                                             Créé le {new Date(bot.created_at).toLocaleDateString('fr-FR')}
                                         </div>
                                     </div>

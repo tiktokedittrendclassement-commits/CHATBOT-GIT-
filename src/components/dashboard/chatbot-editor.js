@@ -9,7 +9,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import styles from './editor.module.css'
-import { ArrowLeft, Save, Bot, Lock } from 'lucide-react'
+import { ArrowLeft, Save, Bot, Lock, Clock, ArrowDown, Trash2, Plus, Zap, MousePointer2, Percent } from 'lucide-react'
+
+// ... (existing code) ...
+
+
 
 // This component handles both Creating and Editing
 export default function ChatbotEditor({ botId = null }) {
@@ -25,7 +29,8 @@ export default function ChatbotEditor({ botId = null }) {
         welcome_message_new: 'Bonjour ! 👋 Comment puis-je vous aider aujourd\'hui ?',
         welcome_message_returning: 'Re-bonjour ! Ravi de vous revoir. 👋',
         system_prompt: 'Tu es un assistant commercial humain, chaleureux et direct. Réponds de manière concise, sans utiliser de formatage complexe (pas d\'astérisques). Ta mission est d\'aider le visiteur avec bienveillance.',
-        data_sources: ''
+        data_sources: '',
+        triggers: []
     })
 
     const PLAN_LIMITS = {
@@ -113,7 +118,8 @@ export default function ChatbotEditor({ botId = null }) {
                         welcome_message_new: data.welcome_message_new ?? 'Bonjour ! 👋 Comment puis-je vous aider aujourd\'hui ?',
                         welcome_message_returning: data.welcome_message_returning ?? 'Re-bonjour ! Ravi de vous revoir. 👋',
                         system_prompt: data.system_prompt,
-                        data_sources: data.data_sources || ''
+                        data_sources: data.data_sources || '',
+                        triggers: data.triggers?.map(t => ({ ...t, id: t.id || Math.random().toString(36).substr(2, 9) })) || []
                     })
                 }
             }
@@ -121,7 +127,43 @@ export default function ChatbotEditor({ botId = null }) {
         }
 
         init()
-    }, [botId, user])
+    }, [botId, user?.id])
+
+    // Helper to manage triggers array state from unified inputs
+    const updateTriggers = (updates) => {
+        let newTriggers = [...(formData.triggers || [])];
+        const { message, page, spawnValue, despawnValue } = updates;
+
+        // Ensure we at least have a base trigger structure
+        if (newTriggers.length === 0) {
+            newTriggers.push({
+                id: Date.now().toString(),
+                type: 'time',
+                spawn: '2',
+                despawn: '8',
+                message: formData.welcome_message_new || 'Bonjour ! 👋',
+                page: '/'
+            });
+        }
+
+        // Sync all fields correctly
+        newTriggers = newTriggers.map(t => ({
+            ...t,
+            ...(message !== undefined ? { message } : {}),
+            ...(page !== undefined ? { page } : {}),
+            ...(spawnValue !== undefined ? { spawn: spawnValue } : {}),
+            ...(despawnValue !== undefined ? { despawn: despawnValue } : {})
+        }));
+
+        setFormData({ ...formData, triggers: newTriggers });
+    };
+
+    // Derived values for UI
+    const activeTrigger = formData.triggers?.[0] || {};
+    const currentMessage = activeTrigger.message || '';
+    const currentPage = activeTrigger.page || '';
+    const currentSpawn = activeTrigger.spawn || '';
+    const currentDespawn = activeTrigger.despawn || '';
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -134,6 +176,7 @@ export default function ChatbotEditor({ botId = null }) {
         setLoading(true)
 
         try {
+            console.log('Saving chatbot payload:', formData); // Debug log
             const payload = {
                 name: profile?.plan_tier === 'free' ? 'Mon Assistant Vendo' : formData.name,
                 color: formData.color,
@@ -141,7 +184,8 @@ export default function ChatbotEditor({ botId = null }) {
                 welcome_message_new: formData.welcome_message_new,
                 welcome_message_returning: formData.welcome_message_returning,
                 system_prompt: formData.system_prompt,
-                data_sources: formData.data_sources
+                data_sources: formData.data_sources,
+                triggers: formData.triggers
             }
 
             if (botId) {
@@ -208,7 +252,7 @@ export default function ChatbotEditor({ botId = null }) {
                         <div className={styles.field}>
                             <div className={styles.fieldHeader}>
                                 <label>Nom du Chatbot</label>
-                                {profile?.plan_tier === 'free' && <span className={styles.badge} style={{ background: '#e2e8f0', color: '#64748b' }}>FIGÉ (GRATUIT)</span>}
+                                {profile?.plan_tier === 'free' && <span className={styles.badge} style={{ background: '#e2e8f0', color: '#334155' }}>FIGÉ (GRATUIT)</span>}
                             </div>
                             <Input
                                 value={profile?.plan_tier === 'free' ? 'Mon Assistant Vendo' : formData.name}
@@ -326,6 +370,98 @@ export default function ChatbotEditor({ botId = null }) {
                             <p className={styles.hint}>Le bot utilisera ce texte pour répondre aux questions des utilisateurs.</p>
                         </div>
                     </div>
+
+                    <div className={styles.card}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+                            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EFF6FF', color: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Zap size={18} fill="#3B82F6" />
+                            </div>
+                            <div>
+                                <h3 className={styles.cardTitle} style={{ marginBottom: 0 }}>Popup Automatique</h3>
+                                <p className={styles.hint} style={{ margin: 0 }}>Configurez l&apos;apparition automatique du chatbot.</p>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gap: 20 }}>
+                            {/* Message Input */}
+                            <div>
+                                <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                    Message Proactif
+                                </label>
+                                <div style={{ position: 'relative' }}>
+                                    <div style={{ position: 'absolute', left: 12, top: 16, width: 8, height: 8, borderRadius: '50%', background: '#10B981', zIndex: 10 }}></div>
+                                    <Input
+                                        value={currentMessage}
+                                        onChange={(e) => updateTriggers({ message: e.target.value })}
+                                        placeholder="Bonjour ! Je peux vous aider ?"
+                                        style={{ height: 42, paddingLeft: 28, fontSize: 14 }}
+                                    />
+                                </div>
+                                <p className={styles.hint} style={{ marginTop: 6 }}>Ce message s'affichera dans une bulle au-dessus de l'icône.</p>
+                            </div>
+
+                            {/* Page Input */}
+                            <div>
+                                <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                    Sur quelle page ? <span style={{ fontWeight: 400, color: '#94a3b8' }}>(Optionnel)</span>
+                                </label>
+                                <div style={{ position: 'relative' }}>
+                                    <MousePointer2 size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
+                                    <Input
+                                        value={currentPage}
+                                        onChange={(e) => updateTriggers({ page: e.target.value })}
+                                        placeholder="/tarifs, /contact..."
+                                        style={{ height: 42, paddingLeft: 36, fontSize: 14 }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div style={{ height: 1, background: '#F1F5F9', margin: '4px 0' }}></div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                                {/* Spawn Timer Input */}
+                                <div>
+                                    <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                        Apparition (sec)
+                                    </label>
+                                    <div style={{ position: 'relative' }}>
+                                        <ArrowDown size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
+                                        <Input
+                                            type="number"
+                                            min="0"
+                                            max="999"
+                                            value={currentSpawn}
+                                            onChange={(e) => updateTriggers({ spawnValue: e.target.value })}
+                                            placeholder="Ex: 2"
+                                            style={{ height: 42, paddingLeft: 36, fontSize: 14 }}
+                                        />
+                                        <div style={{ position: 'absolute', right: 12, top: 13, fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>sec</div>
+                                    </div>
+                                </div>
+
+                                {/* Despawn Timer Input */}
+                                <div>
+                                    <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                        Disparition (sec)
+                                    </label>
+                                    <div style={{ position: 'relative' }}>
+                                        <Clock size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
+                                        <Input
+                                            type="number"
+                                            min="0"
+                                            max="999"
+                                            value={currentDespawn}
+                                            onChange={(e) => updateTriggers({ despawnValue: e.target.value })}
+                                            placeholder="Ex: 8"
+                                            style={{ height: 42, paddingLeft: 36, fontSize: 14 }}
+                                        />
+                                        <div style={{ position: 'absolute', right: 12, top: 13, fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>sec</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className={styles.hint} style={{ margin: 0 }}>Réglez quand la popup doit apparaître et disparaître.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div className={styles.sideCol}>
@@ -333,23 +469,19 @@ export default function ChatbotEditor({ botId = null }) {
                         <h3 className={styles.cardTitle}>Comportement</h3>
 
                         <div className={styles.field}>
-                            <label>Message de Bienvenue (nouveaux visiteurs)</label>
-                            <Input
+                            <label>Premier Message du Chatbot</label>
+                            <textarea
+                                className={styles.textarea}
+                                rows={3}
                                 value={formData.welcome_message_new}
-                                onChange={(e) => setFormData({ ...formData, welcome_message_new: e.target.value })}
-                                placeholder=""
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    welcome_message_new: e.target.value,
+                                    welcome_message_returning: e.target.value
+                                })}
+                                placeholder="Bonjour ! Comment puis-je vous aider ?"
                             />
-                            <p className={styles.hint}>Ce message s'affiche pour les nouveaux visiteurs. (Laisser vide pour désactiver)</p>
-                        </div>
-
-                        <div className={styles.field}>
-                            <label>Message de Bienvenue (Visiteurs de retour)</label>
-                            <Input
-                                value={formData.welcome_message_returning}
-                                onChange={(e) => setFormData({ ...formData, welcome_message_returning: e.target.value })}
-                                placeholder=""
-                            />
-                            <p className={styles.hint}>Ce message s'affiche quand un visiteur revient. (Laisser vide pour désactiver)</p>
+                            <p className={styles.hint}>C&apos;est le tout premier message que le visiteur verra en ouvrant la fenêtre de chat.</p>
                         </div>
 
                         <div className={styles.field}>
@@ -363,6 +495,8 @@ export default function ChatbotEditor({ botId = null }) {
                             <p className={styles.hint}>Instructions pour le comportement du bot (ton, style, etc).</p>
                         </div>
                     </div>
+
+
 
                     {/* Embed Code Section - Always Visible */}
                     <div className={styles.card}>
@@ -385,7 +519,7 @@ export default function ChatbotEditor({ botId = null }) {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

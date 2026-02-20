@@ -26,9 +26,9 @@
 }
 
 .subheading {
-    color: #64748b;
+    color: #334155;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 /* Layout */
@@ -173,7 +173,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 15px;
-    color: #64748b;
+    color: #334155;
     padding: 16px 0;
     border-bottom: 1px solid #F1F5F9;
     font-weight: 500;
@@ -209,7 +209,7 @@
 
 .helpText {
     font-size: 14px;
-    color: #64748b;
+    color: #334155;
     line-height: 1.6;
     margin: 0;
     font-weight: 500;
@@ -226,7 +226,7 @@
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94A3B8;
+    color: #334155;
     font-weight: 800;
 }
 
@@ -252,7 +252,7 @@
     border-radius: 12px;
     border: 1px solid var(--border);
     background: white;
-    color: #64748b;
+    color: #334155;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;

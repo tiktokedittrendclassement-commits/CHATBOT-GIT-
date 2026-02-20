@@ -25,8 +25,8 @@
 
 .subheading {
     font-size: 16px;
-    color: #64748b;
-    font-weight: 400;
+    color: #334155;
+    font-weight: 500;
 }
 
 /* Info Box */
@@ -149,7 +149,7 @@
 .period {
     font-size: 15px;
     font-weight: 600;
-    color: #64748b;
+    color: #334155;
 }
 
 /* Features List */
@@ -189,7 +189,7 @@
     width: 100%;
     background: white;
     border: 1px solid var(--border);
-    color: #64748b;
+    color: #334155;
     font-weight: 700;
     border-radius: 14px;
     height: 52px;
@@ -224,7 +224,7 @@
     width: 100%;
     background: #F1F5F9;
     border: 1px solid #E2E8F0;
-    color: #94A3B8;
+    color: #334155;
     font-weight: 800;
     border-radius: 14px;
     cursor: default;
@@ -237,7 +237,7 @@
     justify-content: center;
     align-items: center;
     min-height: 500px;
-    color: #64748b;
+    color: #334155;
     font-size: 18px;
     font-weight: 600;
 }
@@ -254,7 +254,7 @@
 .testTitle {
     font-size: 13px;
     font-weight: 800;
-    color: #64748b;
+    color: #334155;
     margin-bottom: 16px;
     text-transform: uppercase;
     letter-spacing: 1px;

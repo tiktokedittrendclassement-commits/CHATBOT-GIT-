@@ -16,7 +16,7 @@
 }
 
 .subtitle {
-    color: #64748b;
+    color: #334155;
     font-size: 1.125rem;
 }
 
@@ -57,7 +57,7 @@
 
 .botId {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #334155;
     font-family: monospace;
 }
 
@@ -137,7 +137,7 @@
 
 .lockedCard p {
     margin-bottom: 1.5rem;
-    color: #64748b;
+    color: #334155;
     line-height: 1.6;
 }
 
@@ -148,7 +148,7 @@
     align-items: center;
     justify-content: center;
     padding: 4rem;
-    color: #94a3b8;
+    color: #334155;
     background: #f8fafc;
     border-radius: 1rem;
     border: 2px dashed #e2e8f0;

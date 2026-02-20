@@ -51,7 +51,7 @@ export default function RegisterPage() {
     return (
         <div className={styles.container}>
             <div className={styles.card}>
-                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748b', fontSize: 13, marginBottom: 20, textDecoration: 'none' }}>
+                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#334155', fontSize: 13, marginBottom: 20, textDecoration: 'none' }}>
                     <ArrowLeft size={14} />
                     Retour à l&apos;accueil
                 </Link>

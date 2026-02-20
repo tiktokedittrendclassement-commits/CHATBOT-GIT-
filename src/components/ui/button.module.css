@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius);
-  font-weight: 500;
+  font-weight: 600;
+  /* Bolder buttons */
   transition: all 0.2s;
   border: none;
   cursor: pointer;

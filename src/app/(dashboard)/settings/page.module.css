@@ -25,8 +25,8 @@
 
 .subheading {
     font-size: 16px;
-    color: #64748b;
-    font-weight: 400;
+    color: #334155;
+    font-weight: 500;
 }
 
 /* Section Card */
@@ -98,7 +98,7 @@
 
 .helperText {
     font-size: 13px;
-    color: #64748b;
+    color: #334155;
     margin: 0;
     font-weight: 500;
 }
@@ -142,7 +142,7 @@
 
 .outlineBtn {
     border: 1px solid var(--border);
-    color: #64748b;
+    color: #334155;
     background: white;
     font-weight: 700;
     border-radius: 12px;

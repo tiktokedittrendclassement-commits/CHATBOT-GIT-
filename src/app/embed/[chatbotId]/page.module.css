@@ -100,11 +100,11 @@
 .loading {
     padding: 20px;
     text-align: center;
-    color: #64748b;
+    color: #334155;
 }
 
 .typingIndicator {
-    color: #94a3b8;
+    color: #334155;
     font-size: 24px;
     line-height: 10px;
     padding: 0 10px;

@@ -74,6 +74,7 @@ export default function DemoStore() {
         // Scroll top in the internal container
         const container = document.getElementById('demo-content-area');
         if (container) container.scrollTop = 0;
+
     }
 
     const addToCart = (product) => {
@@ -156,7 +157,14 @@ export default function DemoStore() {
                 <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 40, borderBottom: '2px solid #000', display: 'inline-block', paddingBottom: 8 }}>Sélection Curatée</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
                     {PRODUCTS.slice(0, 4).map(p => (
-                        <div key={p.id} onClick={() => { setSelectedProduct(p); navigate('product'); }} style={{ cursor: 'pointer' }}>
+                        <div key={p.id} onClick={() => {
+                            setSelectedProduct(p);
+                            navigate('product');
+                            // Direct trigger because navigate might use old selectedProduct if not careful
+                            window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {
+                                detail: { message: `Ce ${p.name} est magnifique ! Vous voulez des détails ? ✨` }
+                            }))
+                        }} style={{ cursor: 'pointer' }}>
                             <div style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden', marginBottom: 12 }}>
                                 <img src={p.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
@@ -174,7 +182,13 @@ export default function DemoStore() {
             <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, letterSpacing: '-1px' }}>Toute la Collection.</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
                 {PRODUCTS.map(p => (
-                    <div key={p.id} onClick={() => { setSelectedProduct(p); navigate('product'); }} style={{ cursor: 'pointer' }}>
+                    <div key={p.id} onClick={() => {
+                        setSelectedProduct(p);
+                        navigate('product');
+                        window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {
+                            detail: { message: `Vous avez bon goût ! Le ${p.name} est une pièce d'exception. 🧥` }
+                        }))
+                    }} style={{ cursor: 'pointer' }}>
                         <div style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden', marginBottom: 16 }}>
                             <img src={p.image} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>

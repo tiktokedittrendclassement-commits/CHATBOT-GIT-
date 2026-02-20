@@ -103,7 +103,7 @@ export default function WalletPage() {
                         </div>
 
                         <div style={{ marginBottom: 24 }}>
-                            <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#64748b' }}>Montant à créditer (€)</label>
+                            <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#334155' }}>Montant à créditer (€)</label>
                             <div style={{ display: 'flex', gap: 12 }}>
                                 <div className={styles.inputWrapper}>
                                     <Input
@@ -126,11 +126,11 @@ export default function WalletPage() {
                                     {processing ? 'Traitement...' : `Payer ${amount || 0}€`}
                                 </Button>
                             </div>
-                            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 8 }}>Minimum 5€.</p>
+                            <p style={{ fontSize: 12, color: '#334155', marginTop: 8 }}>Minimum 5€.</p>
                         </div>
 
                         <div>
-                            <label style={{ fontSize: 13, fontWeight: 500, color: '#64748b' }}>Montants rapides :</label>
+                            <label style={{ fontSize: 13, fontWeight: 500, color: '#334155' }}>Montants rapides :</label>
                             <div className={styles.quickAmounts}>
                                 {[10, 20, 50, 100].map(val => (
                                     <Button

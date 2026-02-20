@@ -25,9 +25,9 @@
 }
 
 .subheading {
-    color: #64748b;
+    color: #334155;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .headerActions {
@@ -81,7 +81,7 @@
     cursor: not-allowed;
     background: #E2E8F0;
     border-color: #E2E8F0;
-    color: #94A3B8;
+    color: #334155;
     box-shadow: none;
     transform: none;
 }
@@ -134,7 +134,7 @@
 
 .lockedSubText {
     font-size: 14px;
-    color: #64748b;
+    color: #334155;
     margin: 0;
     font-weight: 500;
 }
@@ -176,7 +176,7 @@
     align-items: center;
     justify-content: center;
     background: #F8FAFC;
-    color: #64748B;
+    color: #334155;
     border: 1px solid #F1F5F9;
 }
 
@@ -241,7 +241,7 @@
 
 .promptBox {
     font-size: 14px;
-    color: #64748b;
+    color: #334155;
     background: #F8FAFC;
     padding: 16px;
     border-radius: 12px;
@@ -278,7 +278,7 @@
 }
 
 .emptyText {
-    color: #64748b;
+    color: #334155;
     font-size: 16px;
     max-width: 500px;
     margin: 0 auto 32px auto;

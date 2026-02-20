@@ -41,10 +41,10 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </header>
+      </header >
 
       {/* Features */}
-      <section id="features" className={styles.features}>
+      < section id="features" className={styles.features} >
         <div className={styles.sectionHeader}>
           <h2>Pourquoi Vendo ?</h2>
           <p>Tout ce dont vous avez besoin pour automatiser votre service client.</p>
@@ -67,10 +67,10 @@ export default function Home() {
             <p>Aucune compétence technique requise. Créez votre premier bot en moins de 2 minutes.</p>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* DEMO SECTION */}
-      <section className={styles.demoSection}>
+      < section id="demo" className={styles.demoSection} >
         <div className={styles.demoContainer}>
           <div className={styles.sectionHeader}>
             <h2>Testez l'Intégration "V-ATHLETICS"</h2>
@@ -83,10 +83,10 @@ export default function Home() {
             <GymsharkDemo />
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Pricing */}
-      <section id="pricing" className={styles.pricing}>
+      < section id="pricing" className={styles.pricing} >
         <div className={styles.sectionHeader}>
           <h2>Tarification Simple</h2>
           <p>Choisissez le plan adapté à votre activité.</p>
@@ -145,12 +145,12 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Footer */}
-      <footer className={styles.footer}>
+      < footer className={styles.footer} >
         <div>&copy; {new Date().getFullYear()} Vendo. Tous droits réservés.</div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   )
 }

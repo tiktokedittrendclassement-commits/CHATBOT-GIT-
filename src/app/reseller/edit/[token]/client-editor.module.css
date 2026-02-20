@@ -28,7 +28,7 @@
 }
 
 .subtitle {
-    color: #64748b;
+    color: #334155;
     font-size: 1.125rem;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .saveBtn:disabled {
-    background: #94a3b8;
+    background: #334155;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -139,7 +139,7 @@
 
 .cardDesc {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #334155;
 }
 
 .formGroup {
@@ -244,6 +244,6 @@
     border-top: 1px solid #e2e8f0;
     padding-top: 2rem;
     text-align: center;
-    color: #94a3b8;
+    color: #334155;
     font-size: 0.875rem;
 }

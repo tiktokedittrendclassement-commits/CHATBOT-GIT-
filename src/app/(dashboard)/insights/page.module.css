@@ -20,9 +20,9 @@
 }
 
 .subheading {
-    color: #64748b;
+    color: #334155;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 /* Badge Agency - Indigo Theme */
@@ -152,13 +152,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #64748b;
+    color: #334155;
     border: 1px solid #F1F5F9;
 }
 
 .statLabel {
     font-size: 14px;
-    color: #64748b;
+    color: #334155;
     font-weight: 600;
     margin-bottom: 2px;
 }
@@ -174,7 +174,7 @@
     padding: 20px;
     background: #F8FAFC;
     border-radius: 16px;
-    color: #64748b;
+    color: #334155;
     font-size: 14px;
     line-height: 1.6;
     border: 1px solid #F1F5F9;
@@ -203,7 +203,7 @@
     justify-content: center;
     font-size: 13px;
     font-weight: 800;
-    color: #64748b;
+    color: #334155;
     margin-right: 20px;
     flex-shrink: 0;
 }
@@ -226,7 +226,7 @@
 
 .lastVisit {
     font-size: 13px;
-    color: #94a3b8;
+    color: #334155;
     margin-top: 4px;
     font-weight: 500;
 }
@@ -244,7 +244,7 @@
 .emptyState {
     padding: 80px 40px;
     text-align: center;
-    color: #94a3b8;
+    color: #334155;
     display: flex;
     flex-direction: column;
     align-items: center;

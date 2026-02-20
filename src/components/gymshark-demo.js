@@ -275,276 +275,276 @@ export default function NaturelSkinDemo() {
     const quizResult = showQuizResult ? getQuizResult() : null
 
     return (
-        <div className="naturel-demo">
-            {/* Inject CSS */}
-            <style jsx global>{CSS_STYLES}</style>
+        <>
+            <div className="naturel-demo">
+                {/* Inject CSS */}
+                <style jsx global>{CSS_STYLES}</style>
 
-            <div ref={containerRef} className="demo-container">
-                {/* TOP BANNER */}
-                <div className="top-banner">Livraison offerte dès 45€ · Formules à moins de 10 ingrédients</div>
+                <div ref={containerRef} className="demo-container">
+                    {/* TOP BANNER */}
+                    <div className="top-banner">Livraison offerte dès 45€ · Formules à moins de 10 ingrédients</div>
 
-                {/* NAV */}
-                <nav className={`demo-nav ${scrolled ? 'scrolled' : ''}`}>
-                    <div className="nav-logo">Naturel</div>
-                    <div className="nav-links">
-                        <div onClick={() => setFilter('all')}>Produits</div>
-                        <div>Ingrédients</div>
-                        <div onClick={startQuiz}>Diagnostic</div>
-                        <div>Notre mission</div>
-                    </div>
-                    <div className="nav-actions">
-                        <button>Recherche</button>
-                        <button className="cart-btn" onClick={() => setCartOpen(true)}>
-                            Panier <span className="cart-count">{cartCount}</span>
-                        </button>
-                    </div>
-                </nav>
-
-                {/* HERO */}
-                <section className="hero">
-                    <div className="hero-text">
-                        <p className="hero-eyebrow">Soins naturels — Made in France</p>
-                        <h1 className="hero-title">La beauté<br />dans sa<br /><em>simplicité</em></h1>
-                        <p className="hero-sub">Des formules courtes, des ingrédients transparents, des résultats réels. Parce que votre peau mérite le meilleur — sans le superflu.</p>
-                        <div className="hero-ctas">
-                            <button className="btn-primary" onClick={() => setFilter('all')}>Découvrir les soins</button>
-                            <button className="btn-secondary" onClick={startQuiz}>Faire mon diagnostic</button>
+                    {/* NAV */}
+                    <nav className={`demo-nav ${scrolled ? 'scrolled' : ''}`}>
+                        <div className="nav-logo">Naturel</div>
+                        <div className="nav-links">
+                            <div onClick={() => setFilter('all')}>Produits</div>
+                            <div>Ingrédients</div>
+                            <div onClick={startQuiz}>Diagnostic</div>
+                            <div>Notre mission</div>
                         </div>
-                    </div>
-                    <div className="hero-visual">
-                        <div className="hero-visual-inner">
-                            <div className="hero-product-visual">
-                                <div className="hero-product-label">Sérum Acide<br />Hyaluronique</div>
-                                <div className="product-mock-line"></div>
-                                <div className="hero-product-pct">3%</div>
+                        <div className="nav-actions">
+                            <button>Recherche</button>
+                            <button className="cart-btn" onClick={() => setCartOpen(true)}>
+                                Panier <span className="cart-count">{cartCount}</span>
+                            </button>
+                        </div>
+                    </nav>
+
+                    {/* HERO */}
+                    <section className="hero">
+                        <div className="hero-text">
+                            <p className="hero-eyebrow">Soins naturels — Made in France</p>
+                            <h1 className="hero-title">La beauté<br />dans sa<br /><em>simplicité</em></h1>
+                            <p className="hero-sub">Des formules courtes, des ingrédients transparents, des résultats réels. Parce que votre peau mérite le meilleur — sans le superflu.</p>
+                            <div className="hero-ctas">
+                                <button className="btn-primary" onClick={() => setFilter('all')}>Découvrir les soins</button>
+                                <button className="btn-secondary" onClick={startQuiz}>Faire mon diagnostic</button>
                             </div>
-                            <div className="hero-badge">Vegan<br />&<br />Naturel</div>
                         </div>
-                    </div>
-                </section>
+                        <div className="hero-visual">
+                            <div className="hero-visual-inner">
+                                <div className="hero-product-visual">
+                                    <div className="hero-product-label">Sérum Acide<br />Hyaluronique</div>
+                                    <div className="product-mock-line"></div>
+                                    <div className="hero-product-pct">3%</div>
+                                </div>
+                                <div className="hero-badge">Vegan<br />&<br />Naturel</div>
+                            </div>
+                        </div>
+                    </section>
 
-                {/* TRUST */}
-                <div className="trust-bar">
-                    <div className="trust-item"><span className="trust-icon">🌿</span>100% Vegan</div>
-                    <div className="trust-item"><span className="trust-icon">🇫🇷</span>Made in France</div>
-                    <div className="trust-item"><span className="trust-icon">🔬</span>Formules courtes</div>
-                    <div className="trust-item"><span className="trust-icon">⭐</span>+50 000 avis</div>
-                </div>
+                    {/* TRUST */}
+                    <div className="trust-bar">
+                        <div className="trust-item"><span className="trust-icon">🌿</span>100% Vegan</div>
+                        <div className="trust-item"><span className="trust-icon">🇫🇷</span>Made in France</div>
+                        <div className="trust-item"><span className="trust-icon">🔬</span>Formules courtes</div>
+                        <div className="trust-item"><span className="trust-icon">⭐</span>+50 000 avis</div>
+                    </div>
 
-                {/* PRODUCTS */}
-                <section className="products-section">
-                    <div className="section-header">
-                        <p className="section-eyebrow">Nos formulations</p>
-                        <h2 className="section-title">Soins <em>essentiels</em></h2>
-                    </div>
-                    <div className="product-filters">
-                        {['all', 'visage', 'corps', 'cheveux', 'serum'].map(f => (
-                            <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>{f === 'all' ? 'Tous' : f}</button>
-                        ))}
-                    </div>
-                    <div className="products-grid">
-                        {PRODUCTS.filter(p => filter === 'all' || p.tag === filter || p.category === filter).map(p => (
-                            <div key={p.id} className="product-card" onClick={() => setModalProduct(p)}>
-                                <div className="product-img-wrap">
-                                    <div className="product-mock">
-                                        <div className="product-mock-label" dangerouslySetInnerHTML={{ __html: p.name.split(' ').slice(0, 2).join('<br>') }} />
-                                        <div className="product-mock-line"></div>
-                                        <div className="product-mock-pct">{p.pct || '♡'}</div>
+                    {/* PRODUCTS */}
+                    <section className="products-section">
+                        <div className="section-header">
+                            <p className="section-eyebrow">Nos formulations</p>
+                            <h2 className="section-title">Soins <em>essentiels</em></h2>
+                        </div>
+                        <div className="product-filters">
+                            {['all', 'visage', 'corps', 'cheveux', 'serum'].map(f => (
+                                <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>{f === 'all' ? 'Tous' : f}</button>
+                            ))}
+                        </div>
+                        <div className="products-grid">
+                            {PRODUCTS.filter(p => filter === 'all' || p.tag === filter || p.category === filter).map(p => (
+                                <div key={p.id} className="product-card" onClick={() => setModalProduct(p)}>
+                                    <div className="product-img-wrap">
+                                        <div className="product-mock">
+                                            <div className="product-mock-label" dangerouslySetInnerHTML={{ __html: p.name.split(' ').slice(0, 2).join('<br>') }} />
+                                            <div className="product-mock-line"></div>
+                                            <div className="product-mock-pct">{p.pct || '♡'}</div>
+                                        </div>
+                                        {p.badge && <span className={`product-badge ${p.badge}`}>{p.badge}</span>}
                                     </div>
-                                    {p.badge && <span className={`product-badge ${p.badge}`}>{p.badge}</span>}
-                                </div>
-                                <div className="product-info">
-                                    <div className="product-category">{p.label}</div>
-                                    <div className="product-name">{p.name}</div>
-                                    <div className="product-desc-short">{p.short}</div>
-                                    <div className="product-footer">
-                                        <span className="product-price">{p.price} €</span>
-                                        <button className="btn-add" onClick={(e) => addToCart(e, p)}>+ Ajouter</button>
+                                    <div className="product-info">
+                                        <div className="product-category">{p.label}</div>
+                                        <div className="product-name">{p.name}</div>
+                                        <div className="product-desc-short">{p.short}</div>
+                                        <div className="product-footer">
+                                            <span className="product-price">{p.price} €</span>
+                                            <button className="btn-add" onClick={(e) => addToCart(e, p)}>+ Ajouter</button>
+                                        </div>
                                     </div>
                                 </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* DIAGNOSTIC */}
+                    <section className="diagnostic" id="diagnostic">
+                        <div className="diagnostic-text">
+                            <p className="section-eyebrow">Diagnostic de peau</p>
+                            <h2 className="section-title" style={{ fontSize: 48 }}>Votre routine<br /><em>sur-mesure</em></h2>
+                            <p>En 3 questions simples, découvrez votre type de peau et obtenez une sélection de soins parfaitement adaptés.</p>
+                        </div>
+                        <div className="diagnostic-quiz">
+                            {!showQuizResult ? (
+                                <>
+                                    <div style={{ width: '100%', height: 2, background: 'rgba(255,255,255,0.1)', marginBottom: 32 }}>
+                                        <div style={{ width: `${quizStep * 33}%`, height: '100%', background: 'var(--amber)', transition: 'width 0.4s' }}></div>
+                                    </div>
+                                    {quizStep === 1 && (
+                                        <>
+                                            <div className="quiz-question" style={{ fontSize: 22, fontFamily: 'var(--font-serif)', marginBottom: 28 }}>Votre type de peau ?</div>
+                                            <div className="quiz-options">
+                                                {['Sèche', 'Grasse', 'Mixte', 'Sensible'].map(o => (
+                                                    <button key={o} className={`quiz-option ${quizAnswers[1] === o.toLowerCase() ? 'selected' : ''}`} onClick={() => handleQuizOption(1, o.toLowerCase())}>{o}</button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                    {quizStep === 2 && (
+                                        <>
+                                            <div className="quiz-question" style={{ fontSize: 22, fontFamily: 'var(--font-serif)', marginBottom: 28 }}>Votre préoccupation ?</div>
+                                            <div className="quiz-options">
+                                                {[{ l: 'Hydratation', v: 'hydratation' }, { l: 'Anti-âge', v: 'antiage' }, { l: 'Éclat', v: 'eclat' }, { l: 'Imperfections', v: 'imperfections' }].map(o => (
+                                                    <button key={o.v} className={`quiz-option ${quizAnswers[2] === o.v ? 'selected' : ''}`} onClick={() => handleQuizOption(2, o.v)}>{o.l}</button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                    {quizStep === 3 && (
+                                        <>
+                                            <div className="quiz-question" style={{ fontSize: 22, fontFamily: 'var(--font-serif)', marginBottom: 28 }}>Routine actuelle ?</div>
+                                            <div className="quiz-options">
+                                                {['Aucun soin', '1 à 2 soins', '3 à 5 soins'].map(o => (
+                                                    <button key={o} className={`quiz-option ${quizAnswers[3] === o ? 'selected' : ''}`} onClick={() => handleQuizOption(3, o)}>{o}</button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="quiz-result">
+                                    <div style={{ fontFamily: 'var(--font-serif)', fontSize: 28, marginBottom: 16 }}>Votre routine : {quizResult.type} & {quizResult.concern}</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                        {quizResult.products.map(p => (
+                                            <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', padding: 12, background: 'rgba(255,255,255,0.1)' }}>
+                                                <div>{p.name}</div>
+                                                <button onClick={(e) => addToCart(e, p)} style={{ textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.1em' }}>+ Ajouter</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button onClick={() => { setShowQuizResult(false); setQuizStep(1); }} style={{ marginTop: 24, textDecoration: 'underline', fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Recommencer</button>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* TESTIMONIALS */}
+                    <section className="testimonials" style={{ background: 'var(--black)', color: 'white', padding: '100px 80px' }}>
+                        <div className="section-header">
+                            <p className="section-eyebrow" style={{ color: 'var(--amber)' }}>Avis Clients</p>
+                            <h2 className="section-title">Ce qu'ils en <em>disent</em></h2>
+                        </div>
+                        <div style={{ display: 'flex', overflowX: 'auto', gap: 32, paddingBottom: 20 }}>
+                            {TESTIMONIALS.map((t, i) => (
+                                <div key={i} style={{ minWidth: 300, background: 'rgba(255,255,255,0.05)', padding: 32, border: '1px solid rgba(255,255,255,0.1)' }}>
+                                    <div style={{ color: 'var(--amber)', letterSpacing: 3, marginBottom: 16 }}>★★★★★</div>
+                                    <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 18, marginBottom: 20, lineHeight: 1.6, opacity: 0.9 }}>"{t.text}"</div>
+                                    <div style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.5 }}>{t.author}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* FOOTER */}
+                    <footer>
+                        <div style={{ padding: '80px', background: '#111', color: '#fff', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 40 }}>
+                            <div>
+                                <div className="nav-logo" style={{ color: '#fff', marginBottom: 20 }}>Naturel</div>
+                                <p style={{ fontSize: 13, opacity: 0.5, lineHeight: 1.8, maxWidth: 300 }}>Soins naturels, vegan et made in France. Des formules simples pour une peau en pleine santé.</p>
+                            </div>
+                            <div>
+                                <h4 style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.4, marginBottom: 24 }}>Soins</h4>
+                                <ul style={{ listStyle: 'none', fontSize: 13, opacity: 0.7, lineHeight: 2 }}>
+                                    <li>Visage</li>
+                                    <li>Corps</li>
+                                    <li>Cheveux</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.4, marginBottom: 24 }}>Aide</h4>
+                                <ul style={{ listStyle: 'none', fontSize: 13, opacity: 0.7, lineHeight: 2 }}>
+                                    <li>FAQ</li>
+                                    <li>Livraison</li>
+                                    <li>Contact</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+                {/* CART DRAWER */}
+                <div className={`cart-overlay ${cartOpen ? 'open' : ''}`} onClick={() => setCartOpen(false)} />
+                <div className={`cart-sidebar ${cartOpen ? 'open' : ''}`}>
+                    <div className="cart-header">
+                        <h3>Mon panier</h3>
+                        <button className="cart-close" onClick={() => setCartOpen(false)}>×</button>
+                    </div>
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
+                        {cart.map(item => (
+                            <div key={item.id} className="cart-item">
+                                <div className="cart-item-img"><div style={{ width: 30, height: 50, background: '#e8ddd0' }}></div></div>
+                                <div className="cart-item-info">
+                                    <div className="cart-item-name">{item.name}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
+                                        <button className="qty-btn" onClick={() => changeQty(item.id, -1)}>−</button>
+                                        <span style={{ width: 30, textAlign: 'center' }}>{item.qty}</span>
+                                        <button className="qty-btn" onClick={() => changeQty(item.id, 1)}>+</button>
+                                    </div>
+                                </div>
+                                <div className="cart-item-price">{(item.price * item.qty).toFixed(2)} €</div>
                             </div>
                         ))}
+                        {cart.length === 0 && <div style={{ textAlign: 'center', marginTop: 60, opacity: 0.5 }}>Votre panier est vide</div>}
                     </div>
-                </section>
-
-                {/* DIAGNOSTIC */}
-                <section className="diagnostic" id="diagnostic">
-                    <div className="diagnostic-text">
-                        <p className="section-eyebrow">Diagnostic de peau</p>
-                        <h2 className="section-title" style={{ fontSize: 48 }}>Votre routine<br /><em>sur-mesure</em></h2>
-                        <p>En 3 questions simples, découvrez votre type de peau et obtenez une sélection de soins parfaitement adaptés.</p>
-                    </div>
-                    <div className="diagnostic-quiz">
-                        {!showQuizResult ? (
-                            <>
-                                <div style={{ width: '100%', height: 2, background: 'rgba(255,255,255,0.1)', marginBottom: 32 }}>
-                                    <div style={{ width: `${quizStep * 33}%`, height: '100%', background: 'var(--amber)', transition: 'width 0.4s' }}></div>
-                                </div>
-                                {quizStep === 1 && (
-                                    <>
-                                        <div className="quiz-question" style={{ fontSize: 22, fontFamily: 'var(--font-serif)', marginBottom: 28 }}>Votre type de peau ?</div>
-                                        <div className="quiz-options">
-                                            {['Sèche', 'Grasse', 'Mixte', 'Sensible'].map(o => (
-                                                <button key={o} className={`quiz-option ${quizAnswers[1] === o.toLowerCase() ? 'selected' : ''}`} onClick={() => handleQuizOption(1, o.toLowerCase())}>{o}</button>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                                {quizStep === 2 && (
-                                    <>
-                                        <div className="quiz-question" style={{ fontSize: 22, fontFamily: 'var(--font-serif)', marginBottom: 28 }}>Votre préoccupation ?</div>
-                                        <div className="quiz-options">
-                                            {[{ l: 'Hydratation', v: 'hydratation' }, { l: 'Anti-âge', v: 'antiage' }, { l: 'Éclat', v: 'eclat' }, { l: 'Imperfections', v: 'imperfections' }].map(o => (
-                                                <button key={o.v} className={`quiz-option ${quizAnswers[2] === o.v ? 'selected' : ''}`} onClick={() => handleQuizOption(2, o.v)}>{o.l}</button>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                                {quizStep === 3 && (
-                                    <>
-                                        <div className="quiz-question" style={{ fontSize: 22, fontFamily: 'var(--font-serif)', marginBottom: 28 }}>Routine actuelle ?</div>
-                                        <div className="quiz-options">
-                                            {['Aucun soin', '1 à 2 soins', '3 à 5 soins'].map(o => (
-                                                <button key={o} className={`quiz-option ${quizAnswers[3] === o ? 'selected' : ''}`} onClick={() => handleQuizOption(3, o)}>{o}</button>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                            </>
-                        ) : (
-                            <div className="quiz-result">
-                                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 28, marginBottom: 16 }}>Votre routine : {quizResult.type} & {quizResult.concern}</div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                    {quizResult.products.map(p => (
-                                        <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', padding: 12, background: 'rgba(255,255,255,0.1)' }}>
-                                            <div>{p.name}</div>
-                                            <button onClick={(e) => addToCart(e, p)} style={{ textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.1em' }}>+ Ajouter</button>
-                                        </div>
-                                    ))}
-                                </div>
-                                <button onClick={() => { setShowQuizResult(false); setQuizStep(1); }} style={{ marginTop: 24, textDecoration: 'underline', fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Recommencer</button>
-                            </div>
-                        )}
-                    </div>
-                </section>
-
-                {/* TESTIMONIALS */}
-                <section className="testimonials" style={{ background: 'var(--black)', color: 'white', padding: '100px 80px' }}>
-                    <div className="section-header">
-                        <p className="section-eyebrow" style={{ color: 'var(--amber)' }}>Avis Clients</p>
-                        <h2 className="section-title">Ce qu'ils en <em>disent</em></h2>
-                    </div>
-                    <div style={{ display: 'flex', overflowX: 'auto', gap: 32, paddingBottom: 20 }}>
-                        {TESTIMONIALS.map((t, i) => (
-                            <div key={i} style={{ minWidth: 300, background: 'rgba(255,255,255,0.05)', padding: 32, border: '1px solid rgba(255,255,255,0.1)' }}>
-                                <div style={{ color: 'var(--amber)', letterSpacing: 3, marginBottom: 16 }}>★★★★★</div>
-                                <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 18, marginBottom: 20, lineHeight: 1.6, opacity: 0.9 }}>"{t.text}"</div>
-                                <div style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.5 }}>{t.author}</div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* FOOTER */}
-                <footer>
-                    <div style={{ padding: '80px', background: '#111', color: '#fff', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 40 }}>
-                        <div>
-                            <div className="nav-logo" style={{ color: '#fff', marginBottom: 20 }}>Naturel</div>
-                            <p style={{ fontSize: 13, opacity: 0.5, lineHeight: 1.8, maxWidth: 300 }}>Soins naturels, vegan et made in France. Des formules simples pour une peau en pleine santé.</p>
+                    <div style={{ padding: '24px 32px', borderTop: '1px solid #eee' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20, fontWeight: 500 }}>
+                            <span>Total</span>
+                            <span>{cartTotal.toFixed(2)} €</span>
                         </div>
-                        <div>
-                            <h4 style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.4, marginBottom: 24 }}>Soins</h4>
-                            <ul style={{ listStyle: 'none', fontSize: 13, opacity: 0.7, lineHeight: 2 }}>
-                                <li>Visage</li>
-                                <li>Corps</li>
-                                <li>Cheveux</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.4, marginBottom: 24 }}>Aide</h4>
-                            <ul style={{ listStyle: 'none', fontSize: 13, opacity: 0.7, lineHeight: 2 }}>
-                                <li>FAQ</li>
-                                <li>Livraison</li>
-                                <li>Contact</li>
-                            </ul>
-                        </div>
+                        <button style={{ width: '100%', background: 'var(--black)', color: 'white', padding: 16, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Commander</button>
                     </div>
-                </footer>
-            </div>
-
-            {/* CART DRAWER */}
-            <div className={`cart-overlay ${cartOpen ? 'open' : ''}`} onClick={() => setCartOpen(false)} />
-            <div className={`cart-sidebar ${cartOpen ? 'open' : ''}`}>
-                <div className="cart-header">
-                    <h3>Mon panier</h3>
-                    <button className="cart-close" onClick={() => setCartOpen(false)}>×</button>
                 </div>
-                <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
-                    {cart.map(item => (
-                        <div key={item.id} className="cart-item">
-                            <div className="cart-item-img"><div style={{ width: 30, height: 50, background: '#e8ddd0' }}></div></div>
-                            <div className="cart-item-info">
-                                <div className="cart-item-name">{item.name}</div>
-                                <div style={{ display: 'flex', alignItems: 'center', marginTop: 8 }}>
-                                    <button className="qty-btn" onClick={() => changeQty(item.id, -1)}>−</button>
-                                    <span style={{ width: 30, textAlign: 'center' }}>{item.qty}</span>
-                                    <button className="qty-btn" onClick={() => changeQty(item.id, 1)}>+</button>
+
+                {/* PRODUCT MODAL */}
+                <div className={`modal-overlay ${modalProduct ? 'open' : ''}`} onClick={() => setModalProduct(null)}>
+                    {modalProduct && (
+                        <div className="modal" onClick={e => e.stopPropagation()}>
+                            <div className="modal-img">
+                                <div className="product-mock" style={{ width: 100, height: 180, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
+                                    <div className="product-mock-label">{modalProduct.name}</div>
+                                    <div className="product-mock-line"></div>
+                                    <div className="product-mock-pct">{modalProduct.pct}</div>
                                 </div>
                             </div>
-                            <div className="cart-item-price">{(item.price * item.qty).toFixed(2)} €</div>
-                        </div>
-                    ))}
-                    {cart.length === 0 && <div style={{ textAlign: 'center', marginTop: 60, opacity: 0.5 }}>Votre panier est vide</div>}
-                </div>
-                <div style={{ padding: '24px 32px', borderTop: '1px solid #eee' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20, fontWeight: 500 }}>
-                        <span>Total</span>
-                        <span>{cartTotal.toFixed(2)} €</span>
-                    </div>
-                    <button style={{ width: '100%', background: 'var(--black)', color: 'white', padding: 16, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Commander</button>
-                </div>
-            </div>
-
-            {/* PRODUCT MODAL */}
-            <div className={`modal-overlay ${modalProduct ? 'open' : ''}`} onClick={() => setModalProduct(null)}>
-                {modalProduct && (
-                    <div className="modal" onClick={e => e.stopPropagation()}>
-                        <div className="modal-img">
-                            <div className="product-mock" style={{ width: 100, height: 180, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
-                                <div className="product-mock-label">{modalProduct.name}</div>
-                                <div className="product-mock-line"></div>
-                                <div className="product-mock-pct">{modalProduct.pct}</div>
-                            </div>
-                        </div>
-                        <div className="modal-content">
-                            <button className="modal-close" onClick={() => setModalProduct(null)} style={{ float: 'right' }}>×</button>
-                            <div className="modal-category">{modalProduct.label}</div>
-                            <div className="modal-name">{modalProduct.name}</div>
-                            <div className="modal-tagline" style={{ marginBottom: 24, color: '#666' }}>{modalProduct.short}</div>
-                            <div className="modal-price" style={{ fontSize: 24, fontWeight: 500, marginBottom: 32 }}>{modalProduct.price} €</div>
-                            <div style={{ marginBottom: 32 }}>
-                                <h4 style={{ fontSize: 11, textTransform: 'uppercase', color: '#999', marginBottom: 12 }}>Ingrédients</h4>
-                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                    {modalProduct.ingredients.map(i => <span key={i} style={{ border: '1px solid #eee', padding: '4px 12px', fontSize: 11 }}>{i}</span>)}
+                            <div className="modal-content">
+                                <button className="modal-close" onClick={() => setModalProduct(null)} style={{ float: 'right' }}>×</button>
+                                <div className="modal-category">{modalProduct.label}</div>
+                                <div className="modal-name">{modalProduct.name}</div>
+                                <div className="modal-tagline" style={{ marginBottom: 24, color: '#666' }}>{modalProduct.short}</div>
+                                <div className="modal-price" style={{ fontSize: 24, fontWeight: 500, marginBottom: 32 }}>{modalProduct.price} €</div>
+                                <div style={{ marginBottom: 32 }}>
+                                    <h4 style={{ fontSize: 11, textTransform: 'uppercase', color: '#999', marginBottom: 12 }}>Ingrédients</h4>
+                                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                        {modalProduct.ingredients.map(i => <span key={i} style={{ border: '1px solid #eee', padding: '4px 12px', fontSize: 11 }}>{i}</span>)}
+                                    </div>
                                 </div>
+                                <button className="btn-primary" style={{ width: '100%' }} onClick={(e) => addToCart(e, modalProduct)}>Ajouter au panier</button>
                             </div>
-                            <button className="btn-primary" style={{ width: '100%' }} onClick={(e) => addToCart(e, modalProduct)}>Ajouter au panier</button>
                         </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
 
-            {/* CHATBOT INTEGRATION */}
-            <div style={{ position: 'absolute', bottom: 30, right: 30, zIndex: 900 }}>
-                <DemoChatStore context={{
-                    storeType: "Naturel (Site de Test)",
-                    cartCount: cartCount,
-                    cartTotal: cartTotal,
-                    page: "home",
-                    cartOpen: cartOpen,
-                    knowledgeBase: NATUREL_DATA
-                }} />
+                {/* CHATBOT INTEGRATION - moved outside naturel-demo to avoid overflow:hidden clipping */}
             </div>
-        </div>
+            <DemoChatStore context={{
+                storeType: "Naturel (Site de Test)",
+                cartCount: cartCount,
+                cartTotal: cartTotal,
+                page: "home",
+                cartOpen: cartOpen,
+                knowledgeBase: NATUREL_DATA
+            }} />
+        </>
     )
 }

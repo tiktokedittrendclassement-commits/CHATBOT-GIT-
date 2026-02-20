@@ -7,20 +7,15 @@ export default function DemoChatStore({ context }) {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState(() => {
         if (context?.knowledgeBase) {
-            // Check for specific persona name in system prompt or fallback
             return [{ role: 'assistant', content: `Salut ! Je suis Léa 🌿 Tu cherches le bon soin ou tu as une question sur ta commande ?` }]
         }
         return [{ role: 'assistant', content: 'Bienvenue chez V-ATHLETICS. Je suis votre coach personnel Vendo. En quoi puis-je vous aider aujourd\'hui ?' }]
     })
 
-
     const [input, setInput] = useState('')
     const [isTyping, setIsTyping] = useState(false)
-
-    // UseRef for the container to control scroll directly
     const messagesContainerRef = useRef(null)
 
-    // Scroll to bottom helper
     const scrollToBottom = () => {
         if (messagesContainerRef.current) {
             const { scrollHeight, clientHeight } = messagesContainerRef.current
@@ -28,38 +23,24 @@ export default function DemoChatStore({ context }) {
         }
     }
 
-    // Effect to handle view/context changes
     useEffect(() => {
         if (!context) return;
-
         let proactiveMsg = "";
-
         if (context.view === 'cart' && context.cart?.length > 0) {
-            proactiveMsg = `Vous avez une excellente sélection dans votre panier. Le total est de ${context.total.toFixed(2)} €. Souhaitez-vous finaliser votre commande ou avez-vous besoin d'un conseil sur l'un des articles ?`;
+            proactiveMsg = `Vous avez une excellente sélection dans votre panier. Le total est de ${context.total?.toFixed(2)} €. Souhaitez-vous finaliser votre commande ?`;
         } else if (context.view === 'checkout') {
-            proactiveMsg = `Vous êtes à l'étape finale. N'oubliez pas que la livraison est offerte pour cette collection. Une question sur les délais ?`;
-        } else if (context.view === 'faq') {
-            proactiveMsg = `Besoin d'aide ? Je connais toutes nos procédures d'expédition et de retour sur le bout des doigts. Qu'est-ce qui vous tracasse ?`;
+            proactiveMsg = `Vous êtes à l'étape finale. N'oubliez pas que la livraison est offerte. Une question sur les délais ?`;
         } else if (context.product) {
-            const p = context.product;
-            if (p.category === "Outerwear") {
-                proactiveMsg = `Le ${p.name} est une pièce maîtresse. La laine vierge est traitée pour durer des décennies. Une question sur la coupe ?`;
-            } else {
-                proactiveMsg = `Vous regardez le ${p.name}. C'est l'un de nos articles les plus recherchés en ce moment.`;
-            }
+            proactiveMsg = `Vous regardez le ${context.product.name}. C'est l'un de nos articles les plus recherchés en ce moment.`;
         }
-
         if (proactiveMsg) {
             setIsOpen(true);
             setMessages(prev => [...prev, { role: 'assistant', content: proactiveMsg }]);
         }
     }, [context?.view, context?.product?.id])
 
-    // Effect to scroll on messages change or typing
     useEffect(() => {
-        // Immediate scroll
         scrollToBottom()
-        // Delayed scroll for safe measure (images, rendering)
         const timeout = setTimeout(scrollToBottom, 50)
         return () => clearTimeout(timeout)
     }, [messages.length, isOpen, isTyping])
@@ -76,7 +57,6 @@ export default function DemoChatStore({ context }) {
         setIsTyping(true)
 
         try {
-            // Prepare messages for API
             let apiMessages = [...newMessages]
 
             if (context || context?.knowledgeBase) {
@@ -84,13 +64,8 @@ export default function DemoChatStore({ context }) {
                 const kb = context?.knowledgeBase
 
                 if (kb && kb.system_prompt) {
-                    // USE CUSTOM SYSTEM PROMPT
                     systemContext = kb.system_prompt
-
-                    // APPEND CONTEXT & DATA
-                    systemContext += `\n\n--- DONNÉES DU SITE (SOURCE DE VÉRITÉ) ---\n`
-
-                    // We re-inject the data so the LLM actually has the info the prompt refers to
+                    systemContext += `\n\n--- DONNÉES DU SITE ---\n`
                     systemContext += `
 BRAND IDENTITY:
 Name: ${kb.brand.name}
@@ -104,54 +79,19 @@ Shipping: Free > ${kb.shipping.free_shipping_threshold}€. Carriers: ${kb.shipp
 Returns: ${kb.returns.return_window_days} days.
 FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
 `
-
-                    // APPEND CURRENT USER CONTEXT
-                    systemContext += `\n\n--- CONTEXTE UTILISATEUR ACTUEL ---\nExample: User is on ${context?.view || 'home'}. Cart: ${context?.cartTotal?.toFixed(2) || '0'}€. Viewed Product: ${context?.product?.name || 'None'}.`
-
+                    systemContext += `\n\n--- CONTEXTE UTILISATEUR ---\nPage: ${context?.view || 'home'}. Panier: ${context?.cartTotal?.toFixed(2) || '0'}€.`
                 } else {
-                    // FALLBACK LEGACY GENERATION
-                    systemContext = `CONTEXT IMMERSION: User is on ${context?.storeType || 'V-ATHLETICS'}. 
-Current View: ${context?.view || 'home'}.
-Cart Contents: ${context?.cart?.map(i => i.name).join(', ') || 'Empty'}.
-Cart Total: ${context?.cartTotal?.toFixed(2) || '0.00'} €.
-`;
-
-                    if (context?.knowledgeBase) {
-                        systemContext += `\nBRAND IDENTITY: ... (Legacy generation) ...`
-                        // (Simplified for brevity as this branch is for non-custom prompts)
-                        const kb = context.knowledgeBase
-                        systemContext += `
-BRAND IDENTITY:
-Name: ${kb.brand.name}
-Slogan: ${kb.brand.slogan}
-
-PRODUCTS KNOWLEDGE:
-${kb.products.map(p => `- ${p.name} (${p.price}€): ${p.short_description}.`).join('\n')}
-
-SUPPORT POLICIES:
-Shipping: Free > ${kb.shipping.free_shipping_threshold}€.
-Returns: ${kb.returns.return_window_days} days.
-`
-                    } else {
-                        systemContext += `
-KNOWLEDGE BASE:
-- Livraison: 24h.
-- Contact: Support privé.`;
+                    systemContext = `CONTEXT: User is on ${context?.storeType || 'V-ATHLETICS'}. View: ${context?.view || 'home'}. Cart Total: ${context?.cartTotal?.toFixed(2) || '0.00'} €.`
+                    if (kb) {
+                        systemContext += `\nBRAND: ${kb.brand.name}\nPRODUCTS:\n${kb.products.map(p => `- ${p.name} (${p.price}€): ${p.short_description}.`).join('\n')}\nShipping: Free > ${kb.shipping.free_shipping_threshold}€. Returns: ${kb.returns.return_window_days} days.`
                     }
-
                     if (context?.product) {
-                        systemContext += `\nCurrently viewing: ${context.product.name} (${context.product.price} €).`;
+                        systemContext += `\nCurrently viewing: ${context.product.name} (${context.product.price} €).`
                     }
                     systemContext += `\nROLE: You are the expert consultant.`
                 }
 
-                apiMessages = [
-                    {
-                        role: 'system',
-                        content: systemContext
-                    },
-                    ...apiMessages
-                ]
+                apiMessages = [{ role: 'system', content: systemContext }, ...apiMessages]
             }
 
             const response = await fetch('/api/chat', {
@@ -159,13 +99,12 @@ KNOWLEDGE BASE:
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: apiMessages,
-                    chatbotId: 'DEMO', // Special ID for landing page demo
+                    chatbotId: 'DEMO',
                     visitorId: 'demo-visitor-' + Math.random().toString(36).substr(2, 9)
                 })
             })
 
             if (!response.ok) throw new Error('Network response was not ok');
-
             const data = await response.json()
 
             if (data.content) {
@@ -182,46 +121,41 @@ KNOWLEDGE BASE:
         }
     }
 
+    const brandColor = '#c8a882'
+    const brandColorDark = '#a88b68'
+    const brandName = context?.knowledgeBase?.brand?.name || 'Naturel'
+
     return (
-        <div style={{ fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ fontFamily: "'Inter', sans-serif", position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 900 }}>
 
             {/* Toggle Button */}
             {!isOpen && (
                 <div
                     className="demo-chat-toggle"
-                    style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 900 }}
+                    style={{ position: 'absolute', bottom: 30, right: 30, zIndex: 900, pointerEvents: 'auto' }}
                 >
                     <button
                         onClick={() => setIsOpen(true)}
                         style={{
                             width: 64,
                             height: 64,
-                            borderRadius: 20,
-                            background: context?.knowledgeBase ? 'linear-gradient(135deg, #c8a882 0%, #a88b68 100%)' : 'linear-gradient(135deg, #000 0%, #333 100%)',
+                            borderRadius: '20px',
+                            background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColorDark} 100%)`,
                             color: 'white',
                             border: 'none',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                            boxShadow: `0 20px 40px rgba(200, 168, 130, 0.4)`,
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                            position: 'relative',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
                     >
-                        <div style={{ position: 'relative', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 16 }}>
-                            {context?.knowledgeBase?.brand?.logo_url === 'ICON:BOT' ? (
-                                <Bot size={32} />
-                            ) : context?.knowledgeBase?.brand?.logo_url && (context.knowledgeBase.brand.logo_url.startsWith('http') || context.knowledgeBase.brand.logo_url.startsWith('/') || context.knowledgeBase.brand.logo_url.startsWith('data:')) ? (
-                                <img src={context.knowledgeBase.brand.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
-                            ) : (
-                                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24 }}>
-                                    {context?.knowledgeBase?.brand?.logo_url || context?.knowledgeBase?.brand?.name?.charAt(0) || 'V'}
-                                </span>
-                            )}
-                            <div style={{ position: 'absolute', top: -4, right: -4, width: 10, height: 10, background: '#22C55E', borderRadius: '50%', border: '2px solid #000' }}></div>
-                        </div>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: 'white', lineHeight: 1 }}>N</span>
+                        <div style={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, background: '#10B981', borderRadius: '50%' }}></div>
                     </button>
                 </div>
             )}
@@ -231,139 +165,230 @@ KNOWLEDGE BASE:
                 <div
                     className="demo-chat-window"
                     style={{
-                        position: 'fixed',
+                        position: 'absolute',
                         bottom: 30,
                         right: 30,
-                        width: 380,
-                        height: 580,
-                        background: 'white',
-                        borderRadius: 24,
-                        boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+                        width: 400,
+                        height: 600,
+                        zIndex: 1000,
+                        background: '#FFFFFF',
+                        borderRadius: 28,
+                        boxShadow: '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
                         display: 'flex',
                         flexDirection: 'column',
                         overflow: 'hidden',
-                        border: '1px solid #f1f5f9',
-                        animation: 'slideUp 0.4s cubic-bezier(0.2, 1, 0.3, 1)',
+                        animation: 'demoSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                         transformOrigin: 'bottom right',
-                        zIndex: 1000
+                        pointerEvents: 'auto'
                     }}
                 >
                     {/* Header */}
-                    <div style={{ background: '#000', padding: '24px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ background: context?.knowledgeBase ? 'linear-gradient(135deg, #c8a882 0%, #a88b68 100%)' : 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)', padding: 0, borderRadius: 12, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, overflow: 'hidden', fontSize: 20, fontWeight: 'bold' }}>
-                                    <Bot size={24} />
-                                </div>
-                                <div style={{ position: 'absolute', bottom: -4, right: -4, width: 14, height: 14, background: '#22C55E', borderRadius: '50%', border: '3px solid #000' }}></div>
+                    <div style={{
+                        background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColorDark} 100%)`,
+                        padding: '24px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 14, position: 'relative', zIndex: 1 }}>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.2)',
+                                backdropFilter: 'blur(10px)',
+                                width: 44,
+                                height: 44,
+                                borderRadius: 14,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                border: '1px solid rgba(255,255,255,0.3)'
+                            }}>
+                                <Bot size={22} />
                             </div>
                             <div>
-                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.5px' }}>{context?.knowledgeBase ? `Conseiller ${context.knowledgeBase.brand.name}` : 'Coach Vendo'}</div>
-                                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{context?.knowledgeBase ? 'Assistant Expert' : 'V-ATHLETICS Assistant'}</div>
+                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>Conseiller {brandName}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%', boxShadow: '0 0 10px #10B981' }}></div>
+                                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Assistant Expert Connecté</span>
+                                </div>
                             </div>
                         </div>
-                        <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: 10, borderRadius: 12, transition: 'all 0.2s' }}>
-                            <X size={20} />
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            style={{
+                                background: 'rgba(255,255,255,0.15)',
+                                border: 'none',
+                                color: '#fff',
+                                cursor: 'pointer',
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s',
+                                zIndex: 2
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+                        >
+                            <X size={16} />
                         </button>
                     </div>
 
-                    {/* Messages Area */}
+                    {/* Messages */}
                     <div
                         ref={messagesContainerRef}
-                        style={{ flex: 1, padding: '24px', overflowY: 'auto', background: '#fff', display: 'flex', flexDirection: 'column', gap: 20 }}
+                        style={{
+                            flex: 1,
+                            padding: '24px',
+                            overflowY: 'auto',
+                            background: '#F8FAFC',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 20,
+                            scrollBehavior: 'smooth'
+                        }}
                     >
                         {messages.map((msg, idx) => (
                             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                                <div style={{ display: 'flex', gap: 12, flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', maxWidth: '90%' }}>
-                                    {msg.role === 'assistant' && (
-                                        <div style={{ width: 32, height: 32, borderRadius: 10, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', flexShrink: 0, marginTop: 4, overflow: 'hidden', fontWeight: 'bold', fontSize: 14 }}>
-                                            <Bot size={18} />
-                                        </div>
-                                    )}
-                                    {msg.content && (
-                                        <div style={{
-                                            padding: '14px 18px',
-                                            borderRadius: 18,
-                                            fontSize: 14,
-                                            lineHeight: '1.6',
-                                            color: msg.role === 'user' ? '#fff' : '#1f2937',
-                                            background: msg.role === 'user' ? (context?.knowledgeBase ? '#c8a882' : '#000') : '#f3f4f6',
-                                            boxShadow: msg.role === 'user' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
-                                            borderTopLeftRadius: msg.role === 'assistant' ? 4 : 18,
-                                            borderTopRightRadius: msg.role === 'user' ? 4 : 18,
-                                            whiteSpace: 'pre-wrap',
-                                            fontWeight: 500,
-                                            border: 'none'
-                                        }}>
-                                            {msg.content}
-                                        </div>
-                                    )}
+                                <div style={{
+                                    maxWidth: '85%',
+                                    padding: '14px 18px',
+                                    borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                                    fontSize: 14.5,
+                                    lineHeight: '1.6',
+                                    color: msg.role === 'user' ? '#fff' : '#1E293B',
+                                    background: msg.role === 'user' ? brandColor : '#FFFFFF',
+                                    boxShadow: msg.role === 'user' ? `0 8px 16px rgba(200,168,130,0.25)` : '0 2px 8px rgba(0,0,0,0.04)',
+                                    border: msg.role === 'assistant' ? '1px solid rgba(0,0,0,0.03)' : 'none',
+                                    whiteSpace: 'pre-wrap',
+                                    fontWeight: 500
+                                }}>
+                                    {msg.content}
                                 </div>
                             </div>
                         ))}
                         {isTyping && (
-                            <div style={{ display: 'flex', gap: 8 }}>
-                                <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#673DE6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
-                                    <Bot size={14} />
-                                </div>
-                                <div style={{ background: 'white', padding: '12px 16px', borderRadius: 12, borderTopLeftRadius: 4, boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                                    <div style={{ display: 'flex', gap: 4 }}>
-                                        <div style={{ width: 5, height: 5, background: '#cbd5e1', borderRadius: '50%', animation: 'bounce 1s infinite 0ms' }}></div>
-                                        <div style={{ width: 5, height: 5, background: '#cbd5e1', borderRadius: '50%', animation: 'bounce 1s infinite 200ms' }}></div>
-                                        <div style={{ width: 5, height: 5, background: '#cbd5e1', borderRadius: '50%', animation: 'bounce 1s infinite 400ms' }}></div>
-                                    </div>
-                                </div>
+                            <div style={{ display: 'flex', gap: 6, paddingLeft: 8 }}>
+                                <div style={{ width: 8, height: 8, background: '#CED4DA', borderRadius: '50%', animation: 'demoBounce 1.4s infinite 0ms' }}></div>
+                                <div style={{ width: 8, height: 8, background: '#CED4DA', borderRadius: '50%', animation: 'demoBounce 1.4s infinite 200ms' }}></div>
+                                <div style={{ width: 8, height: 8, background: '#CED4DA', borderRadius: '50%', animation: 'demoBounce 1.4s infinite 400ms' }}></div>
                             </div>
                         )}
-                        {/* No more messagesEndRef needed, we scroll the container */}
                     </div>
 
-                    {/* Input Area */}
-                    <form onSubmit={handleSend} style={{ padding: 20, background: 'white', borderTop: '1px solid #F1F5F9', display: 'flex', gap: 12 }}>
-                        <input
-                            value={input}
-                            onChange={e => setInput(e.target.value)}
-                            placeholder="Posez votre question..."
-                            style={{
-                                flex: 1,
+                    {/* Quick Actions */}
+                    <div style={{ padding: '0 24px 12px', background: '#F8FAFC', display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none' }}>
+                        {['Soins visage', 'Ma commande', 'Ingrédients', 'Diagnostic'].map(label => (
+                            <button key={label} style={{
+                                flexShrink: 0,
+                                padding: '8px 14px',
+                                background: '#FFFFFF',
                                 border: '1px solid #E2E8F0',
-                                borderRadius: 16,
-                                padding: '12px 18px',
-                                fontSize: 15,
-                                outline: 'none',
-                                background: '#F8FAFC',
-                                color: '#0F172A',
-                                fontWeight: 500,
-                                transition: 'all 0.2s'
+                                borderRadius: '12px',
+                                fontSize: 12,
+                                fontWeight: 700,
+                                color: '#334155',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
                             }}
-                        />
-                        <button type="submit" style={{ background: context?.knowledgeBase ? '#c8a882' : '#000', color: '#fff', width: 48, height: 48, borderRadius: 0, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.2)', transition: 'all 0.2s' }}>
+                                onClick={() => setInput(label)}
+                                onMouseEnter={e => { e.currentTarget.style.borderColor = brandColor; e.currentTarget.style.color = brandColorDark; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#334155'; }}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Input */}
+                    <form onSubmit={handleSend} style={{
+                        padding: '20px 24px 30px',
+                        background: '#FFFFFF',
+                        borderTop: '1px solid #F1F5F9',
+                        display: 'flex',
+                        gap: 12,
+                        alignItems: 'center'
+                    }}>
+                        <div style={{ flex: 1, position: 'relative' }}>
+                            <input
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                placeholder="Posez votre question..."
+                                style={{
+                                    width: '100%',
+                                    border: '1.5px solid #F1F5F9',
+                                    borderRadius: '16px',
+                                    padding: '14px 18px',
+                                    fontSize: 14,
+                                    outline: 'none',
+                                    background: '#F8FAFC',
+                                    transition: 'all 0.3s',
+                                    fontWeight: 500,
+                                    color: '#1E293B'
+                                }}
+                                onFocus={e => {
+                                    e.currentTarget.style.border = `1.5px solid ${brandColor}`
+                                    e.currentTarget.style.background = '#FFFFFF'
+                                    e.currentTarget.style.boxShadow = `0 0 0 4px rgba(200,168,130,0.15)`
+                                }}
+                                onBlur={e => {
+                                    e.currentTarget.style.border = '1.5px solid #F1F5F9'
+                                    e.currentTarget.style.background = '#F8FAFC'
+                                    e.currentTarget.style.boxShadow = 'none'
+                                }}
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            style={{
+                                background: brandColor,
+                                color: '#fff',
+                                width: 48,
+                                height: 48,
+                                borderRadius: '14px',
+                                border: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                boxShadow: `0 8px 16px rgba(200,168,130,0.3)`
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = brandColorDark}
+                            onMouseLeave={e => e.currentTarget.style.background = brandColor}
+                        >
                             <Send size={20} />
                         </button>
                     </form>
                 </div>
-            )
-            }
+            )}
+
             <style jsx global>{`
-                @keyframes slideUp {
-                    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+                @keyframes demoSlideIn {
+                    from { opacity: 0; transform: translateY(30px) scale(0.9); }
                     to { opacity: 1; transform: translateY(0) scale(1); }
                 }
-                @keyframes bounce {
+                @keyframes demoBounce {
                     0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-4px); }
+                    50% { transform: translateY(-6px); }
                 }
                 @media (max-width: 768px) {
                     .demo-chat-window {
-                        width: calc(100vw - 32px) !important;
-                        height: calc(100vh - 80px) !important;
-                        bottom: 16px !important;
-                        right: 16px !important;
+                        width: calc(100vw - 24px) !important;
+                        height: calc(100vh - 24px) !important;
+                        bottom: 12px !important;
+                        right: 12px !important;
                         border-radius: 20px !important;
                     }
                     .demo-chat-toggle {
-                        bottom: 16px !important;
-                        right: 16px !important;
+                        bottom: 20px !important;
+                        right: 20px !important;
                     }
                 }
             `}</style>

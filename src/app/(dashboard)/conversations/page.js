@@ -3,10 +3,9 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/components/auth-provider' // Assumed existing hook
-import styles from './page.module.css'
+import { useAuth } from '@/components/auth-provider'
 import Link from 'next/link'
-import { MessageSquare, Calendar } from 'lucide-react'
+import { MessageSquare, Calendar, ChevronRight, Bot } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
 export default function ConversationsPage() {
@@ -18,10 +17,9 @@ export default function ConversationsPage() {
         if (!user) return
 
         const fetchConversations = async () => {
-            // Get IDs of my chatbots
             const { data: myBots } = await supabase
                 .from('chatbots')
-                .select('id, name')
+                .select('id, name, color')
                 .eq('user_id', user.id)
 
             if (!myBots?.length) {
@@ -30,16 +28,11 @@ export default function ConversationsPage() {
             }
 
             const botIds = myBots.map(b => b.id)
+            const botMap = Object.fromEntries(myBots.map(b => [b.id, b]))
 
-            // Fetch conversations for these bots
             const { data } = await supabase
                 .from('conversations')
-                .select(`
-          id, 
-          created_at, 
-          visitor_id,
-          chatbots ( name )
-        `)
+                .select(`id, created_at, visitor_id, chatbot_id, chatbots ( name, color )`)
                 .in('chatbot_id', botIds)
                 .order('created_at', { ascending: false })
 
@@ -50,47 +43,109 @@ export default function ConversationsPage() {
         fetchConversations()
     }, [user])
 
-    if (loading) return <div className={styles.loading}>Chargement des conversations...</div>
+    if (loading) return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', fontFamily: 'Inter, sans-serif', color: '#94A3B8', fontSize: 15 }}>
+            Chargement des conversations...
+        </div>
+    )
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <div>
-                    <h1 className={styles.heading}>Conversations</h1>
-                    <p className={styles.subheading}>Suivez les échanges avec vos visiteurs</p>
-                </div>
+        <div style={{ fontFamily: "'Inter', sans-serif", maxWidth: 800, margin: '0 auto', padding: '40px 24px' }}>
+            <style>{`
+                .conv-item:hover { background: #F8FAFC !important; transform: translateX(4px); }
+                .conv-item { transition: all 0.2s ease; }
+            `}</style>
+
+            {/* Header */}
+            <div style={{ marginBottom: 32 }}>
+                <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.6px', marginBottom: 6 }}>Conversations</h1>
+                <p style={{ fontSize: 15, color: '#64748B', fontWeight: 500 }}>Suivez les échanges avec vos visiteurs</p>
             </div>
 
-            <div className={styles.list}>
-                {conversations.map(conv => (
-                    <Link key={conv.id} href={`/conversations/${conv.id}`} className={styles.item}>
-                        <div className={styles.icon}>
-                            <MessageSquare size={20} />
-                        </div>
-                        <div className={styles.info}>
-                            <div className={styles.meta}>
-                                <span className={styles.botName}>{conv.chatbots?.name}</span>
-                                <div className={styles.badges}>
-                                    {/* Fake 'New' badge for demo, logic can be added later */}
-                                    <span className={`${styles.badge} ${styles.badgeNew}`}>Actif</span>
-                                    <span className={styles.date}>
-                                        <Calendar size={12} />
-                                        {formatDate(conv.created_at)}
-                                    </span>
+            {/* List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {conversations.map(conv => {
+                    const color = conv.chatbots?.color || '#673DE6'
+                    const initial = conv.chatbots?.name?.charAt(0).toUpperCase() || 'A'
+                    const visitorLabel = conv.visitor_id ? `Visiteur #${conv.visitor_id.substring(0, 6)}` : 'Visiteur Anonyme'
+
+                    return (
+                        <Link key={conv.id} href={`/conversations/${conv.id}`} style={{ textDecoration: 'none' }}>
+                            <div className="conv-item" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 16,
+                                background: '#FFFFFF',
+                                border: '1px solid #F1F5F9',
+                                borderRadius: 18,
+                                padding: '16px 20px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                                cursor: 'pointer'
+                            }}>
+                                {/* Avatar */}
+                                <div style={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: 14,
+                                    background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0,
+                                    boxShadow: `0 6px 14px ${color}33`
+                                }}>
+                                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white' }}>{initial}</span>
+                                </div>
+
+                                {/* Info */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                                        <span style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>{conv.chatbots?.name}</span>
+                                        <span style={{
+                                            fontSize: 11,
+                                            fontWeight: 700,
+                                            background: '#DCFCE7',
+                                            color: '#16A34A',
+                                            padding: '2px 8px',
+                                            borderRadius: 20,
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.5px'
+                                        }}>Actif</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <span style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>Discussion avec {visitorLabel}</span>
+                                    </div>
+                                </div>
+
+                                {/* Date + arrow */}
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
+                                    <span style={{ fontSize: 12, color: '#94A3B8', fontWeight: 600 }}>{formatDate(conv.created_at)}</span>
+                                    <ChevronRight size={16} color="#CBD5E1" />
                                 </div>
                             </div>
-                            <div className={styles.messagePreview}>
-                                Discussion avec {conv.visitor_id ? `Visiteur #${conv.visitor_id.substring(0, 6)}` : 'Visiteur Anonyme'}
-                            </div>
-                        </div>
-                    </Link>
-                ))}
+                        </Link>
+                    )
+                })}
 
                 {conversations.length === 0 && (
-                    <div className={styles.empty}>
-                        <MessageSquare size={48} color="#cbd5e1" />
-                        <h3>Aucune conversation</h3>
-                        <p>Les échanges avec vos chatbots apparaîtront ici.</p>
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '80px 24px',
+                        background: '#F8FAFC',
+                        borderRadius: 24,
+                        border: '1px dashed #E2E8F0',
+                        gap: 16
+                    }}>
+                        <div style={{ width: 64, height: 64, background: '#F1F5F9', borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <MessageSquare size={28} color="#CBD5E1" />
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <h3 style={{ fontSize: 17, fontWeight: 700, color: '#334155', marginBottom: 6 }}>Aucune conversation</h3>
+                            <p style={{ fontSize: 14, color: '#94A3B8', fontWeight: 500 }}>Les échanges avec vos chatbots apparaîtront ici.</p>
+                        </div>
                     </div>
                 )}
             </div>

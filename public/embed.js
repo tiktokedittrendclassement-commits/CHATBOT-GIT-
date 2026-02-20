@@ -3,78 +3,124 @@
   const script = document.currentScript;
   const chatbotId = script.getAttribute('data-chatbot-id');
   const baseUrl = script.src.split('/embed.js')[0];
-  // Should allow testing on localhost if src is http://localhost...
-  // Or hardcode for now.
 
   if (!chatbotId) {
     console.error('UseVendo: No data-chatbot-id attribute found on script tag.');
     return;
   }
 
-  // Styles for the Bubble
+  // Inject keyframes
   const style = document.createElement('style');
   style.innerHTML = `
-      @keyframes vendo-float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-      }
-    `;
+    @keyframes vendo-slide-in {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  `;
   document.head.appendChild(style);
 
+  // === BUBBLE BUTTON ===
   const bubble = document.createElement('div');
-  bubble.style.position = 'fixed';
-  bubble.style.bottom = '20px';
-  bubble.style.right = '20px';
-  bubble.style.width = '60px';
-  bubble.style.height = '60px';
-  bubble.style.borderRadius = '50%';
-  bubble.style.backgroundColor = '#4f46e5'; // Default color, ideally fetched or generic
-  bubble.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-  bubble.style.cursor = 'pointer';
-  bubble.style.display = 'flex';
-  bubble.style.alignItems = 'center';
-  bubble.style.justifyContent = 'center';
-  bubble.style.zIndex = '999999';
-  bubble.style.transition = 'transform 0.2s ease';
-
-  // Icon (SVG)
-  bubble.innerHTML = `
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
+  bubble.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #673DE6 0%, #9B5CF6 100%);
+    box-shadow: 0 20px 40px rgba(103, 61, 230, 0.35);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: fixed;
   `;
 
-  // Iframe Container
+  // Letter label
+  const letterSpan = document.createElement('span');
+  letterSpan.style.cssText = `
+    font-family: Inter, -apple-system, sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 28px;
+    color: white;
+    line-height: 1;
+    user-select: none;
+  `;
+  letterSpan.textContent = 'V'; // default, will be updated
+
+  // Green dot
+  const greenDot = document.createElement('div');
+  greenDot.style.cssText = `
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #10B981;
+    border-radius: 50%;
+  `;
+
+  const bubbleInner = document.createElement('div');
+  bubbleInner.style.cssText = 'position: relative; display: flex; align-items: center; justify-content: center;';
+  bubbleInner.appendChild(letterSpan);
+  bubbleInner.appendChild(greenDot);
+  bubble.appendChild(bubbleInner);
+
+  // Close icon (hidden by default)
+  const closeIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
+  bubble.addEventListener('mouseenter', () => {
+    if (!isOpen) bubble.style.transform = 'translateY(-5px) scale(1.05)';
+  });
+  bubble.addEventListener('mouseleave', () => {
+    if (!isOpen) bubble.style.transform = 'translateY(0) scale(1)';
+  });
+
+  // === IFRAME CONTAINER ===
   const iframeContainer = document.createElement('div');
-  iframeContainer.style.position = 'fixed';
-  iframeContainer.style.bottom = '90px';
-  iframeContainer.style.right = '20px';
-  iframeContainer.style.width = '380px'; // Standard width
-  iframeContainer.style.height = '600px';
-  iframeContainer.style.maxHeight = 'calc(100vh - 120px)';
-  iframeContainer.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
-  iframeContainer.style.borderRadius = '16px';
-  iframeContainer.style.overflow = 'hidden';
-  iframeContainer.style.zIndex = '999999';
-  iframeContainer.style.display = 'none'; // Hidden by default
-  iframeContainer.style.opacity = '0';
-  iframeContainer.style.transform = 'translateY(20px)';
-  iframeContainer.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  iframeContainer.style.cssText = `
+    position: fixed;
+    bottom: 104px;
+    right: 24px;
+    width: 400px;
+    height: 600px;
+    max-height: calc(100vh - 120px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
+    border-radius: 28px;
+    overflow: hidden;
+    z-index: 999998;
+    display: none;
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  `;
 
   // Iframe
   const iframe = document.createElement('iframe');
-  // Use absolute URL. For production, change this to 'https://usevendo.com'
-  // For development, we assume this script is loaded from the same origin or we hardcode.
-  // We'll use the origin derived from the script src.
-  const iframeUrl = `${baseUrl}/embed/${chatbotId}`;
-  iframe.src = iframeUrl;
-  iframe.style.width = '100%';
-  iframe.style.height = '100%';
-  iframe.style.border = 'none';
+  iframe.src = `${baseUrl}/embed/${chatbotId}`;
+  iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
 
   iframeContainer.appendChild(iframe);
   document.body.appendChild(bubble);
   document.body.appendChild(iframeContainer);
+
+  // Listen for bot config from iframe to update bubble color & letter
+  window.addEventListener('message', (event) => {
+    if (!event.data) return;
+
+    if (event.data.type === 'vendo-bot-config') {
+      const { name, color } = event.data;
+      if (name) letterSpan.textContent = name.charAt(0).toUpperCase();
+      if (color) {
+        bubble.style.background = `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`;
+        bubble.style.boxShadow = `0 20px 40px ${color}55`;
+      }
+    }
+  });
 
   // Toggle Logic
   let isOpen = false;
@@ -82,35 +128,27 @@
     isOpen = !isOpen;
     if (isOpen) {
       iframeContainer.style.display = 'block';
-      // Hide teaser if open
       if (teaserBubble) teaserBubble.style.display = 'none';
-
-      // Small timeout to allow display block to apply before transition
       setTimeout(() => {
         iframeContainer.style.opacity = '1';
-        iframeContainer.style.transform = 'translateY(0)';
+        iframeContainer.style.transform = 'translateY(0) scale(1)';
       }, 10);
-      bubble.innerHTML = `
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      `;
+      // Show X icon
+      bubbleInner.innerHTML = closeIcon;
+      bubble.style.transform = 'scale(1)';
     } else {
       iframeContainer.style.opacity = '0';
-      iframeContainer.style.transform = 'translateY(20px)';
-      setTimeout(() => {
-        iframeContainer.style.display = 'none';
-      }, 300);
-      bubble.innerHTML = `
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-        </svg>
-      `;
+      iframeContainer.style.transform = 'translateY(30px) scale(0.95)';
+      setTimeout(() => { iframeContainer.style.display = 'none'; }, 400);
+      // Restore letter + dot
+      bubbleInner.innerHTML = '';
+      bubbleInner.appendChild(letterSpan);
+      bubbleInner.appendChild(greenDot);
     }
   };
 
   bubble.addEventListener('click', toggleChat);
+
 
   // Teaser Bubble Logic
   let teaserBubble = null;

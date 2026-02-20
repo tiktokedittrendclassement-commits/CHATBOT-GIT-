@@ -1,17 +1,7 @@
-
 import { NextResponse } from 'next/server'
 import { generateChatResponse } from '@/lib/deepseek'
-import { supabase } from '@/lib/supabase' // Use admin client if needed, but here we can check bot ID
-
-// Note: In a real app we need a Service Role client to verify ownership/limits securely 
-// without relying on client-side keys. Since we are using the public client in lib, 
-// we should probably upgrade it to use service role for API routes.
-// But for "ultra stable" MVP, we can reuse if we are careful.
-// Actually, for API routes, we can use `createClient` with SERVICE_ROLE key to bypass RLS.
-// I'll stick to the provided client for now, but RLS might block us if we aren't auth'd.
-// The widget sends requests anonymously.
-// We need to bypass RLS for "public" widget access to insert messages?
-// Or we rely on the public policies we set in schema.sql.
+import { supabase } from '@/lib/supabase'
+import { VENDO_KNOWLEDGE_BASE } from '@/lib/vendo_knowledge'
 
 export async function POST(req) {
     try {
@@ -68,8 +58,6 @@ export async function POST(req) {
         }
         // --- VENDO SUPPORT & CREATOR ASSISTANT ---
         if (chatbotId === 'VENDO_SUPPORT') {
-            const { VENDO_KNOWLEDGE_BASE } = require('@/lib/vendo_knowledge')
-
 
             const systemInstruction = `
 # SYSTEM PROMPT — Vendo AI Sales Agent

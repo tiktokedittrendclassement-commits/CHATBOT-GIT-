@@ -107,6 +107,7 @@ export default function VendoAssistant() {
     if (!teaserText && !isOpen) return (
         <button
             onClick={() => setIsOpen(true)}
+            className="vendo-toggle-btn"
             style={{
                 position: 'fixed',
                 bottom: 30, right: 30,
@@ -147,6 +148,7 @@ export default function VendoAssistant() {
             {!isOpen && (
                 <div
                     onClick={() => setIsOpen(true)}
+                    className="vendo-invite-card"
                     style={{
                         position: 'absolute',
                         bottom: 80,
@@ -222,6 +224,7 @@ export default function VendoAssistant() {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
+                    className="vendo-toggle-btn"
                     style={{
                         width: 64,
                         height: 64,
@@ -254,18 +257,20 @@ export default function VendoAssistant() {
 
             {/* Chat Window */}
             {isOpen && (
-                <div style={{
-                    width: 400,
-                    height: 600,
-                    background: '#FFFFFF',
-                    borderRadius: 28,
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'hidden',
-                    animation: 'slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                    transformOrigin: 'bottom right'
-                }}>
+                <div
+                    className="vendo-chat-window"
+                    style={{
+                        width: 400,
+                        height: 600,
+                        background: '#FFFFFF',
+                        borderRadius: 28,
+                        boxShadow: '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        animation: 'slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        transformOrigin: 'bottom right'
+                    }}>
                     {/* Header */}
                     <div style={{
                         background: '#673DE6',
@@ -477,13 +482,29 @@ export default function VendoAssistant() {
                     from { opacity: 0; transform: translateY(40px) scale(0.9) rotate(2deg); }
                     to { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
                 }
-                @keyframes float {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-10px); }
-                }
                 @keyframes slideInUp {
                     from { opacity: 0; transform: translateY(20px) scale(0.95); }
                     to { opacity: 1; transform: translateY(0) scale(1); }
+                }
+
+                @media (max-width: 768px) {
+                    .vendo-chat-window {
+                        width: calc(100vw - 32px) !important;
+                        height: 70vh !important;
+                        bottom: 16px !important;
+                        right: 16px !important;
+                    }
+                    .vendo-toggle-btn {
+                        bottom: 16px !important;
+                        right: 16px !important;
+                        width: 56px !important;
+                        height: 56px !important;
+                    }
+                    .vendo-invite-card {
+                        width: calc(100vw - 32px) !important;
+                        bottom: 80px !important;
+                        right: 16px !important;
+                    }
                 }
             `}</style>
         </div>

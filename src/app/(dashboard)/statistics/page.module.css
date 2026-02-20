@@ -13,6 +13,23 @@
     border-bottom: 1px solid var(--border);
 }
 
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .headerActions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .select {
+        width: 100%;
+    }
+}
+
 .heading {
     font-size: 32px;
     font-weight: 800;

@@ -165,6 +165,40 @@ const CSS_STYLES = `
     .modal-overlay.open .modal { transform: scale(1); }
     .modal-img { background: var(--cream); display: flex; align-items: center; justify-content: center; min-height: 400px; }
     .modal-content { padding: 48px 40px; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 1024px) {
+        .products-grid { grid-template-columns: repeat(3, 1fr); }
+        .hero { min-height: 500px; }
+        .hero-text { padding: 40px; }
+    }
+
+    @media (max-width: 768px) {
+        .demo-nav { padding: 0 20px; }
+        .nav-links { display: none; }
+        .hero { grid-template-columns: 1fr; }
+        .hero-text { padding: 60px 24px; text-align: center; align-items: center; order: 2; }
+        .hero-visual { height: 400px; order: 1; }
+        .hero-sub { margin-left: auto; margin-right: auto; }
+        .trust-bar { gap: 24px; padding: 32px 20px; }
+        .products-grid { grid-template-columns: repeat(2, 1fr); padding: 0 20px; }
+        .products-section { padding: 60px 0; }
+        .diagnostic { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
+        .diagnostic-text .section-title { text-align: center; }
+        .diagnostic-text p { text-align: center; }
+        .cart-sidebar { width: 100%; }
+        .modal { grid-template-columns: 1fr; }
+        .modal-img { min-height: 300px; }
+        .modal-content { padding: 32px 24px; }
+    }
+
+    @media (max-width: 480px) {
+        .products-grid { grid-template-columns: 1fr; }
+        .hero-title { font-size: 48px; }
+        .top-banner { font-size: 10px; }
+        .nav-logo { font-size: 20px; }
+        .cart-btn { padding: 6px 12px; }
+    }
 `;
 
 export default function NaturelSkinDemo() {

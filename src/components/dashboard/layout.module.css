@@ -399,6 +399,30 @@
     }
 
     .content {
-        padding: 24px;
+        padding: 16px;
+    }
+
+    .topBar {
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .profileName {
+        display: none;
+    }
+
+    .topBarDivider {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: 12px;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-width: 300px;
     }
 }

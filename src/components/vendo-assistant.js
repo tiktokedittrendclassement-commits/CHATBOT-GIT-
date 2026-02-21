@@ -182,10 +182,10 @@ export default function VendoAssistant() {
                         bottom: 110,
                         right: 30,
                         width: 320,
-                        background: 'rgba(255, 255, 255, 0.8)',
+                        background: 'rgba(15, 23, 42, 0.9)',
                         backdropFilter: 'blur(20px)',
                         borderRadius: 24,
-                        boxShadow: '0 20px 50px rgba(103, 61, 230, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5)',
+                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)',
                         fontFamily: "inherit",
                         zIndex: 9998,
                         cursor: 'pointer',
@@ -194,7 +194,7 @@ export default function VendoAssistant() {
                         display: 'flex',
                         flexDirection: 'column',
                         overflow: 'hidden',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
                         padding: '4px'
                     }}
                 >
@@ -213,34 +213,34 @@ export default function VendoAssistant() {
                             }}>
                                 <Bot size={26} />
                             </div>
-                            <div style={{ position: 'absolute', bottom: -2, right: -2, width: 14, height: 14, background: '#10B981', border: '3px solid white', borderRadius: '50%' }}></div>
+                            <div style={{ position: 'absolute', bottom: -2, right: -2, width: 14, height: 14, background: '#10B981', border: '3px solid #0f172a', borderRadius: '50%' }}></div>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: '#673DE6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Assistant Vendo</div>
-                            <div style={{ fontSize: 14.5, color: '#020617', fontWeight: 600, lineHeight: 1.5 }}>{teaserText}</div>
+                            <div style={{ fontSize: 13, fontWeight: 800, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Assistant Vendo</div>
+                            <div style={{ fontSize: 14.5, color: '#F1F5F9', fontWeight: 600, lineHeight: 1.5 }}>{teaserText}</div>
                         </div>
                     </div>
                     <div style={{
                         margin: '0 4px 4px',
                         padding: '10px 16px',
-                        background: 'rgba(103, 61, 230, 0.05)',
+                        background: 'rgba(103, 61, 230, 0.1)',
                         borderRadius: 18,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between'
                     }}>
-                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>Maintenant</span>
+                        <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>Maintenant</span>
                         <div style={{
                             fontSize: 13,
                             fontWeight: 700,
-                            color: '#673DE6',
+                            color: '#fff',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 6,
-                            background: 'white',
+                            background: '#673DE6',
                             padding: '6px 12px',
                             borderRadius: 12,
-                            boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+                            boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
                         }}>
                             Répondre <Send size={12} />
                         </div>
@@ -263,7 +263,7 @@ export default function VendoAssistant() {
                         background: '#673DE6',
                         color: 'white',
                         border: 'none',
-                        boxShadow: '0 20px 40px rgba(103, 61, 230, 0.3)',
+                        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -298,9 +298,9 @@ export default function VendoAssistant() {
                         width: 400,
                         height: 600,
                         zIndex: 9999,
-                        background: '#FFFFFF',
+                        background: '#0B0E14',
                         borderRadius: 28,
-                        boxShadow: '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
+                        boxShadow: '0 30px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
                         display: 'flex',
                         flexDirection: 'column',
                         overflow: 'hidden',
@@ -371,7 +371,7 @@ export default function VendoAssistant() {
                             flex: 1,
                             padding: '24px',
                             overflowY: 'auto',
-                            background: '#F8FAFC',
+                            background: '#0B0E14',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 20,
@@ -386,10 +386,10 @@ export default function VendoAssistant() {
                                     borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
                                     fontSize: 14.5,
                                     lineHeight: '1.6',
-                                    color: msg.role === 'user' ? '#fff' : '#1E293B',
-                                    background: msg.role === 'user' ? '#673DE6' : '#FFFFFF',
-                                    boxShadow: msg.role === 'user' ? '0 8px 16px rgba(103, 61, 230, 0.15)' : '0 2px 8px rgba(0,0,0,0.04)',
-                                    border: msg.role === 'assistant' ? '1px solid rgba(0,0,0,0.03)' : 'none',
+                                    color: msg.role === 'user' ? '#fff' : '#F1F5F9',
+                                    background: msg.role === 'user' ? '#673DE6' : '#1E293B',
+                                    boxShadow: msg.role === 'user' ? '0 8px 16px rgba(103, 61, 230, 0.2)' : '0 2px 8px rgba(0,0,0,0.2)',
+                                    border: msg.role === 'assistant' ? '1px solid rgba(255,255,255,0.05)' : 'none',
                                     whiteSpace: 'pre-wrap',
                                     fontWeight: 500
                                 }}>
@@ -406,43 +406,18 @@ export default function VendoAssistant() {
                         ))}
                         {isTyping && (
                             <div style={{ display: 'flex', gap: 6, paddingLeft: 8 }}>
-                                <div style={{ width: 8, height: 8, background: '#CED4DA', borderRadius: '50%', animation: 'bounce 1.4s infinite 0ms' }}></div>
-                                <div style={{ width: 8, height: 8, background: '#CED4DA', borderRadius: '50%', animation: 'bounce 1.4s infinite 200ms' }}></div>
-                                <div style={{ width: 8, height: 8, background: '#CED4DA', borderRadius: '50%', animation: 'bounce 1.4s infinite 400ms' }}></div>
+                                <div style={{ width: 8, height: 8, background: '#475569', borderRadius: '50%', animation: 'bounce 1.4s infinite 0ms' }}></div>
+                                <div style={{ width: 8, height: 8, background: '#475569', borderRadius: '50%', animation: 'bounce 1.4s infinite 200ms' }}></div>
+                                <div style={{ width: 8, height: 8, background: '#475569', borderRadius: '50%', animation: 'bounce 1.4s infinite 400ms' }}></div>
                             </div>
                         )}
                     </div>
 
-                    {/* Quick Actions */}
-                    <div style={{ padding: '0 24px 12px', background: '#F8FAFC', display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none' }}>
-                        {['Tarifs', 'Aide Prompt', 'WhatsApp', 'Marque Blanche'].map(label => (
-                            <button key={label} style={{
-                                flexShrink: 0,
-                                padding: '8px 14px',
-                                background: '#FFFFFF',
-                                border: '1px solid #E2E8F0',
-                                borderRadius: '12px',
-                                fontSize: 12,
-                                fontWeight: 700,
-                                color: '#334155',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-                            }}
-                                onClick={() => { setInput(label === 'Aide Prompt' ? "Aide moi à créer un prompt pour mon bot" : label); }}
-                                onMouseEnter={e => { e.currentTarget.style.borderColor = '#673DE6'; e.currentTarget.style.color = '#673DE6'; }}
-                                onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#334155'; }}
-                            >
-                                {label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Input */}
+                    {/* Input Area */}
                     <form onSubmit={handleSend} style={{
                         padding: '20px 24px 30px',
-                        background: '#FFFFFF',
-                        borderTop: '1px solid #F1F5F9',
+                        background: '#0B0E14',
+                        borderTop: '1px solid rgba(255,255,255,0.05)',
                         display: 'flex',
                         gap: 12,
                         alignItems: 'center'
@@ -454,24 +429,24 @@ export default function VendoAssistant() {
                                 placeholder="Posez une question à Vendo..."
                                 style={{
                                     width: '100%',
-                                    border: '1.5px solid #F1F5F9',
+                                    border: '1.5px solid rgba(255,255,255,0.05)',
                                     borderRadius: '16px',
                                     padding: '14px 18px',
                                     fontSize: 14,
                                     outline: 'none',
-                                    background: '#F8FAFC',
+                                    background: '#1E293B',
                                     transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
                                     fontWeight: 500,
-                                    color: '#1E293B'
+                                    color: '#F1F5F9'
                                 }}
                                 onFocus={e => {
                                     e.currentTarget.style.border = '1.5px solid #673DE6'
-                                    e.currentTarget.style.background = '#FFFFFF'
-                                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(103, 61, 230, 0.1)'
+                                    e.currentTarget.style.background = '#1E293B'
+                                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(103, 61, 230, 0.15)'
                                 }}
                                 onBlur={e => {
-                                    e.currentTarget.style.border = '1.5px solid #F1F5F9'
-                                    e.currentTarget.style.background = '#F8FAFC'
+                                    e.currentTarget.style.border = '1.5px solid rgba(255,255,255,0.05)'
+                                    e.currentTarget.style.background = '#1E293B'
                                     e.currentTarget.style.boxShadow = 'none'
                                 }}
                             />
@@ -490,7 +465,7 @@ export default function VendoAssistant() {
                                 justifyContent: 'center',
                                 cursor: 'pointer',
                                 transition: 'all 0.3s',
-                                boxShadow: '0 8px 16px rgba(103, 61, 230, 0.2)'
+                                boxShadow: '0 8px 16px rgba(103, 61, 230, 0.3)'
                             }}
                             onMouseEnter={e => e.currentTarget.style.background = '#5528d1'}
                             onMouseLeave={e => e.currentTarget.style.background = '#673DE6'}

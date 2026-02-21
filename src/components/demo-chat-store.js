@@ -132,7 +132,7 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
             {!isOpen && (
                 <div
                     className="demo-chat-toggle"
-                    style={{ position: 'absolute', bottom: 30, right: 30, zIndex: 900, pointerEvents: 'auto' }}
+                    style={{ position: 'absolute', bottom: 30, right: 40, zIndex: 900, pointerEvents: 'auto' }}
                 >
                     <button
                         onClick={() => setIsOpen(true)}
@@ -167,7 +167,7 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
                     style={{
                         position: 'absolute',
                         bottom: 30,
-                        right: 30,
+                        right: 40,
                         width: 400,
                         height: 600,
                         zIndex: 1000,

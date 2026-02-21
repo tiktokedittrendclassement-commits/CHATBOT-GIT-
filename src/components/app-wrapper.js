@@ -7,8 +7,11 @@ import VendoAssistant from './vendo-assistant'
 export default function AppWrapper({ children }) {
     const pathname = usePathname()
 
-    // Hide assistant on maintenance page, embed pages, and landing page (which has its own demo chatbot)
-    const hideAssistant = pathname?.startsWith('/maintenance') || pathname?.startsWith('/embed')
+    // Hide assistant on maintenance page, embed pages, and auth pages (login/register)
+    const hideAssistant = pathname?.startsWith('/maintenance') ||
+        pathname?.startsWith('/embed') ||
+        pathname === '/login' ||
+        pathname === '/register'
 
     return (
         <>

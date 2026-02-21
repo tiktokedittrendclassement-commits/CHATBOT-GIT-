@@ -16,23 +16,40 @@
 
 @media (max-width: 768px) {
     .header {
-        flex-direction: column;
-        gap: 20px;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
     }
-}
 
-.heading {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--foreground);
-    margin-bottom: 8px;
-    letter-spacing: -1px;
-}
+    .heading {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
 
-.subheading {
-    color: #334155;
-    font-size: 16px;
-    font-weight: 500;
+    .subheading {
+        font-size: 13px;
+    }
+
+    .header>div:last-child {
+        flex-direction: row !important;
+        gap: 8px !important;
+    }
+
+    .header button,
+    .header a {
+        width: auto;
+        padding: 0 10px !important;
+        height: 36px !important;
+        font-size: 11px !important;
+    }
+
+    .header svg {
+        width: 14px;
+        height: 14px;
+        margin-right: 4px !important;
+    }
 }
 
 /* Grille de Chatbots */
@@ -42,9 +59,10 @@
     gap: 24px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 }
 
@@ -62,17 +80,42 @@
     height: 100%;
 }
 
-.card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
-    border-color: rgba(99, 102, 241, 0.2);
-}
+@media (max-width: 640px) {
+    .card {
+        padding: 12px;
+        border-radius: 16px;
+    }
 
-.cardHeader {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 20px;
+    .cardHeader {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .botIcon {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .botName {
+        font-size: 13px;
+        margin-bottom: 2px;
+    }
+
+    .botMeta {
+        font-size: 10px;
+        gap: 6px;
+    }
+
+    .compactStat {
+        padding: 2px 6px;
+        font-size: 9px;
+    }
+
+    .footer {
+        padding-top: 10px;
+    }
 }
 
 /* Icône du Bot */

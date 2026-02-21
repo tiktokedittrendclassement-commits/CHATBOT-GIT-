@@ -311,9 +311,84 @@
 }
 
 .transparencyText {
-    font-size: 14px;
     color: #4F46E5;
     line-height: 1.6;
     margin: 0;
     font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+
+    .heading {
+        font-size: 24px;
+    }
+
+    .subheading {
+        font-size: 14px;
+    }
+
+    .balanceCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 24px;
+        border-radius: 24px;
+    }
+
+    .balanceAmount {
+        font-size: 36px;
+    }
+
+    .balanceIcon {
+        width: 52px;
+        height: 52px;
+        font-size: 20px;
+        border-radius: 12px;
+    }
+
+    .card {
+        padding: 24px;
+        border-radius: 20px;
+    }
+
+    .cardTitle {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .infoItem {
+        font-size: 14px;
+        padding: 12px 0;
+    }
+
+    .transparencyBox {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .transparencyTitle {
+        font-size: 14px;
+    }
+
+    .transparencyText {
+        font-size: 13px;
+    }
+
+    .quickAmounts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .amountBtn {
+        min-width: unset;
+        font-size: 14px;
+        padding: 10px;
+    }
 }

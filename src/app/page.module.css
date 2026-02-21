@@ -1317,3 +1317,10 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .heroCtaRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+}

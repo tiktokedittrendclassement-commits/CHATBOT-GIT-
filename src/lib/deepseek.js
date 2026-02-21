@@ -1,12 +1,13 @@
 
 import OpenAI from 'openai'
 
-const deepseek = new OpenAI({
-    baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
-    apiKey: process.env.DEEPSEEK_API_KEY,
-})
-
 export async function generateChatResponse(messages, systemPrompt = 'You are a helpful assistant.') {
+    // Instantiate inside the function so it only runs at request time (not build time)
+    const deepseek = new OpenAI({
+        baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
+        apiKey: process.env.DEEPSEEK_API_KEY || '',
+    })
+
     try {
         const fullMessages = [
             { role: 'system', content: systemPrompt },

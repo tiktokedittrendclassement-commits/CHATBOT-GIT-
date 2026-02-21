@@ -100,9 +100,14 @@ export default function VendoAssistant() {
         // Trigger welcome message after 1 second ONLY on the landing page
         if (pathname !== '/') return
 
+        // Check if already shown in this session
+        const alreadyShown = sessionStorage.getItem('vendo_teaser_shown')
+        if (alreadyShown) return
+
         const timer = setTimeout(() => {
             if (!isOpen) {
                 setTeaserText("Bonjour ! Je suis votre assistant IA. Je peux répondre à toutes vos questions sur Vendo. ✨")
+                sessionStorage.setItem('vendo_teaser_shown', 'true')
             }
         }, 500)
 
@@ -119,9 +124,9 @@ export default function VendoAssistant() {
             clearTimeout(timer)
             window.removeEventListener('vendo-proactive-trigger', handleProactiveTrigger)
         }
-    }, [pathname])
+    }, [pathname, isOpen])
 
-    // Simple Auto-dismiss (3 seconds)
+    // Simple Auto-dismiss (5 seconds)
     useEffect(() => {
         if (isOpen || !teaserText) return
 
@@ -200,17 +205,20 @@ export default function VendoAssistant() {
                 >
                     <div style={{ padding: '16px 18px', display: 'flex', gap: 14, alignItems: 'center' }}>
                         <div style={{ position: 'relative', flexShrink: 0 }}>
-                            <div style={{
-                                width: 50,
-                                height: 50,
-                                background: 'linear-gradient(135deg, #673DE6 0%, #8B5CF6 100%)',
-                                borderRadius: 16,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: 'white',
-                                boxShadow: '0 8px 16px rgba(103, 61, 230, 0.2)'
-                            }}>
+                            <div
+                                className="bot-icon-container"
+                                style={{
+                                    width: 50,
+                                    height: 50,
+                                    background: 'linear-gradient(135deg, #673DE6 0%, #8B5CF6 100%)',
+                                    borderRadius: 16,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    boxShadow: '0 8px 16px rgba(103, 61, 230, 0.2)'
+                                }}
+                            >
                                 <Bot size={26} />
                             </div>
                             <div style={{ position: 'absolute', bottom: -2, right: -2, width: 14, height: 14, background: '#10B981', border: '3px solid #0f172a', borderRadius: '50%' }}></div>
@@ -501,7 +509,7 @@ export default function VendoAssistant() {
                 @media (max-width: 768px) {
                     .vendo-chat-window {
                         width: calc(100vw - 24px) !important;
-                        height: calc(100vh - 24px) !important;
+                        height: calc(100vh - 35%) !important;
                         bottom: 12px !important;
                         right: 12px !important;
                         border-radius: 20px !important;
@@ -513,9 +521,39 @@ export default function VendoAssistant() {
                         height: 56px !important;
                     }
                     .vendo-invite-card {
-                        width: calc(100vw - 40px) !important;
-                        bottom: 90px !important;
+                        width: 280px !important;
+                        bottom: 85px !important;
                         right: 20px !important;
+                        border-radius: 20px !important;
+                    }
+                    .vendo-invite-card > div:first-child {
+                        padding: 12px !important;
+                        gap: 10px !important;
+                    }
+                    .vendo-invite-card .bot-icon-container {
+                        width: 36px !important;
+                        height: 36px !important;
+                    }
+                    .vendo-invite-card .bot-icon-container svg {
+                        width: 18px !important;
+                        height: 18px !important;
+                    }
+                    .vendo-invite-card .teaser-title {
+                        font-size: 11px !important;
+                    }
+                    .vendo-invite-card .teaser-text {
+                        font-size: 13px !important;
+                        line-height: 1.3 !important;
+                    }
+                    .vendo-invite-card .teaser-footer {
+                        padding: 8px 12px !important;
+                    }
+                    .vendo-invite-card .teaser-footer span {
+                        font-size: 10px !important;
+                    }
+                    .vendo-invite-card .teaser-footer div {
+                        padding: 4px 10px !important;
+                        font-size: 12px !important;
                     }
                 }
             `}</style>

@@ -17,22 +17,42 @@
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
-        gap: 20px;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
     }
-}
 
-.heading {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--foreground);
-    margin-bottom: 8px;
-    letter-spacing: -1px;
-}
+    .heading {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
 
-.subheading {
-    color: #334155;
-    font-size: 16px;
-    font-weight: 500;
+    .subheading {
+        font-size: 14px;
+    }
+
+    .header>div:last-child {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px !important;
+    }
+
+    .header button,
+    .header a {
+        width: 100%;
+        padding: 0 10px !important;
+        height: 40px !important;
+        font-size: 12px !important;
+        justify-content: center;
+    }
+
+    .header svg {
+        width: 14px;
+        height: 14px;
+        margin-right: 4px !important;
+    }
 }
 
 /* Grille de Chatbots */
@@ -42,37 +62,47 @@
     gap: 24px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
-}
 
-/* Card Style Premium */
-.card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    height: 100%;
-}
+    .card {
+        padding: 24px;
+        border-radius: 24px;
+    }
 
-.card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
-    border-color: rgba(99, 102, 241, 0.2);
-}
+    .cardHeader {
+        gap: 16px;
+        margin-bottom: 24px;
+    }
 
-.cardHeader {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 20px;
+    .botIcon {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        font-size: 20px;
+    }
+
+    .botName {
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .botMeta {
+        font-size: 13px;
+        gap: 10px;
+    }
+
+    .compactStat {
+        padding: 4px 10px;
+        font-size: 11px;
+    }
+
+    .footer {
+        padding-top: 18px;
+    }
 }
 
 /* Icône du Bot */

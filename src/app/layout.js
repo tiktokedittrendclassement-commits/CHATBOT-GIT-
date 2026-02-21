@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth-provider";
 import AppWrapper from "@/components/app-wrapper";
-// Deployment trigger: 2026-02-20-19-27
+// Deployment trigger: 2026-02-21-00-40
 
 const inter = Inter({
   subsets: ["latin"],

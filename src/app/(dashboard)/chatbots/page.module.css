@@ -61,60 +61,44 @@
 
 @media (max-width: 640px) {
     .grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
-}
 
-/* Card Style Premium */
-.card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    height: 100%;
-}
-
-@media (max-width: 640px) {
     .card {
-        padding: 12px;
-        border-radius: 16px;
+        padding: 20px;
+        border-radius: 20px;
     }
 
     .cardHeader {
-        gap: 10px;
-        margin-bottom: 12px;
+        gap: 14px;
+        margin-bottom: 20px;
     }
 
     .botIcon {
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
-        font-size: 14px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        font-size: 16px;
     }
 
     .botName {
-        font-size: 13px;
-        margin-bottom: 2px;
+        font-size: 16px;
+        margin-bottom: 4px;
     }
 
     .botMeta {
-        font-size: 10px;
-        gap: 6px;
+        font-size: 13px;
+        gap: 10px;
     }
 
     .compactStat {
-        padding: 2px 6px;
-        font-size: 9px;
+        padding: 4px 10px;
+        font-size: 11px;
     }
 
     .footer {
-        padding-top: 10px;
+        padding-top: 16px;
     }
 }
 

@@ -359,28 +359,31 @@
 @media (max-width: 1024px) {
     .topBar {
         padding: 0 16px;
+        height: 64px;
+        /* Slightly more compact but solid */
     }
 
     .mobileMenuBtn {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .breadcrumbs {
         display: none;
     }
 
-    .logoMobile {
-        display: block;
-    }
-
     .sidebar {
         position: fixed;
         transform: translateX(-100%);
-        width: 280px;
+        width: 100%;
+        /* Take full width on small mobile for focus */
+        max-width: 320px;
         top: 0;
         left: 0;
         bottom: 0;
-        box-shadow: 20px 0 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: 20px 0 50px rgba(0, 0, 0, 0.2);
+        border-radius: 0 24px 24px 0;
     }
 
     .sidebar.open {
@@ -391,23 +394,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-
-    .mobileHeader {
-        display: flex;
-    }
-
-    .overlay {
-        display: block;
+        width: 40px;
+        height: 40px;
+        background: #F1F5F9;
+        border-radius: 12px;
     }
 
     .content {
-        padding: 16px;
-    }
-
-    .topBar {
-        padding: 0 16px;
-        height: 60px;
+        padding: 20px 16px;
+        /* Optimized padding */
     }
 
     .profileName {
@@ -417,15 +412,24 @@
     .topBarDivider {
         display: none;
     }
+
+    .profileAvatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+    }
 }
 
 @media (max-width: 480px) {
     .content {
-        padding: 12px;
+        padding: 16px 12px;
     }
 
-    .sidebar {
-        width: 100%;
-        max-width: 300px;
+    .topBar {
+        height: 60px;
+    }
+
+    .logo {
+        font-size: 20px;
     }
 }

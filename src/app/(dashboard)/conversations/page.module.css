@@ -141,3 +141,49 @@
     font-size: 16px;
     font-weight: 500;
 }
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+
+    .heading {
+        font-size: 24px;
+    }
+
+    .subheading {
+        font-size: 14px;
+    }
+
+    .item {
+        padding: 16px;
+        gap: 12px;
+        border-radius: 18px;
+    }
+
+    .icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
+    .botName {
+        font-size: 15px;
+    }
+
+    .messagePreview {
+        font-size: 13px;
+    }
+
+    .date {
+        font-size: 11px;
+    }
+
+    .empty {
+        padding: 40px 20px;
+        border-radius: 20px;
+    }
+}

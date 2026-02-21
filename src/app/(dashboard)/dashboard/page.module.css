@@ -32,46 +32,43 @@
 
 @media (max-width: 768px) {
     .header {
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
         margin-bottom: 24px;
         padding-bottom: 16px;
     }
 
     .heading {
-        font-size: 20px;
-        margin-bottom: 4px;
+        font-size: 24px;
+        letter-spacing: -0.5px;
     }
 
     .subheading {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .headerActions {
-        gap: 8px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
     }
 
     .headerActions button,
     .headerActions a {
-        width: auto;
+        width: 100%;
         padding: 0 12px !important;
-        height: 38px !important;
-        font-size: 12px !important;
-    }
-
-    .headerActions svg {
-        width: 14px;
-        height: 14px;
-        margin-right: 4px !important;
+        height: 44px !important;
+        font-size: 13px !important;
+        justify-content: center;
     }
 }
 
 /* Stats Grid */
 .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* Force 2 columns at base desktop if needed, but we handle breakpoints */
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     margin-bottom: 48px;
 }
@@ -79,15 +76,23 @@
 @media (max-width: 1280px) {
     .grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+        gap: 20px;
     }
 }
 
-/* Premium Card Style */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+}
+
+/* Premium Card Style - Base */
 .card {
     background: white;
-    padding: 28px;
-    border-radius: 24px;
+    padding: 32px;
+    border-radius: 28px;
     border: 1px solid var(--border);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-sm);
@@ -126,13 +131,6 @@
 }
 
 @media (max-width: 640px) {
-    .grid {
-        grid-template-columns: 1fr;
-        /* Stacking is safer for long values on small phones */
-        gap: 12px;
-        margin-bottom: 24px;
-    }
-
     .cardValue {
         font-size: 24px;
         letter-spacing: -0.5px;
@@ -164,6 +162,33 @@
     .cardDesc {
         margin-top: 14px;
         font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 24px;
+        border-radius: 24px;
+    }
+
+    .cardValue {
+        font-size: 28px;
+    }
+
+    .cardTitle {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+
+    .iconBox {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+    }
+
+    .iconBox svg {
+        width: 20px;
+        height: 20px;
     }
 }
 

@@ -1,8 +1,11 @@
 .container {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
+    /* Fixed height to prevent whole page scrolling */
     background-color: var(--background);
     color: var(--foreground);
+    overflow: hidden;
+    /* Contain scroll to internal area */
 }
 
 .sidebar {
@@ -11,8 +14,6 @@
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    position: sticky;
-    top: 0;
     height: 100vh;
     z-index: 50;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -149,6 +150,8 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
+    height: 100vh;
+    /* Fixed height for main area */
     background-color: var(--background);
 }
 

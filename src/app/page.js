@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import styles from './page.module.css'
-import { ArrowRight, Check, X, Copy, Send } from 'lucide-react'
+import { ArrowRight, Check, X, Copy, Send, Bot, Palette, Code, Sun, Moon, MessageSquare, Zap } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import GymsharkDemo from '@/components/gymshark-demo'
 
@@ -78,66 +78,72 @@ function ChatWidget({ tilt }) {
   )
 }
 
-/* ─── Mockup Step 1 : editeur de catalogue ─── */
 function MockEditor() {
   return (
-    <div className={styles.mockBox}>
-      <div className={styles.mockHead}>
-        <div className={styles.mockDots}><span /><span /><span /></div>
-        <span className={styles.mockTitle}>Votre catalogue — editeur Vendo</span>
+    <div className={styles.mockCard}>
+      <div className={styles.mockCardTitle}>
+        <Bot size={18} color="var(--accent)" />
+        Entraînement & Contexte
       </div>
-      <div className={styles.mockEditorBody}>
-        <p className={styles.mLine}><span className={styles.mProp}>Produit</span> Hoodie Training Pro</p>
-        <p className={styles.mLine}><span className={styles.mProp}>Prix</span> 89,99 €</p>
-        <p className={styles.mLine}><span className={styles.mProp}>Tailles</span> S · M · L · XL</p>
-        <p className={styles.mLine}><span className={styles.mProp}>Couleurs</span> Noir · Gris · Marine</p>
-        <p className={styles.mLine}><span className={styles.mProp}>Livraison</span> sous 48 h</p>
-        <p className={styles.mLine}><span className={styles.mProp}>Retours</span> gratuits 30 jours</p>
-        <span className={styles.cursor} />
-      </div>
-      <div className={styles.mockFoot}>
-        <Check size={12} color="#34d399" />
-        <span>847 elements enregistres · Pret a repondre</span>
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Sources de Données</label>
+        <div className={styles.mockTextarea}>
+          Collez le texte directement ici pour que le bot connaisse votre entreprise, vos produits et vos politiques de retour...
+        </div>
+        <p className={styles.mockHint}>
+          Le bot utilisera ce texte pour répondre aux questions des utilisateurs.
+        </p>
       </div>
     </div>
   )
 }
 
-/* ─── Mockup Step 2 : personnalisation ─── */
 function MockCustom() {
   return (
-    <div className={styles.mockBox}>
-      <div className={styles.mockHead}>
-        <div className={styles.mockDots}><span /><span /><span /></div>
-        <span className={styles.mockTitle}>Personnalisation</span>
+    <div className={styles.mockCard}>
+      <div className={styles.mockCardTitle}>
+        <Palette size={18} color="var(--accent)" />
+        Personnalisation
       </div>
-      <div className={styles.mockCustomBody}>
-        <div className={styles.mockCustomLeft}>
-          <div className={styles.mockField}>
-            <label>Nom du bot</label>
-            <div className={styles.mockInput}>Assistant SportZone</div>
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Nom de l'Assistant</label>
+        <div className={styles.mockInput}>Mon Assistant Vendo</div>
+      </div>
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Sous-titre / Statut</label>
+        <div className={styles.mockInput}>Expert Vendo Connecté</div>
+      </div>
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Couleur de la marque</label>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 20 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#673DE6', border: '1px solid rgba(255,255,255,0.1)' }} />
+          <div className={styles.mockInput} style={{ margin: 0, flex: 1 }}>#673DE6</div>
+        </div>
+      </div>
+
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Style de l'Avatar</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#673DE6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Bot size={22} color="#fff" />
           </div>
-          <div className={styles.mockField}>
-            <label>Message d’accueil</label>
-            <div className={styles.mockInput} style={{ fontSize: 11 }}>Bonjour, comment puis-je vous aider ?</div>
+          <div className={`${styles.mockBtnMini} ${styles.mockBtnMiniActive}`} style={{ margin: 0 }}>
+            <Bot size={14} style={{ marginRight: 6 }} /> Robot
           </div>
-          <div className={styles.mockField}>
-            <label>Couleur principale</label>
-            <div className={styles.swatches}>
-              {['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'].map(c => (
-                <span key={c} className={styles.swatch} style={{ background: c, outline: c === '#7c3aed' ? '2px solid #fff' : 'none' }} />
-              ))}
-            </div>
+          <div className={styles.mockBtnMini} style={{ margin: 0 }}>
+            Lettre
           </div>
         </div>
-        <div className={styles.mockCustomRight}>
-          <p className={styles.mockPreviewLabel}>Aperçu</p>
-          <div className={styles.miniWidget}>
-            <div className={styles.miniHead}>
-              <div className={styles.miniAv}>S</div>
-              <span>Assistant SportZone</span>
-            </div>
-            <div className={styles.miniMsg}>Bonjour, comment puis-je vous aider ?</div>
+      </div>
+
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Thème du Chatbot</label>
+        <div className={styles.mockBtnGroup}>
+          <div className={styles.mockBtnMini}>
+            <Sun size={14} /> Mode Clair
+          </div>
+          <div className={`${styles.mockBtnMini} ${styles.mockBtnMiniActive}`}>
+            <Moon size={14} /> Mode Sombre
           </div>
         </div>
       </div>
@@ -145,45 +151,77 @@ function MockCustom() {
   )
 }
 
-/* ─── Mockup Step 3 : integration ─── */
-function MockEmbed() {
-  const [copied, setCopied] = useState(false)
-  const handleCopy = () => { setCopied(true); setTimeout(() => setCopied(false), 1600) }
+function MockBehavior() {
   return (
-    <div className={styles.mockBox}>
-      <div className={styles.mockHead}>
-        <div className={styles.mockDots}><span /><span /><span /></div>
-        <span className={styles.mockTitle}>Votre script d’integration</span>
+    <div className={styles.mockCard} style={{ maxWidth: 500, margin: '0 auto' }}>
+      <div className={styles.mockCardTitle}>
+        <MessageSquare size={18} color="var(--accent)" />
+        Comportement
       </div>
-      <div className={styles.mockEmbedBody}>
-        <div className={styles.codeRow}>
-          <code className={styles.codeSnip}>
-            {'<script src="https://vendo.ai/bot.js"'}
-            <br />
-            {'  data-id="bot_x7k2m"></script>'}
-          </code>
-          <button className={styles.copyBtn} onClick={handleCopy}>
-            {copied ? <Check size={12} /> : <Copy size={12} />}
-            {copied ? 'Copie !' : 'Copier'}
-          </button>
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Premier Message</label>
+        <div className={styles.mockTextarea} style={{ minHeight: 60 }}>Bonjour ! Comment puis-je vous aider aujourd&apos;hui ?</div>
+      </div>
+      <div className={styles.field}>
+        <label className={styles.mockLabel}>Prompt Système</label>
+        <div className={styles.mockTextarea} style={{ minHeight: 180, fontSize: 13, lineHeight: '1.6' }}>
+          Tu es un assistant expert pour la boutique Vendo.
+          Ton ton est chaleureux et professionnel.
+          Réponds toujours en te basant sur le catalogue fourni.
         </div>
-        <div className={styles.embedArrow}>↓ Collez avant &lt;/body&gt;</div>
-        <div className={styles.siteMini}>
-          <div className={styles.siteMiniHead}>
-            <div className={styles.siteMiniDots}><span /><span /><span /></div>
-            <span className={styles.siteMiniUrl}>votreboutique.com</span>
+      </div>
+    </div>
+  )
+}
+
+function MockPopups() {
+  return (
+    <div className={styles.mockCard} style={{ maxWidth: 500, margin: '0 auto' }}>
+      <div className={styles.mockCardTitle}>
+        <Zap size={18} color="var(--accent)" />
+        Popups Automatiques
+      </div>
+      <p className={styles.mockHint} style={{ marginBottom: 20 }}>Configurez l&apos;apparition automatique de popup</p>
+
+      <div style={{ padding: 20, background: 'rgba(255,255,255,0.02)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
+        <label className={styles.mockLabel}>Message Proactif #1</label>
+        <div className={styles.mockInput} style={{ marginBottom: 16 }}>Besoin d&apos;aide pour choisir ? 👋</div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: 12 }}>
+          <div>
+            <label className={styles.mockLabel}>Page</label>
+            <div className={styles.mockInput} style={{ fontSize: 12 }}>URL</div>
           </div>
-          <div className={styles.siteMiniBody}>
-            <div className={styles.siteFakeContent}>
-              <div className={styles.fakeLine} style={{ width: '70%' }} />
-              <div className={styles.fakeLine} style={{ width: '50%' }} />
-              <div className={styles.fakeLine} style={{ width: '60%' }} />
-            </div>
-            <div className={styles.widgetBubble}>
-              <span>V</span>
-            </div>
+          <div>
+            <label className={styles.mockLabel}>Apparition</label>
+            <div className={styles.mockInput}>2s</div>
+          </div>
+          <div>
+            <label className={styles.mockLabel}>Disparition</label>
+            <div className={styles.mockInput}>10s</div>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function MockEmbed() {
+  return (
+    <div className={styles.mockCard}>
+      <div className={styles.mockCardTitle}>
+        <Code size={18} color="var(--accent)" />
+        Intégrer sur votre site
+      </div>
+      <p className={styles.mockHint} style={{ marginBottom: 16 }}>
+        Copiez ce code dans la balise &lt;body&gt; de votre site :
+      </p>
+      <div className={styles.mockCodeBlock}>
+        {`<script 
+   src="https://usevendo.com/embed.js" 
+   data-chatbot-id="96d933b7-cecc-42dc-a5ae-0b36da990a04" 
+   async 
+></script>`}
       </div>
     </div>
   )
@@ -218,8 +256,10 @@ const AFTER = [
 
 const STEPS = [
   { n: '01', t: 'Collez votre catalogue', d: 'Produits, prix, tailles, delais, politique de retour — texte libre, aucun format impose.', Mock: MockEditor },
-  { n: '02', t: 'Personnalisez votre bot', d: "Nom, couleur, message d’accueil. Vos clients parlent à votre marque, pas à un outil generique.", Mock: MockCustom },
-  { n: '03', t: 'Une ligne de code', d: 'Copiez le script, collez-le avant la balise de fermeture. Compatible tout CMS.', Mock: MockEmbed },
+  { n: '02', t: 'Personnalisez le look', d: "Nom, couleur, avatar et theme. Votre assistant s'integre parfaitement à votre site.", Mock: MockCustom },
+  { n: '03', t: 'Definissez le comportement', d: 'Choisissez le message d’accueil et le ton du bot pour une experience client unique.', Mock: MockBehavior },
+  { n: '04', t: 'Boostez l’engagement', d: 'Configurez des popups automatiques pour capturer l’attention sur les pages cles.', Mock: MockPopups },
+  { n: '05', t: 'En ligne en 3 minutes', d: 'Copiez le script, collez-le sur votre site. Compatible avec Shopify, Wix, etc.', Mock: MockEmbed },
 ]
 
 const PLANS = [
@@ -415,7 +455,13 @@ export default function Home() {
                 <p className={styles.stepD}>{s.d}</p>
               </div>
               <div className={styles.stepVisual}>
-                <s.Mock />
+                {s.img ? (
+                  <div className={styles.stepImgWrapper}>
+                    <img src={s.img} alt={s.t} className={styles.stepImg} />
+                  </div>
+                ) : (
+                  <s.Mock />
+                )}
               </div>
             </div>
           ))}

@@ -26,7 +26,7 @@ export default function EmbedPage() {
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
-                .select('name, color, welcome_message_new, welcome_message_returning, triggers')
+                .select('name, color, welcome_message_new, welcome_message_returning, triggers, theme')
                 .eq('id', params.chatbotId)
                 .single()
 
@@ -128,9 +128,22 @@ export default function EmbedPage() {
         </div>
     )
 
+    const isDark = botConfig.theme === 'dark'
     const brandColor = botConfig.color || '#673DE6'
     const brandInitial = botConfig.name?.charAt(0).toUpperCase() || 'A'
     const quickActions = botConfig.quick_actions || []
+
+    const themeColors = {
+        bgMain: isDark ? '#0F172A' : '#FFFFFF',
+        bgMessages: isDark ? '#020617' : '#F8FAFC',
+        textMain: isDark ? '#F8FAFC' : '#1E293B',
+        textMuted: isDark ? 'rgba(255, 255, 255, 0.5)' : '#64748B',
+        bubbleAssistant: isDark ? '#1E293B' : '#FFFFFF',
+        bubbleTextAssistant: isDark ? '#F8FAFC' : '#1E293B',
+        inputBg: isDark ? '#1E293B' : '#F8FAFC',
+        inputBorder: isDark ? '#334155' : '#F1F5F9',
+        scrollbar: isDark ? '#334155' : '#E2E8F0'
+    }
 
     return (
         <div style={{
@@ -138,7 +151,7 @@ export default function EmbedPage() {
             flexDirection: 'column',
             height: '100vh',
             fontFamily: "'Inter', -apple-system, sans-serif",
-            background: '#FFFFFF',
+            background: themeColors.bgMain,
             overflow: 'hidden'
         }}>
             <style>{`
@@ -154,7 +167,7 @@ export default function EmbedPage() {
                 }
                 ::-webkit-scrollbar { width: 4px; }
                 ::-webkit-scrollbar-track { background: transparent; }
-                ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+                ::-webkit-scrollbar-thumb { background: ${themeColors.scrollbar}; border-radius: 4px; }
                 input:focus { outline: none; }
             `}</style>
 
@@ -201,7 +214,7 @@ export default function EmbedPage() {
                     flex: 1,
                     padding: '20px',
                     overflowY: 'auto',
-                    background: '#F8FAFC',
+                    background: themeColors.bgMessages,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 16
@@ -219,12 +232,12 @@ export default function EmbedPage() {
                             borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                             fontSize: 14,
                             lineHeight: '1.6',
-                            color: msg.role === 'user' ? '#fff' : '#1E293B',
-                            background: msg.role === 'user' ? brandColor : '#FFFFFF',
+                            color: msg.role === 'user' ? '#fff' : themeColors.bubbleTextAssistant,
+                            background: msg.role === 'user' ? brandColor : themeColors.bubbleAssistant,
                             boxShadow: msg.role === 'user'
                                 ? `0 6px 14px ${brandColor}33`
-                                : '0 2px 6px rgba(0,0,0,0.04)',
-                            border: msg.role === 'assistant' ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                                : isDark ? '0 4px 12px rgba(0,0,0,0.2)' : '0 2px 6px rgba(0,0,0,0.04)',
+                            border: msg.role === 'assistant' ? (isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.04)') : 'none',
                             fontWeight: 500,
                             whiteSpace: 'pre-wrap'
                         }}>
@@ -235,9 +248,9 @@ export default function EmbedPage() {
 
                 {loading && (
                     <div style={{ display: 'flex', gap: 5, paddingLeft: 4 }}>
-                        <div style={{ width: 7, height: 7, background: '#CBD5E1', borderRadius: '50%', animation: 'embedBounce 1.4s infinite 0ms' }}></div>
-                        <div style={{ width: 7, height: 7, background: '#CBD5E1', borderRadius: '50%', animation: 'embedBounce 1.4s infinite 200ms' }}></div>
-                        <div style={{ width: 7, height: 7, background: '#CBD5E1', borderRadius: '50%', animation: 'embedBounce 1.4s infinite 400ms' }}></div>
+                        <div style={{ width: 7, height: 7, background: isDark ? '#334155' : '#CBD5E1', borderRadius: '50%', animation: 'embedBounce 1.4s infinite 0ms' }}></div>
+                        <div style={{ width: 7, height: 7, background: isDark ? '#334155' : '#CBD5E1', borderRadius: '50%', animation: 'embedBounce 1.4s infinite 200ms' }}></div>
+                        <div style={{ width: 7, height: 7, background: isDark ? '#334155' : '#CBD5E1', borderRadius: '50%', animation: 'embedBounce 1.4s infinite 400ms' }}></div>
                     </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -245,17 +258,17 @@ export default function EmbedPage() {
 
             {/* Quick Actions */}
             {quickActions.length > 0 && (
-                <div style={{ padding: '0 20px 10px', background: '#F8FAFC', display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0 }}>
+                <div style={{ padding: '0 20px 10px', background: themeColors.bgMessages, display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0 }}>
                     {quickActions.map(label => (
                         <button key={label} onClick={() => setInput(label)} style={{
                             flexShrink: 0,
                             padding: '7px 12px',
-                            background: '#FFFFFF',
-                            border: '1px solid #E2E8F0',
+                            background: themeColors.bubbleAssistant,
+                            border: `1px solid ${themeColors.inputBorder}`,
                             borderRadius: '10px',
                             fontSize: 12,
                             fontWeight: 700,
-                            color: '#334155',
+                            color: themeColors.textMain,
                             cursor: 'pointer',
                             fontFamily: 'Inter, sans-serif',
                             transition: 'all 0.2s'
@@ -266,11 +279,11 @@ export default function EmbedPage() {
                 </div>
             )}
 
-            {/* Input */}
+            {/* Input Form */}
             <form onSubmit={handleSend} style={{
                 padding: '16px 20px 20px',
-                background: '#FFFFFF',
-                borderTop: '1px solid #F1F5F9',
+                background: themeColors.bgMain,
+                borderTop: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9',
                 display: 'flex',
                 gap: 10,
                 alignItems: 'center',
@@ -283,24 +296,24 @@ export default function EmbedPage() {
                     disabled={loading}
                     style={{
                         flex: 1,
-                        border: '1.5px solid #F1F5F9',
+                        border: `1.5px solid ${themeColors.inputBorder}`,
                         borderRadius: '14px',
                         padding: '12px 16px',
                         fontSize: 14,
-                        background: '#F8FAFC',
+                        background: themeColors.inputBg,
                         fontFamily: 'Inter, sans-serif',
                         fontWeight: 500,
-                        color: '#1E293B',
+                        color: themeColors.textMain,
                         transition: 'all 0.3s'
                     }}
                     onFocus={e => {
                         e.target.style.border = `1.5px solid ${brandColor}`
-                        e.target.style.background = '#FFFFFF'
+                        e.target.style.background = isDark ? '#1E293B' : '#FFFFFF'
                         e.target.style.boxShadow = `0 0 0 3px ${brandColor}22`
                     }}
                     onBlur={e => {
-                        e.target.style.border = '1.5px solid #F1F5F9'
-                        e.target.style.background = '#F8FAFC'
+                        e.target.style.border = `1.5px solid ${themeColors.inputBorder}`
+                        e.target.style.background = themeColors.inputBg
                         e.target.style.boxShadow = 'none'
                     }}
                 />

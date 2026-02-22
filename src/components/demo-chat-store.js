@@ -4,12 +4,17 @@ import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Bot } from 'lucide-react'
 
 export default function DemoChatStore({ context }) {
+    const brandName = context?.knowledgeBase?.brand?.name || (context?.storeType?.split(' ')[0]) || 'Vendo'
+    const brandColor = context?.knowledgeBase?.brand?.color || '#673DE6'
+    const brandColorDark = '#4F32B5'
+
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState(() => {
-        if (context?.knowledgeBase) {
-            return [{ role: 'assistant', content: `Salut ! Je suis Léa 🌿 Tu cherches le bon soin ou tu as une question sur ta commande ?` }]
+        if (context?.knowledgeBase?.system_prompt) {
+            // Extract opening message from system prompt or use a default one
+            return [{ role: 'assistant', content: `Salut ! C'est Max de ${brandName}. Prêt pour ta séance ? Je peux t'aider sur les tailles ou ta commande.` }]
         }
-        return [{ role: 'assistant', content: 'Bienvenue chez V-ATHLETICS. Je suis votre coach personnel Vendo. En quoi puis-je vous aider aujourd\'hui ?' }]
+        return [{ role: 'assistant', content: `Bienvenue chez ${brandName}. Je suis votre assistant expert. En quoi puis-je vous aider ?` }]
     })
 
     const [input, setInput] = useState('')
@@ -26,18 +31,16 @@ export default function DemoChatStore({ context }) {
     useEffect(() => {
         if (!context) return;
         let proactiveMsg = "";
-        if (context.view === 'cart' && context.cart?.length > 0) {
-            proactiveMsg = `Vous avez une excellente sélection dans votre panier. Le total est de ${context.total?.toFixed(2)} €. Souhaitez-vous finaliser votre commande ?`;
+        if (context.view === 'cart' && (context.cartCount > 0)) {
+            proactiveMsg = `Tu as une sacrée sélection ! Total : ${context.cartTotal?.toFixed(2)} €. On valide la commande ?`;
         } else if (context.view === 'checkout') {
-            proactiveMsg = `Vous êtes à l'étape finale. N'oubliez pas que la livraison est offerte. Une question sur les délais ?`;
-        } else if (context.product) {
-            proactiveMsg = `Vous regardez le ${context.product.name}. C'est l'un de nos articles les plus recherchés en ce moment.`;
+            proactiveMsg = `C'est presque fini ! On livre en 24h. Une question sur le paiement ?`;
         }
         if (proactiveMsg) {
             setIsOpen(true);
             setMessages(prev => [...prev, { role: 'assistant', content: proactiveMsg }]);
         }
-    }, [context?.view, context?.product?.id])
+    }, [context?.view, context?.cartCount])
 
     useEffect(() => {
         scrollToBottom()
@@ -59,7 +62,7 @@ export default function DemoChatStore({ context }) {
         try {
             let apiMessages = [...newMessages]
 
-            if (context || context?.knowledgeBase) {
+            if (context?.knowledgeBase) {
                 let systemContext = ""
                 const kb = context?.knowledgeBase
 
@@ -69,26 +72,18 @@ export default function DemoChatStore({ context }) {
                     systemContext += `
 BRAND IDENTITY:
 Name: ${kb.brand.name}
-Values: ${kb.brand.values.join(', ')}
+Slogan: ${kb.brand.slogan}
 
-PRODUCTS (${kb.products.length} items):
-${kb.products.map(p => `- ${p.name} (${p.price}€): ${p.short_description}. Ingredients: ${p.key_ingredients.map(i => `${i.name} (${i.concentration || ''})`).join(', ')}. Use: ${p.how_to_use}.`).join('\n')}
+PRODUCTS:
+${kb.products?.map(p => `- ${p.name} (${p.price}€): ${p.description}. Sizing: ${p.sizing}`).join('\n')}
 
 SUPPORT POLICIES:
-Shipping: Free > ${kb.shipping.free_shipping_threshold}€. Carriers: ${kb.shipping.carriers.map(c => c.name).join(', ')}.
-Returns: ${kb.returns.return_window_days} days.
-FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
+Shipping: ${kb.shipping?.delays}. Price: ${kb.shipping?.price}.
+Returns: ${kb.returns?.policy}.
 `
-                    systemContext += `\n\n--- CONTEXTE UTILISATEUR ---\nPage: ${context?.view || 'home'}. Panier: ${context?.cartTotal?.toFixed(2) || '0'}€.`
+                    systemContext += `\n\n--- CONTEXTE UTILISATEUR ---\nPage: ${context?.page || 'home'}. Panier: ${context?.cartTotal?.toFixed(2) || '0'}€.`
                 } else {
-                    systemContext = `CONTEXT: User is on ${context?.storeType || 'V-ATHLETICS'}. View: ${context?.view || 'home'}. Cart Total: ${context?.cartTotal?.toFixed(2) || '0.00'} €.`
-                    if (kb) {
-                        systemContext += `\nBRAND: ${kb.brand.name}\nPRODUCTS:\n${kb.products.map(p => `- ${p.name} (${p.price}€): ${p.short_description}.`).join('\n')}\nShipping: Free > ${kb.shipping.free_shipping_threshold}€. Returns: ${kb.returns.return_window_days} days.`
-                    }
-                    if (context?.product) {
-                        systemContext += `\nCurrently viewing: ${context.product.name} (${context.product.price} €).`
-                    }
-                    systemContext += `\nROLE: You are the expert consultant.`
+                    systemContext = `CONTEXT: User is on ${brandName}. View: ${context?.page || 'home'}. Cart Total: ${context?.cartTotal?.toFixed(2) || '0.00'} €.`
                 }
 
                 apiMessages = [{ role: 'system', content: systemContext }, ...apiMessages]
@@ -121,10 +116,6 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
         }
     }
 
-    const brandColor = '#c8a882'
-    const brandColorDark = '#a88b68'
-    const brandName = context?.knowledgeBase?.brand?.name || 'Naturel'
-
     return (
         <div style={{ fontFamily: "'Inter', sans-serif", position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 900 }}>
 
@@ -140,10 +131,10 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
                             width: 64,
                             height: 64,
                             borderRadius: '20px',
-                            background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColorDark} 100%)`,
+                            background: brandColor,
                             color: 'white',
                             border: 'none',
-                            boxShadow: `0 20px 40px rgba(200, 168, 130, 0.4)`,
+                            boxShadow: `0 20px 40px ${brandColor}44`,
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -154,7 +145,9 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
                         onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)'}
                         onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
                     >
-                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: 'white', lineHeight: 1 }}>N</span>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 28, color: 'white', lineHeight: 1 }}>
+                            {brandName.charAt(0)}
+                        </span>
                         <div style={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, background: '#10B981', borderRadius: '50%' }}></div>
                     </button>
                 </div>
@@ -184,7 +177,7 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
                 >
                     {/* Header */}
                     <div style={{
-                        background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColorDark} 100%)`,
+                        background: brandColor,
                         padding: '24px',
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -283,7 +276,7 @@ FAQ: ${kb.faq.map(f => `Q: ${f.question} A: ${f.answer}`).join(' ')}
 
                     {/* Quick Actions */}
                     <div style={{ padding: '0 24px 12px', background: '#F8FAFC', display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none' }}>
-                        {['Soins visage', 'Ma commande', 'Ingrédients', 'Diagnostic'].map(label => (
+                        {['Tailles', 'Ma livraison', 'Qualité', 'Promo'].map(label => (
                             <button key={label} style={{
                                 flexShrink: 0,
                                 padding: '8px 14px',

@@ -186,16 +186,16 @@
 
         const executeTrigger = () => {
           if (sessionStorage.getItem(storageKey)) return; // Double check
-          showTeaser(trigger.message);
+          showTeaser(trigger.message, trigger);
           sessionStorage.setItem(storageKey, 'true');
         };
 
         if (trigger.type === 'time') {
-          setTimeout(executeTrigger, (parseInt(trigger.value) || 5) * 1000);
+          setTimeout(executeTrigger, (parseInt(trigger.spawn) || 5) * 1000);
         } else if (trigger.type === 'scroll') {
           const onScroll = () => {
             const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-            if (scrollPercent >= parseInt(trigger.value)) {
+            if (scrollPercent >= parseInt(trigger.spawn)) {
               executeTrigger();
               window.removeEventListener('scroll', onScroll);
             }
@@ -212,7 +212,7 @@
   let autoCloseTimer = null;
   let scrollDismissListener = null;
 
-  function showTeaser(text) {
+  function showTeaser(text, triggerContext = null) {
     if (isOpen) return; // Don't show if already open
     if (sessionStorage.getItem(`vendo_teaser_seen_${chatbotId}`)) return; // Only show once per session
 
@@ -295,10 +295,11 @@
     // Mark as seen
     sessionStorage.setItem(`vendo_teaser_seen_${chatbotId}`, 'true');
 
-    // 1. Auto-close after 5 seconds
+    // 1. Auto-close after custom duration
+    const dismissDuration = (parseInt(triggerContext?.despawn) || 5) * 1000;
     autoCloseTimer = setTimeout(() => {
       removeTeaser();
-    }, 5000);
+    }, dismissDuration);
 
     // 2. Auto-close if user scrolls away from trigger point (pixels)
     const startScrollY = window.scrollY;

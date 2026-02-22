@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import styles from './editor.module.css'
-import { ArrowLeft, Save, Bot, Lock, Clock, ArrowDown, Trash2, Plus, Zap, MousePointer2, Percent } from 'lucide-react'
+import { ArrowLeft, Save, Bot, Lock, Clock, ArrowDown, Trash2, Plus, Zap, MousePointer2, Percent, Palette, Code, MessageSquare, Settings } from 'lucide-react'
 
 // ... (existing code) ...
 
@@ -24,13 +24,15 @@ export default function ChatbotEditor({ botId = null }) {
 
     const [formData, setFormData] = useState({
         name: '',
+        subtitle: 'En ligne · repond en 3s',
         color: '#673DE6',
         logo_url: 'ICON:BOT',
         welcome_message_new: 'Bonjour ! 👋 Comment puis-je vous aider aujourd\'hui ?',
         welcome_message_returning: 'Re-bonjour ! Ravi de vous revoir. 👋',
         system_prompt: 'Tu es un assistant commercial humain, chaleureux et direct. Réponds de manière concise, sans utiliser de formatage complexe (pas d\'astérisques). Ta mission est d\'aider le visiteur avec bienveillance.',
         data_sources: '',
-        triggers: []
+        triggers: [],
+        theme: 'light'
     })
 
     const PLAN_LIMITS = {
@@ -112,6 +114,7 @@ export default function ChatbotEditor({ botId = null }) {
                 if (data) {
                     setFormData({
                         name: data.name,
+                        subtitle: data.subtitle ?? 'En ligne · repond en 3s',
                         color: data.color,
                         logo_url: data.logo_url || '',
                         // Use ?? so that empty string "" is preserved and not replaced by default
@@ -119,7 +122,8 @@ export default function ChatbotEditor({ botId = null }) {
                         welcome_message_returning: data.welcome_message_returning ?? 'Re-bonjour ! Ravi de vous revoir. 👋',
                         system_prompt: data.system_prompt,
                         data_sources: data.data_sources || '',
-                        triggers: data.triggers?.map(t => ({ ...t, id: t.id || Math.random().toString(36).substr(2, 9) })) || []
+                        triggers: data.triggers?.map(t => ({ ...t, id: t.id || Math.random().toString(36).substr(2, 9) })) || [],
+                        theme: data.theme || 'light'
                     })
                 }
             }
@@ -129,41 +133,37 @@ export default function ChatbotEditor({ botId = null }) {
         init()
     }, [botId, user?.id])
 
-    // Helper to manage triggers array state from unified inputs
-    const updateTriggers = (updates) => {
-        let newTriggers = [...(formData.triggers || [])];
-        const { message, page, spawnValue, despawnValue } = updates;
+    // Helper to manage triggers array state
+    const updateTrigger = (id, updates) => {
+        setFormData(prev => ({
+            ...prev,
+            triggers: prev.triggers.map(t => t.id === id ? { ...t, ...updates } : t)
+        }))
+    }
 
-        // Ensure we at least have a base trigger structure
-        if (newTriggers.length === 0) {
-            newTriggers.push({
-                id: Date.now().toString(),
-                type: 'time',
-                spawn: '2',
-                despawn: '8',
-                message: formData.welcome_message_new || 'Bonjour ! 👋',
-                page: '/'
-            });
+    const addTrigger = () => {
+        const newTrigger = {
+            id: Date.now().toString(),
+            type: 'time',
+            spawn: '2',
+            despawn: '8',
+            message: 'Bonjour ! 👋',
+            page: ''
         }
+        setFormData(prev => ({
+            ...prev,
+            triggers: [...(prev.triggers || []), newTrigger]
+        }))
+    }
 
-        // Sync all fields correctly
-        newTriggers = newTriggers.map(t => ({
-            ...t,
-            ...(message !== undefined ? { message } : {}),
-            ...(page !== undefined ? { page } : {}),
-            ...(spawnValue !== undefined ? { spawn: spawnValue } : {}),
-            ...(despawnValue !== undefined ? { despawn: despawnValue } : {})
-        }));
+    const removeTrigger = (id) => {
+        setFormData(prev => ({
+            ...prev,
+            triggers: prev.triggers.filter(t => t.id !== id)
+        }))
+    }
 
-        setFormData({ ...formData, triggers: newTriggers });
-    };
-
-    // Derived values for UI
-    const activeTrigger = formData.triggers?.[0] || {};
-    const currentMessage = activeTrigger.message || '';
-    const currentPage = activeTrigger.page || '';
-    const currentSpawn = activeTrigger.spawn || '';
-    const currentDespawn = activeTrigger.despawn || '';
+    const triggers = formData.triggers || []
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -178,14 +178,16 @@ export default function ChatbotEditor({ botId = null }) {
         try {
             console.log('Saving chatbot payload:', formData); // Debug log
             const payload = {
-                name: profile?.plan_tier === 'free' ? 'Mon Assistant Vendo' : formData.name,
+                name: formData.name,
+                subtitle: formData.subtitle,
                 color: formData.color,
                 logo_url: formData.logo_url,
                 welcome_message_new: formData.welcome_message_new,
                 welcome_message_returning: formData.welcome_message_returning,
                 system_prompt: formData.system_prompt,
                 data_sources: formData.data_sources,
-                triggers: formData.triggers
+                triggers: formData.triggers,
+                theme: formData.theme
             }
 
             if (botId) {
@@ -247,24 +249,29 @@ export default function ChatbotEditor({ botId = null }) {
             <div className={styles.grid}>
                 <div className={styles.mainCol}>
                     <div className={styles.card}>
-                        <h3 className={styles.cardTitle}>Paramètres Généraux</h3>
+                        <h2 className={styles.cardTitle}>
+                            <Palette size={18} color="var(--primary)" />
+                            Personnalisation
+                        </h2>
 
                         <div className={styles.field}>
-                            <div className={styles.fieldHeader}>
-                                <label>Nom du Chatbot</label>
-                                {profile?.plan_tier === 'free' && <span className={styles.badge} style={{ background: 'rgba(255, 255, 255, 0.05)', color: 'rgba(255, 255, 255, 0.4)' }}>FIGÉ (GRATUIT)</span>}
-                            </div>
+                            <label>Nom de l'Assistant</label>
                             <Input
-                                value={profile?.plan_tier === 'free' ? 'Mon Assistant Vendo' : formData.name}
+                                value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="Mon Assistant Commercial"
-                                disabled={profile?.plan_tier === 'free'}
+                                placeholder="Ex: Mon Assistant Vendo"
+                                required
                             />
-                            {profile?.plan_tier === 'free' && (
-                                <p className={styles.hint} style={{ color: '#ef4444' }}>
-                                    <Link href="/billing" className={styles.upgradeLink}>Passer sur un plan payant</Link> pour le personnaliser.
-                                </p>
-                            )}
+                        </div>
+
+                        <div className={styles.field}>
+                            <label>Sous-titre / Statut</label>
+                            <Input
+                                value={formData.subtitle}
+                                onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                                placeholder="Ex: Expert Vendo Connecté"
+                                required
+                            />
                         </div>
 
                         <div className={styles.field}>
@@ -354,10 +361,56 @@ export default function ChatbotEditor({ botId = null }) {
                                 </p>
                             )}
                         </div>
+
+                        <div className={styles.field} style={{ marginTop: 24 }}>
+                            <label>Thème du Chatbot</label>
+                            <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+                                <Button
+                                    type="button"
+                                    variant={formData.theme === 'light' ? 'default' : 'outline'}
+                                    onClick={() => setFormData({ ...formData, theme: 'light' })}
+                                    size="sm"
+                                    style={{
+                                        flex: 1,
+                                        background: formData.theme === 'light' ? 'var(--primary)' : 'transparent',
+                                        color: '#fff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 8
+                                    }}
+                                >
+                                    Mode Clair
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={formData.theme === 'dark' ? 'default' : 'outline'}
+                                    onClick={() => setFormData({ ...formData, theme: 'dark' })}
+                                    size="sm"
+                                    style={{
+                                        flex: 1,
+                                        background: formData.theme === 'dark' ? 'var(--primary)' : 'transparent',
+                                        color: '#fff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 8
+                                    }}
+                                >
+                                    Mode Sombre
+                                </Button>
+                            </div>
+                            <p className={styles.hint} style={{ marginTop: 8 }}>
+                                Choisissez l'apparence de votre widget sur votre site.
+                            </p>
+                        </div>
                     </div>
 
                     <div className={styles.card}>
-                        <h3 className={styles.cardTitle}>Entraînement & Contexte</h3>
+                        <h3 className={styles.cardTitle}>
+                            <Bot size={18} color="var(--primary)" />
+                            Entraînement & Contexte
+                        </h3>
                         <div className={styles.field}>
                             <label>Sources de Données</label>
                             <textarea
@@ -372,101 +425,95 @@ export default function ChatbotEditor({ botId = null }) {
                     </div>
 
                     <div className={styles.card}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(124, 58, 237, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Zap size={18} fill="currentColor" />
-                            </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
                             <div>
-                                <h3 className={styles.cardTitle} style={{ marginBottom: 0 }}>Popup Automatique</h3>
-                                <p className={styles.hint} style={{ margin: 0 }}>Configurez l&apos;apparition automatique du chatbot.</p>
+                                <h3 className={styles.cardTitle} style={{ marginBottom: 0, border: 'none', padding: 0 }}>
+                                    <Zap size={18} color="var(--primary)" />
+                                    Popups Automatiques
+                                </h3>
+                                <p className={styles.hint} style={{ margin: 0 }}>Configurez l&apos;apparition automatique de popup</p>
                             </div>
+                            <Button type="button" size="sm" onClick={addTrigger}>
+                                <Plus size={16} style={{ marginRight: 6 }} /> Ajouter
+                            </Button>
                         </div>
 
-                        <div style={{ display: 'grid', gap: 20 }}>
-                            {/* Message Input */}
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
-                                    Message Proactif
-                                </label>
-                                <div style={{ position: 'relative' }}>
-                                    <div style={{ position: 'absolute', left: 12, top: 16, width: 8, height: 8, borderRadius: '50%', background: '#10B981', zIndex: 10 }}></div>
-                                    <Input
-                                        value={currentMessage}
-                                        onChange={(e) => updateTriggers({ message: e.target.value })}
-                                        placeholder="Bonjour ! Je peux vous aider ?"
-                                        style={{ height: 42, paddingLeft: 28, fontSize: 14 }}
-                                    />
+                        <div style={{ display: 'grid', gap: 24 }}>
+                            {triggers.length === 0 && (
+                                <div style={{ textAlign: 'center', padding: '20px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: 12 }}>
+                                    <p className={styles.hint}>Aucune popup configurée</p>
                                 </div>
-                                <p className={styles.hint} style={{ marginTop: 6 }}>Ce message s'affichera dans une bulle au-dessus de l'icône.</p>
-                            </div>
+                            )}
 
-                            {/* Page Input */}
-                            <div>
-                                <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
-                                    Sur quelle page ? <span style={{ fontWeight: 400, color: 'rgba(255, 255, 255, 0.2)' }}>(Optionnel)</span>
-                                </label>
-                                <div style={{ position: 'relative' }}>
-                                    <MousePointer2 size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
-                                    <Input
-                                        value={currentPage}
-                                        onChange={(e) => updateTriggers({ page: e.target.value })}
-                                        placeholder="/tarifs, /contact..."
-                                        style={{ height: 42, paddingLeft: 36, fontSize: 14 }}
-                                    />
-                                </div>
-                            </div>
+                            {triggers.map((trigger, idx) => (
+                                <div key={trigger.id} style={{ padding: 20, background: 'rgba(255,255,255,0.02)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeTrigger(trigger.id)}
+                                        style={{ position: 'absolute', top: 16, right: 16, background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer' }}
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
 
-                            <div style={{ height: 1, background: 'rgba(255, 255, 255, 0.05)', margin: '4px 0' }}></div>
+                                    <div style={{ display: 'grid', gap: 16 }}>
+                                        <div>
+                                            <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
+                                                Message Proactif #{idx + 1}
+                                            </label>
+                                            <Input
+                                                value={trigger.message}
+                                                onChange={(e) => updateTrigger(trigger.id, { message: e.target.value })}
+                                                placeholder="Bonjour ! Je peux vous aider ?"
+                                            />
+                                        </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                                {/* Spawn Timer Input */}
-                                <div>
-                                    <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
-                                        Apparition (sec)
-                                    </label>
-                                    <div style={{ position: 'relative' }}>
-                                        <ArrowDown size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
-                                        <Input
-                                            type="number"
-                                            min="0"
-                                            max="999"
-                                            value={currentSpawn}
-                                            onChange={(e) => updateTriggers({ spawnValue: e.target.value })}
-                                            placeholder="Ex: 2"
-                                            style={{ height: 42, paddingLeft: 36, fontSize: 14 }}
-                                        />
-                                        <div style={{ position: 'absolute', right: 12, top: 13, fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>sec</div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: 12 }}>
+                                            <div>
+                                                <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
+                                                    Page (ex: /contact)
+                                                </label>
+                                                <Input
+                                                    value={trigger.page}
+                                                    onChange={(e) => updateTrigger(trigger.id, { page: e.target.value })}
+                                                    placeholder="L'URL de votre page"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
+                                                    Apparition (sec)
+                                                </label>
+                                                <Input
+                                                    type="number"
+                                                    value={trigger.spawn}
+                                                    onChange={(e) => updateTrigger(trigger.id, { spawn: e.target.value })}
+                                                    placeholder="ex:1"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
+                                                    Disparition (sec)
+                                                </label>
+                                                <Input
+                                                    type="number"
+                                                    value={trigger.despawn}
+                                                    onChange={(e) => updateTrigger(trigger.id, { despawn: e.target.value })}
+                                                    placeholder="ex:5"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* Despawn Timer Input */}
-                                <div>
-                                    <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
-                                        Disparition (sec)
-                                    </label>
-                                    <div style={{ position: 'relative' }}>
-                                        <Clock size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
-                                        <Input
-                                            type="number"
-                                            min="0"
-                                            max="999"
-                                            value={currentDespawn}
-                                            onChange={(e) => updateTriggers({ despawnValue: e.target.value })}
-                                            placeholder="Ex: 8"
-                                            style={{ height: 42, paddingLeft: 36, fontSize: 14 }}
-                                        />
-                                        <div style={{ position: 'absolute', right: 12, top: 13, fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>sec</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p className={styles.hint} style={{ margin: 0 }}>Réglez quand la popup doit apparaître et disparaître.</p>
+                            ))}
                         </div>
                     </div>
                 </div>
 
                 <div className={styles.sideCol}>
                     <div className={styles.card}>
-                        <h3 className={styles.cardTitle}>Comportement</h3>
+                        <h3 className={styles.cardTitle}>
+                            <MessageSquare size={18} color="var(--primary)" />
+                            Comportement
+                        </h3>
 
                         <div className={styles.field}>
                             <label>Premier Message du Chatbot</label>
@@ -500,7 +547,10 @@ export default function ChatbotEditor({ botId = null }) {
 
                     {/* Embed Code Section - Always Visible */}
                     <div className={styles.card}>
-                        <h3 className={styles.cardTitle}>Intégrer sur votre site</h3>
+                        <h3 className={styles.cardTitle}>
+                            <Code size={18} color="var(--primary)" />
+                            Intégrer sur votre site
+                        </h3>
 
                         {!botId && (
                             <div style={{ marginBottom: 12, padding: 12, background: 'rgba(249, 115, 22, 0.05)', borderLeft: '4px solid #f97316', color: '#f97316', fontSize: 13, borderRadius: 8 }}>
@@ -510,12 +560,12 @@ export default function ChatbotEditor({ botId = null }) {
 
                         <p className={styles.hint} style={{ marginBottom: 12 }}>Copiez ce code dans la balise &lt;body&gt; de votre site :</p>
 
-                        <div className={styles.codeBlock} style={{ background: '#1e293b', color: '#e2e8f0', padding: 12, borderRadius: 6, fontSize: 13, fontFamily: 'monospace', overflowX: 'auto' }}>
-                            {`<script 
-    src="https://usevendo.com/embed.js" 
-    data-chatbot-id="${botId || 'GENERE_APRES_SAUVEGARDE'}" 
-    async
-></script>`}
+                        <div className={styles.codeBlock} style={{ background: '#030308', color: '#8b5cf6', padding: 20, borderRadius: 12, fontSize: 13, fontFamily: 'monospace', overflowX: 'auto', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <span style={{ color: '#E596FD' }}>&lt;script</span> <br />
+                            &nbsp;&nbsp;&nbsp;src=<span style={{ color: '#FFF' }}>&quot;https://usevendo.com/embed.js&quot;</span> <br />
+                            &nbsp;&nbsp;&nbsp;data-chatbot-id=<span style={{ color: '#FFF' }}>&quot;{botId || 'GENERE_APRES_SAUVEGARDE'}&quot;</span> <br />
+                            &nbsp;&nbsp;&nbsp;<span style={{ color: '#E596FD' }}>async</span> <br />
+                            <span style={{ color: '#E596FD' }}>&gt;&lt;/script&gt;</span>
                         </div>
                     </div>
                 </div>

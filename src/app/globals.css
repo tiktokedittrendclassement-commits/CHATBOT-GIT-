@@ -27,19 +27,22 @@
 }
 
 [data-theme='dark'] {
-  --background: #020617;
-  /* Deepest Navy */
+  --background: #09090b;
+  /* Deepest Navy -> Zinc 950 */
   --foreground: #F8FAFC;
 
   --primary: #8B5CF6;
   /* Bright Purple (Dark Mode) */
   --primary-dark: #7C3AED;
 
-  --secondary: #0F172A;
-  --secondary-dark: #1E293B;
+  --secondary: #18181b;
+  /* Zinc 900 */
+  --secondary-dark: #27272a;
+  /* Zinc 800 */
 
   --muted: #0F172A;
-  --border: #1E293B;
+  --border: #27272a;
+  /* Gray border instead of blueish */
   color-scheme: dark;
 }
 

@@ -96,7 +96,7 @@ export default function MarketingEmailPage() {
 
                 {isLocked && (
                     <div className={styles.lockedBox}>
-                        <div style={{ background: '#EDE9FE', padding: 12, borderRadius: '50%', color: '#7C3AED' }}>
+                        <div style={{ background: 'rgba(124, 58, 237, 0.1)', padding: 12, borderRadius: '50%', color: '#818CF8', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
                             <Lock size={24} />
                         </div>
                         <div style={{ flex: 1 }}>

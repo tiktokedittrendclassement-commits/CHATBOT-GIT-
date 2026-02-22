@@ -252,7 +252,7 @@ export default function ChatbotEditor({ botId = null }) {
                         <div className={styles.field}>
                             <div className={styles.fieldHeader}>
                                 <label>Nom du Chatbot</label>
-                                {profile?.plan_tier === 'free' && <span className={styles.badge} style={{ background: '#e2e8f0', color: '#334155' }}>FIGÉ (GRATUIT)</span>}
+                                {profile?.plan_tier === 'free' && <span className={styles.badge} style={{ background: 'rgba(255, 255, 255, 0.05)', color: 'rgba(255, 255, 255, 0.4)' }}>FIGÉ (GRATUIT)</span>}
                             </div>
                             <Input
                                 value={profile?.plan_tier === 'free' ? 'Mon Assistant Vendo' : formData.name}
@@ -261,7 +261,7 @@ export default function ChatbotEditor({ botId = null }) {
                                 disabled={profile?.plan_tier === 'free'}
                             />
                             {profile?.plan_tier === 'free' && (
-                                <p className={styles.hint} style={{ color: '#dc2626' }}>
+                                <p className={styles.hint} style={{ color: '#ef4444' }}>
                                     <Link href="/billing" className={styles.upgradeLink}>Passer sur un plan payant</Link> pour le personnaliser.
                                 </p>
                             )}
@@ -289,7 +289,7 @@ export default function ChatbotEditor({ botId = null }) {
                             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                                 <div style={{
                                     width: 44, height: 44, borderRadius: 14, overflow: 'hidden',
-                                    border: '1px solid #ddd', flexShrink: 0,
+                                    border: '1px solid rgba(255, 255, 255, 0.1)', flexShrink: 0,
                                     background: formData.color || '#C8A882',
                                     color: '#fff',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -310,7 +310,7 @@ export default function ChatbotEditor({ botId = null }) {
                                         variant={formData.logo_url === 'ICON:BOT' ? 'default' : 'outline'}
                                         onClick={() => setFormData({ ...formData, logo_url: 'ICON:BOT' })}
                                         size="sm"
-                                        style={{ background: formData.logo_url === 'ICON:BOT' ? '#0F172A' : 'transparent', color: formData.logo_url === 'ICON:BOT' ? '#fff' : '#0F172A' }}
+                                        style={{ background: formData.logo_url === 'ICON:BOT' ? 'var(--primary)' : 'transparent', color: '#fff' }}
                                     >
                                         <Bot size={16} style={{ marginRight: 6 }} /> Robot
                                     </Button>
@@ -324,8 +324,8 @@ export default function ChatbotEditor({ botId = null }) {
                                         size="sm"
                                         disabled={profile?.plan_tier === 'free'}
                                         style={{
-                                            background: formData.logo_url !== 'ICON:BOT' ? '#0F172A' : 'transparent',
-                                            color: formData.logo_url !== 'ICON:BOT' ? '#fff' : '#0F172A',
+                                            background: formData.logo_url !== 'ICON:BOT' ? 'var(--primary)' : 'transparent',
+                                            color: '#fff',
                                             opacity: profile?.plan_tier === 'free' ? 0.5 : 1,
                                             cursor: profile?.plan_tier === 'free' ? 'not-allowed' : 'pointer'
                                         }}
@@ -349,7 +349,7 @@ export default function ChatbotEditor({ botId = null }) {
                                 </div>
                             )}
                             {profile?.plan_tier === 'free' && (
-                                <p className={styles.hint} style={{ color: '#dc2626', marginTop: 8 }}>
+                                <p className={styles.hint} style={{ color: '#ef4444', marginTop: 8 }}>
                                     <Link href="/billing" className={styles.upgradeLink}>Passer sur un plan payant</Link> pour choisir l'initiale.
                                 </p>
                             )}
@@ -373,8 +373,8 @@ export default function ChatbotEditor({ botId = null }) {
 
                     <div className={styles.card}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EFF6FF', color: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Zap size={18} fill="#3B82F6" />
+                            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(124, 58, 237, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Zap size={18} fill="currentColor" />
                             </div>
                             <div>
                                 <h3 className={styles.cardTitle} style={{ marginBottom: 0 }}>Popup Automatique</h3>
@@ -385,7 +385,7 @@ export default function ChatbotEditor({ botId = null }) {
                         <div style={{ display: 'grid', gap: 20 }}>
                             {/* Message Input */}
                             <div>
-                                <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
                                     Message Proactif
                                 </label>
                                 <div style={{ position: 'relative' }}>
@@ -402,8 +402,8 @@ export default function ChatbotEditor({ botId = null }) {
 
                             {/* Page Input */}
                             <div>
-                                <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
-                                    Sur quelle page ? <span style={{ fontWeight: 400, color: '#94a3b8' }}>(Optionnel)</span>
+                                <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
+                                    Sur quelle page ? <span style={{ fontWeight: 400, color: 'rgba(255, 255, 255, 0.2)' }}>(Optionnel)</span>
                                 </label>
                                 <div style={{ position: 'relative' }}>
                                     <MousePointer2 size={16} style={{ position: 'absolute', left: 12, top: 13, color: '#94a3b8', zIndex: 10 }} />
@@ -416,12 +416,12 @@ export default function ChatbotEditor({ botId = null }) {
                                 </div>
                             </div>
 
-                            <div style={{ height: 1, background: '#F1F5F9', margin: '4px 0' }}></div>
+                            <div style={{ height: 1, background: 'rgba(255, 255, 255, 0.05)', margin: '4px 0' }}></div>
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                                 {/* Spawn Timer Input */}
                                 <div>
-                                    <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                    <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
                                         Apparition (sec)
                                     </label>
                                     <div style={{ position: 'relative' }}>
@@ -441,7 +441,7 @@ export default function ChatbotEditor({ botId = null }) {
 
                                 {/* Despawn Timer Input */}
                                 <div>
-                                    <label style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8, display: 'block' }}>
+                                    <label style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', marginBottom: 8, display: 'block' }}>
                                         Disparition (sec)
                                     </label>
                                     <div style={{ position: 'relative' }}>
@@ -503,7 +503,7 @@ export default function ChatbotEditor({ botId = null }) {
                         <h3 className={styles.cardTitle}>Intégrer sur votre site</h3>
 
                         {!botId && (
-                            <div style={{ marginBottom: 12, padding: 12, background: '#fff7ed', borderLeft: '4px solid #f97316', color: '#c2410c', fontSize: 13 }}>
+                            <div style={{ marginBottom: 12, padding: 12, background: 'rgba(249, 115, 22, 0.05)', borderLeft: '4px solid #f97316', color: '#f97316', fontSize: 13, borderRadius: 8 }}>
                                 ⚠️ <strong>Important :</strong> Vous devez sauvegarder ce chatbot pour générer son ID unique et obtenir le code final.
                             </div>
                         )}

@@ -25,6 +25,5 @@
 }
 
 .input::placeholder {
-    color: #334155;
-    /* Slate 500 - Darker than 400 */
+    color: rgba(255, 255, 255, 0.2);
 }

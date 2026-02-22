@@ -6,27 +6,21 @@
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
     margin-bottom: 48px;
     padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .heading {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--foreground);
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
     margin-bottom: 8px;
-    letter-spacing: -1px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    letter-spacing: -1.5px;
 }
 
 .subheading {
-    color: #334155;
+    color: rgba(255, 255, 255, 0.4);
     font-size: 16px;
     font-weight: 500;
 }
@@ -36,12 +30,6 @@
     display: grid;
     grid-template-columns: 1.6fr 1fr;
     gap: 32px;
-}
-
-@media (max-width: 1024px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 .mainColumn {
@@ -58,66 +46,70 @@
 
 /* Cards */
 .card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
     padding: 32px;
-    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
-}
-
-.card:hover {
-    box-shadow: var(--shadow);
 }
 
 .cardTitle {
     font-size: 20px;
-    font-weight: 800;
-    color: var(--foreground);
+    font-weight: 900;
+    color: #fff;
     margin-bottom: 24px;
     display: flex;
     align-items: center;
     gap: 12px;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.02em;
 }
 
-/* Balance Card (Premium Indigo Gradient) */
+/* Balance Card */
 .balanceCard {
-    background: linear-gradient(135deg, var(--primary) 0%, #4F46E5 100%);
+    background: rgba(124, 58, 237, 0.1);
     border-radius: 28px;
     padding: 40px;
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
-.balanceCard:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 30px 40px -10px rgba(99, 102, 241, 0.4);
+.balanceCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .balanceLabel {
-    font-size: 15px;
+    font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.9;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.4);
     margin-bottom: 8px;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .balanceAmount {
     font-size: 52px;
     font-weight: 900;
     letter-spacing: -2px;
+    color: #fff;
 }
 
 .balanceSub {
     font-size: 14px;
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.4);
     margin-top: 12px;
     display: flex;
     align-items: center;
@@ -126,7 +118,7 @@
 }
 
 .balanceIcon {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     width: 72px;
@@ -135,28 +127,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 32px;
-    transition: all 0.3s;
-}
-
-.balanceCard:hover .balanceIcon {
-    transform: rotate(10deg) scale(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Info Box */
 .infoBox {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
     padding: 32px;
-    box-shadow: var(--shadow-sm);
 }
 
 .infoTitle {
     font-size: 18px;
-    font-weight: 800;
-    color: var(--foreground);
+    font-weight: 900;
+    color: #fff;
     margin-bottom: 24px;
     display: flex;
     align-items: center;
@@ -172,50 +157,23 @@
 .infoItem {
     display: flex;
     justify-content: space-between;
-    font-size: 15px;
-    color: #334155;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
     padding: 16px 0;
-    border-bottom: 1px solid #F1F5F9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-weight: 500;
 }
 
 .infoItem:last-child {
     border-bottom: none;
-    padding-bottom: 0;
 }
 
 .infoItem strong {
-    color: var(--foreground);
-    font-weight: 700;
+    color: #fff;
+    font-weight: 800;
 }
 
-/* Help Box */
-.helpBox {
-    background: #F8FAFC;
-    border: 1px solid #F1F5F9;
-    border-radius: 20px;
-    padding: 24px;
-}
-
-.helpTitle {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--foreground);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.helpText {
-    font-size: 14px;
-    color: #334155;
-    line-height: 1.6;
-    margin: 0;
-    font-weight: 500;
-}
-
-/* Top Up Form */
+/* Form */
 .inputWrapper {
     position: relative;
     flex: 1;
@@ -223,19 +181,22 @@
 
 .currencySymbol {
     position: absolute;
-    left: 16px;
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    color: #334155;
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 800;
 }
 
 .amountInput {
-    padding-left: 36px !important;
-    font-size: 18px !important;
+    padding-left: 40px !important;
+    font-size: 20px !important;
     font-weight: 800 !important;
-    border-radius: 14px !important;
-    height: 52px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-radius: 16px !important;
+    height: 56px !important;
 }
 
 .quickAmounts {
@@ -249,46 +210,30 @@
     flex: 1;
     min-width: 90px;
     padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: white;
-    color: #334155;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
     font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-weight: 800;
+    transition: all 0.2s;
 }
 
 .amountBtn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: #F5F3FF;
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
 }
 
 .amountBtnActive {
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
-    color: white !important;
-    font-weight: 800 !important;
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2) !important;
-}
-
-/* Action Button */
-.payBtn {
-    height: 52px !important;
-    border-radius: 14px !important;
-    font-size: 16px !important;
-    font-weight: 800 !important;
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2) !important;
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #fff !important;
 }
 
 .transparencyBox {
-    background: #F5F3FF;
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    background: rgba(124, 58, 237, 0.05);
+    border: 1px solid rgba(124, 58, 237, 0.2);
     border-radius: 20px;
     padding: 24px;
     display: flex;
@@ -297,98 +242,38 @@
 }
 
 .transparencyIcon {
-    color: var(--primary);
+    color: #a78bfa;
     flex-shrink: 0;
-    margin-top: 2px;
 }
 
 .transparencyTitle {
     font-size: 16px;
-    font-weight: 800;
-    color: var(--primary-dark);
+    font-weight: 900;
+    color: #fff;
     margin-bottom: 6px;
-    letter-spacing: -0.3px;
 }
 
 .transparencyText {
-    color: #4F46E5;
+    color: rgba(255, 255, 255, 0.5);
     line-height: 1.6;
     margin: 0;
     font-weight: 500;
 }
 
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-    }
-
     .heading {
-        font-size: 24px;
+        font-size: 28px;
     }
 
-    .subheading {
-        font-size: 14px;
+    .grid {
+        grid-template-columns: 1fr;
     }
 
     .balanceCard {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 24px;
-        padding: 24px;
-        border-radius: 24px;
+        padding: 32px;
     }
 
     .balanceAmount {
-        font-size: 36px;
-    }
-
-    .balanceIcon {
-        width: 52px;
-        height: 52px;
-        font-size: 20px;
-        border-radius: 12px;
-    }
-
-    .card {
-        padding: 24px;
-        border-radius: 20px;
-    }
-
-    .cardTitle {
-        font-size: 18px;
-        margin-bottom: 20px;
-    }
-
-    .infoItem {
-        font-size: 14px;
-        padding: 12px 0;
-    }
-
-    .transparencyBox {
-        padding: 16px;
-        gap: 12px;
-    }
-
-    .transparencyTitle {
-        font-size: 14px;
-    }
-
-    .transparencyText {
-        font-size: 13px;
-    }
-
-    .quickAmounts {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    .amountBtn {
-        min-width: unset;
-        font-size: 14px;
-        padding: 10px;
+        font-size: 40px;
     }
 }

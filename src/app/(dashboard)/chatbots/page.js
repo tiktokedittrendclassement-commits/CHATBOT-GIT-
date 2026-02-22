@@ -99,11 +99,7 @@ export default function ChatbotsPage() {
                 {chatbots.map(bot => (
                     <div
                         key={bot.id}
-                        className={styles.card}
-                        style={{
-                            border: selectedChatbots.includes(bot.id) ? '2px solid #ef4444' : undefined,
-                            background: selectedChatbots.includes(bot.id) ? '#fef2f2' : undefined
-                        }}
+                        className={`${styles.card} ${selectedChatbots.includes(bot.id) ? styles.selected : ''}`}
                     >
                         <div className={styles.cardHeader}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -117,7 +113,7 @@ export default function ChatbotsPage() {
                                             setSelectedChatbots(selectedChatbots.filter(id => id !== bot.id))
                                         }
                                     }}
-                                    style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#0F172A' }}
+                                    style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--primary)' }}
                                 />
                                 <div className={styles.botIcon} style={{ background: bot.color || '#000', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 13, borderRadius: 14 }}>
                                     {bot.logo_url === 'ICON:BOT' ? (
@@ -146,12 +142,17 @@ export default function ChatbotsPage() {
                         <div className={styles.footer}>
                             <Link href={`/chatbots/${bot.id}`} style={{
                                 fontSize: '13px',
-                                fontWeight: '600',
-                                color: '#0F172A',
+                                fontWeight: '700',
+                                color: '#fff',
                                 textDecoration: 'none',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '4px'
+                                gap: '6px',
+                                padding: '8px 16px',
+                                background: 'rgba(255,255,255,0.05)',
+                                borderRadius: '10px',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                transition: 'all 0.2s'
                             }}>
                                 Configurer <ArrowUpRight size={14} />
                             </Link>

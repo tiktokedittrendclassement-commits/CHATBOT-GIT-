@@ -20,7 +20,7 @@
 }
 
 .subheading {
-    color: #334155;
+    color: rgba(255, 255, 255, 0.4);
     font-size: 16px;
     font-weight: 500;
 }
@@ -28,40 +28,40 @@
 /* Badge Agency - Indigo Theme */
 .badgeAgency {
     font-size: 12px;
-    background: #F5F3FF;
-    color: var(--primary);
+    background: rgba(124, 58, 237, 0.1);
+    color: #818CF8;
     padding: 4px 12px;
     border-radius: 20px;
     font-weight: 800;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
 /* Agency Banner - Indigo Theme */
 .banner {
-    background: linear-gradient(135deg, #F5F3FF 0%, #FFFFFF 100%);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
     padding: 32px;
     margin-bottom: 48px;
     display: flex;
     align-items: center;
     gap: 24px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .bannerIcon {
     width: 52px;
     height: 52px;
-    background: white;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary);
+    color: #fff;
     flex-shrink: 0;
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .bannerContent h3 {
@@ -74,7 +74,7 @@
 
 .bannerContent p {
     font-size: 14px;
-    color: #4F46E5;
+    color: rgba(255, 255, 255, 0.4);
     margin: 0;
     font-weight: 500;
 }
@@ -89,13 +89,13 @@
     border: 1px solid var(--primary);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.2);
 }
 
 .upgradeBtn:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 15px 20px -5px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
 }
 
 /* Grid Layout */
@@ -113,11 +113,11 @@
 
 /* Cards */
 .card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
     padding: 32px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
@@ -148,17 +148,17 @@
     width: 52px;
     height: 52px;
     border-radius: 16px;
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #334155;
-    border: 1px solid #F1F5F9;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .statLabel {
     font-size: 14px;
-    color: #334155;
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 600;
     margin-bottom: 2px;
 }
@@ -172,18 +172,18 @@
 
 .infoBox {
     padding: 20px;
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.02);
     border-radius: 16px;
-    color: #334155;
+    color: rgba(255, 255, 255, 0.4);
     font-size: 14px;
     line-height: 1.6;
-    border: 1px solid #F1F5F9;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* List Items */
 .listItem {
     padding: 20px 0;
-    border-bottom: 1px solid #F1F5F9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -196,16 +196,17 @@
 .rank {
     width: 32px;
     height: 32px;
-    background: #F1F5F9;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
     font-weight: 800;
-    color: #334155;
+    color: #fff;
     margin-right: 20px;
     flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .urlLink {
@@ -226,27 +227,30 @@
 
 .lastVisit {
     font-size: 13px;
-    color: #334155;
+    color: rgba(255, 255, 255, 0.3);
     margin-top: 4px;
     font-weight: 500;
 }
 
 .countBadge {
-    background: #F5F3FF;
-    color: var(--primary);
+    background: rgba(124, 58, 237, 0.1);
+    color: #818CF8;
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 800;
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
 .emptyState {
-    padding: 80px 40px;
+    padding: 100px 40px;
     text-align: center;
-    color: #334155;
+    color: rgba(255, 255, 255, 0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
 }

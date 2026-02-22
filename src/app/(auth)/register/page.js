@@ -51,7 +51,7 @@ export default function RegisterPage() {
     return (
         <div className={styles.container}>
             <div className={styles.card}>
-                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#334155', fontSize: 13, marginBottom: 20, textDecoration: 'none' }}>
+                <Link href="/" className={styles.backLink}>
                     <ArrowLeft size={14} />
                     Retour à l&apos;accueil
                 </Link>
@@ -70,6 +70,13 @@ export default function RegisterPage() {
                             onChange={(e) => setFullName(e.target.value)}
                             placeholder="Jean Dupont"
                             required
+                            style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                color: '#fff',
+                                height: 48,
+                                borderRadius: 12
+                            }}
                         />
                     </div>
 
@@ -82,6 +89,13 @@ export default function RegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="vous@exemple.com"
                             required
+                            style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                color: '#fff',
+                                height: 48,
+                                borderRadius: 12
+                            }}
                         />
                     </div>
 
@@ -94,6 +108,13 @@ export default function RegisterPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
                             required
+                            style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                color: '#fff',
+                                height: 48,
+                                borderRadius: 12
+                            }}
                         />
                     </div>
 

@@ -58,7 +58,7 @@ export default function ConversationDetailPage() {
     }, [messages])
 
     if (loading) return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', fontFamily: 'Inter, sans-serif', color: '#94A3B8', fontSize: 15 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', fontFamily: 'Inter, sans-serif', color: 'rgba(255, 255, 255, 0.4)', fontSize: 15 }}>
             Chargement...
         </div>
     )
@@ -81,10 +81,10 @@ export default function ConversationDetailPage() {
                 }
                 .chat-window {
                     flex: 1;
-                    background: #FFFFFF;
-                    border-radius: 24px;
-                    border: 1px solid #F1F5F9;
-                    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+                    background: rgba(255, 255, 255, 0.03);
+                    border-radius: 28px;
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -124,23 +124,23 @@ export default function ConversationDetailPage() {
                 }
                 ::-webkit-scrollbar { width: 4px; }
                 ::-webkit-scrollbar-track { background: transparent; }
-                ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+                ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
             `}</style>
 
             {/* Top bar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, flexShrink: 0 }}>
                 <Link href="/conversations" style={{
                     display: 'flex', alignItems: 'center', gap: 6,
-                    fontSize: 13, fontWeight: 700, color: '#64748B',
-                    textDecoration: 'none', padding: '8px 12px',
-                    background: '#F8FAFC', border: '1px solid #E2E8F0',
+                    fontSize: 13, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)',
+                    textDecoration: 'none', padding: '8px 16px',
+                    background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: 12, transition: 'all 0.2s'
                 }}>
                     <ArrowLeft size={16} /> <span className="back-text">Retour</span>
                 </Link>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <h1 className="top-bar-title" style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.4px', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{conversation.chatbots?.name}</h1>
-                    <span style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500 }}>{visitorLabel}</span>
+                    <h1 className="top-bar-title" style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.4px', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{conversation.chatbots?.name}</h1>
+                    <span style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.4)', fontWeight: 500 }}>{visitorLabel}</span>
                 </div>
             </div>
 
@@ -183,12 +183,12 @@ export default function ConversationDetailPage() {
                     ref={messagesContainerRef}
                     style={{
                         flex: 1,
-                        padding: '20px',
+                        padding: '24px',
                         overflowY: 'auto',
-                        background: '#F8FAFC',
+                        background: 'transparent',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 12
+                        gap: 16
                     }}
                 >
                     {messages.length === 0 ? (
@@ -204,16 +204,16 @@ export default function ConversationDetailPage() {
                             }}>
                                 <div className="message-bubble" style={{
                                     borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                                    color: msg.role === 'user' ? '#fff' : '#1E293B',
-                                    background: msg.role === 'user' ? brandColor : '#FFFFFF',
+                                    color: msg.role === 'user' ? '#fff' : 'rgba(255, 255, 255, 0.8)',
+                                    background: msg.role === 'user' ? brandColor : 'rgba(255, 255, 255, 0.05)',
                                     boxShadow: msg.role === 'user'
-                                        ? `0 4px 12px ${brandColor}33`
-                                        : '0 2px 8px rgba(0,0,0,0.04)',
-                                    border: msg.role === 'assistant' ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                                        ? `0 10px 20px -5px ${brandColor}66`
+                                        : 'none',
+                                    border: msg.role === 'assistant' ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
                                 }}>
                                     {msg.content}
                                 </div>
-                                <div style={{ fontSize: 10, color: '#CBD5E1', marginTop: 4, paddingLeft: 4, paddingRight: 4, fontWeight: 500 }}>
+                                <div style={{ fontSize: 10, color: 'rgba(255, 255, 255, 0.2)', marginTop: 4, paddingLeft: 4, paddingRight: 4, fontWeight: 500 }}>
                                     {msg.created_at ? formatDate(msg.created_at) : ''}
                                 </div>
                             </div>

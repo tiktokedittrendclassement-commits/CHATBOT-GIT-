@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { Maximize, Minimize } from 'lucide-react'
 import DemoChatStore from '@/components/demo-chat-store'
 import { NATUREL_DATA } from '@/data/naturel-data'
 
@@ -56,6 +57,29 @@ const CSS_STYLES = `
         overflow-x: hidden;
         position: relative;
     }
+    .naturel-demo:fullscreen {
+        background: var(--white);
+        width: 100vw;
+        height: 100vh;
+        overflow: visible !important;
+    }
+    .fullscreen-btn {
+        background: #000;
+        color: #fff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+    }
+    .fullscreen-btn:hover {
+        transform: scale(1.1);
+        background: var(--amber);
+    }
+
     .demo-container a { text-decoration: none; color: inherit; }
     .demo-container img { display: block; max-width: 100%; }
     .demo-container button { cursor: pointer; border: none; background: none; font-family: var(--font-sans); }
@@ -214,6 +238,24 @@ export default function NaturelSkinDemo() {
     const [quizAnswers, setQuizAnswers] = useState({})
     const [showQuizResult, setShowQuizResult] = useState(false)
     const containerRef = useRef(null)
+    const [isFullscreen, setIsFullscreen] = useState(false)
+
+    const toggleFullscreen = () => {
+        if (!containerRef.current) return;
+        if (!document.fullscreenElement) {
+            containerRef.current.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    useEffect(() => {
+        const handleFSChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', handleFSChange);
+        return () => document.removeEventListener('fullscreenchange', handleFSChange);
+    }, [])
 
     // Derived
     const cartCount = cart.reduce((s, i) => s + i.qty, 0)
@@ -276,11 +318,11 @@ export default function NaturelSkinDemo() {
 
     return (
         <>
-            <div className="naturel-demo">
+            <div className="naturel-demo" ref={containerRef}>
                 {/* Inject CSS */}
                 <style jsx global>{CSS_STYLES}</style>
 
-                <div ref={containerRef} className="demo-container">
+                <div className="demo-container">
                     {/* TOP BANNER */}
                     <div className="top-banner">Livraison offerte dès 45€ · Formules à moins de 10 ingrédients</div>
 
@@ -294,6 +336,9 @@ export default function NaturelSkinDemo() {
                             <div>Notre mission</div>
                         </div>
                         <div className="nav-actions">
+                            <button onClick={toggleFullscreen} className="fullscreen-btn" title="Plein écran">
+                                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                            </button>
                             <button>Recherche</button>
                             <button className="cart-btn" onClick={() => setCartOpen(true)}>
                                 Panier <span className="cart-count">{cartCount}</span>
@@ -536,15 +581,15 @@ export default function NaturelSkinDemo() {
                 </div>
 
                 {/* CHATBOT INTEGRATION - moved outside naturel-demo to avoid overflow:hidden clipping */}
+                <DemoChatStore context={{
+                    storeType: "Naturel (Site de Test)",
+                    cartCount: cartCount,
+                    cartTotal: cartTotal,
+                    page: "home",
+                    cartOpen: cartOpen,
+                    knowledgeBase: NATUREL_DATA
+                }} />
             </div>
-            <DemoChatStore context={{
-                storeType: "Naturel (Site de Test)",
-                cartCount: cartCount,
-                cartTotal: cartTotal,
-                page: "home",
-                cartOpen: cartOpen,
-                knowledgeBase: NATUREL_DATA
-            }} />
         </>
     )
 }

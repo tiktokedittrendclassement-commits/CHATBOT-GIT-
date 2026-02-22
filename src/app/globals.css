@@ -4,10 +4,10 @@
   --foreground: #020617;
   /* Deepest Navy for maximum contrast */
 
-  --primary: #673DE6;
-  /* Vendo Violet (SaaS Brand) */
-  --primary-dark: #5528d1;
-  /* Darker shade */
+  --primary: #7C3AED;
+  /* Vivid Purple */
+  --primary-dark: #6D28D9;
+  /* Darker Purple */
 
   --secondary: #FFFFFF;
   /* Pure White (For cards) */
@@ -31,15 +31,20 @@
   /* Deepest Navy */
   --foreground: #F8FAFC;
 
-  --primary: #818CF8;
-  /* Indigo 400 */
-  --primary-dark: #6366F1;
+  --primary: #8B5CF6;
+  /* Bright Purple (Dark Mode) */
+  --primary-dark: #7C3AED;
 
   --secondary: #0F172A;
   --secondary-dark: #1E293B;
 
   --muted: #0F172A;
   --border: #1E293B;
+  color-scheme: dark;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--primary);
 }
 
 * {

@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }) {
     }
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container} data-theme="dark">
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${mobileMenuOpen ? styles.open : ''}`}>
                 <div className={styles.sidebarHeader}>
@@ -153,11 +153,6 @@ export default function DashboardLayout({ children }) {
                     </div>
 
                     <div className={styles.topBarRight}>
-                        <button className={styles.topBarAction}>
-                            <Bell size={20} />
-                            <span className={styles.notificationDot} />
-                        </button>
-                        <div className={styles.topBarDivider} />
                         <div className={styles.profileSummary}>
                             <div className={styles.profileAvatar}>
                                 <User size={18} />

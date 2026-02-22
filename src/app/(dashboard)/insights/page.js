@@ -128,7 +128,7 @@ export default function InsightsPage() {
 
                 {/* Pages List */}
                 <div className={styles.card} style={{ padding: 0, overflow: 'hidden' }}>
-                    <div style={{ padding: '20px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h2 className={styles.cardTitle} style={{ marginBottom: 0 }}>Pages les plus visitées</h2>
                         <Globe size={16} className="text-slate-400" />
                     </div>

@@ -178,11 +178,11 @@ export default function DashboardPage() {
                         </div>
                         <div className={styles.iconBox}>
                             {/* Wallet icon not imported, using CreditCard as placeholder or if imported previously */}
-                            <div style={{ fontWeight: 'bold', fontSize: '18px' }}>€</div>
+                            <div style={{ fontWeight: '900', fontSize: '20px' }}>€</div>
                         </div>
                     </div>
                     <div className={styles.cardDesc}>
-                        <Link href="/wallet" style={{ color: '#334155', textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Link href="/wallet" className={styles.link}>
                             Recharger <ArrowUpRight size={16} />
                         </Link>
                     </div>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                     <div className={styles.cardHeader}>
                         <div>
                             <div className={styles.cardTitle}>Messages Envoyés</div>
-                            <div className={styles.cardValue}>{stats.messages} <span style={{ fontSize: 20, color: '#334155', fontWeight: 500 }}>/ {profile?.plan_tier === 'free' ? '1000' : '∞'}</span></div>
+                            <div className={styles.cardValue}>{stats.messages} <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>/ {profile?.plan_tier === 'free' ? '1000' : '∞'}</span></div>
                         </div>
                         <div className={styles.iconBox}>
                             <MessageSquare size={24} />
@@ -215,7 +215,7 @@ export default function DashboardPage() {
                     )}
                     {profile?.plan_tier !== 'free' && (
                         <div className={styles.cardDesc} style={{ marginTop: 12 }}>
-                            <span style={{ color: '#334155', fontWeight: 500, fontSize: '13px' }}>Volume illimité activé</span>
+                            <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 500, fontSize: '13px' }}>Volume illimité activé</span>
                         </div>
                     )}
                 </div>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                     <div className={styles.cardDesc}>
-                        <Link href="/chatbots" style={{ color: '#334155', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
+                        <Link href="/chatbots" className={styles.link}>
                             Gérer mes bots <ArrowUpRight size={16} />
                         </Link>
                     </div>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                                 </div>
                             ))
                         ) : (
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#334155' }}>
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)' }}>
                                 Pas de données de vente
                             </div>
                         )}

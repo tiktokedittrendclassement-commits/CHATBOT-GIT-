@@ -1,28 +1,17 @@
-/* Header Minimalist */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 48px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
+    align-items: center;
+    margin-bottom: 40px;
 }
 
 .heading {
     font-size: 32px;
-    font-weight: 800;
-    color: var(--foreground);
-    margin-bottom: 8px;
+    font-weight: 900;
+    color: #fff;
     letter-spacing: -1px;
 }
 
-.subheading {
-    color: #334155;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-/* List Style Pro */
 .list {
     display: flex;
     flex-direction: column;
@@ -33,157 +22,127 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    background: white;
-    border: 1px solid var(--border);
-    padding: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px;
     border-radius: 20px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
-    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
 }
 
 .item:hover {
-    border-color: rgba(99, 102, 241, 0.2);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-4px);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .icon {
-    width: 52px;
-    height: 52px;
-    background: #F8FAFC;
-    border-radius: 16px;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #334155;
-    flex-shrink: 0;
-    transition: all 0.3s;
-    border: 1px solid #F1F5F9;
-}
-
-.item:hover .icon {
-    background: var(--primary);
-    color: white;
-    transform: rotate(-5deg);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .info {
     flex: 1;
-    min-width: 0;
+}
+
+.botName {
+    font-size: 13px;
+    font-weight: 800;
+    color: #7c3aed;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+}
+
+.visitorInfo {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
 }
 
 .meta {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
-}
-
-.botName {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--foreground);
-    letter-spacing: -0.5px;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .date {
-    font-size: 13px;
-    color: #334155;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-weight: 500;
+    gap: 4px;
 }
 
-.messagePreview {
-    color: #475569;
-    font-size: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90%;
-    font-weight: 500;
-}
-
-.badges {
-    display: flex;
-    gap: 8px;
-}
-
-/* Status Badges */
-.badge {
+.statusBadge {
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
 }
 
-.badgeNew {
-    background: #F5F3FF;
-    color: var(--primary);
-    border: 1px solid rgba(99, 102, 241, 0.1);
+.status-active {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
-.empty {
-    padding: 80px 40px;
+.status-completed {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.emptyState {
     text-align: center;
-    background: white;
-    border-radius: 24px;
-    border: 2px dashed #E2E8F0;
-    color: #334155;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    font-size: 16px;
-    font-weight: 500;
+    padding: 80px 40px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 28px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.emptyTitle {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
 }
 
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-    }
-
-    .heading {
-        font-size: 24px;
-    }
-
-    .subheading {
-        font-size: 14px;
+        align-items: flex-start;
+        gap: 16px;
     }
 
     .item {
-        padding: 16px;
         gap: 12px;
-        border-radius: 18px;
+        padding: 16px;
     }
 
     .icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
+        width: 40px;
+        height: 40px;
     }
 
-    .botName {
-        font-size: 15px;
-    }
-
-    .messagePreview {
-        font-size: 13px;
-    }
-
-    .date {
-        font-size: 11px;
-    }
-
-    .empty {
-        padding: 40px 20px;
-        border-radius: 20px;
+    .visitorInfo {
+        font-size: 14px;
     }
 }

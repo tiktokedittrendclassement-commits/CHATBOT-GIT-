@@ -208,14 +208,15 @@ export default function BillingPage() {
                     zIndex: 1000
                 }}>
                     <div style={{
-                        background: 'white',
-                        borderRadius: 12,
+                        background: '#0F172A',
+                        borderRadius: 24,
                         padding: 32,
                         maxWidth: 600,
                         width: '90%',
                         maxHeight: '80vh',
                         overflow: 'auto',
-                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)'
                     }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                             <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>
@@ -228,7 +229,7 @@ export default function BillingPage() {
                                     border: 'none',
                                     cursor: 'pointer',
                                     padding: 8,
-                                    color: '#334155'
+                                    color: 'rgba(255, 255, 255, 0.4)'
                                 }}
                             >
                                 <X size={24} />
@@ -237,16 +238,16 @@ export default function BillingPage() {
 
                         <div style={{
                             padding: 16,
-                            background: '#fef3c7',
-                            borderRadius: 8,
+                            background: 'rgba(245, 158, 11, 0.05)',
+                            borderRadius: 12,
                             marginBottom: 24,
-                            borderLeft: '4px solid #f59e0b'
+                            border: '1px solid rgba(245, 158, 11, 0.2)'
                         }}>
-                            <p style={{ margin: 0, color: '#92400e', fontSize: 14 }}>
+                            <p style={{ margin: 0, color: '#f59e0b', fontSize: 14 }}>
                                 ⚠️ Vous devez supprimer <strong>{requiredDeletions}</strong> chatbot(s) pour passer au plan{' '}
                                 <strong>{targetPlan === 'free' ? 'Gratuit' : 'Pro'}</strong>.
                             </p>
-                            <p style={{ margin: '8px 0 0 0', color: '#92400e', fontSize: 13 }}>
+                            <p style={{ margin: '8px 0 0 0', color: 'rgba(255, 255, 255, 0.5)', fontSize: 13 }}>
                                 Sélectionnés: {selectedChatbots.length} / {requiredDeletions} minimum
                             </p>
                         </div>
@@ -260,10 +261,10 @@ export default function BillingPage() {
                                         alignItems: 'center',
                                         gap: 12,
                                         padding: 16,
-                                        border: selectedChatbots.includes(bot.id) ? '2px solid #ef4444' : '1px solid #e2e8f0',
-                                        borderRadius: 8,
+                                        border: selectedChatbots.includes(bot.id) ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.08)',
+                                        borderRadius: 16,
                                         cursor: 'pointer',
-                                        background: selectedChatbots.includes(bot.id) ? '#fef2f2' : 'white',
+                                        background: selectedChatbots.includes(bot.id) ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255, 255, 255, 0.03)',
                                         transition: 'all 0.2s'
                                     }}
                                 >
@@ -277,11 +278,11 @@ export default function BillingPage() {
                                                 setSelectedChatbots(selectedChatbots.filter(id => id !== bot.id))
                                             }
                                         }}
-                                        style={{ width: 18, height: 18, cursor: 'pointer' }}
+                                        style={{ width: 18, height: 18, cursor: 'pointer', accentColor: 'var(--primary)' }}
                                     />
                                     <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: 500, marginBottom: 4 }}>{bot.name}</div>
-                                        <div style={{ fontSize: 13, color: '#334155' }}>
+                                        <div style={{ fontWeight: 600, marginBottom: 4, color: '#fff' }}>{bot.name}</div>
+                                        <div style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.4)' }}>
                                             Créé le {new Date(bot.created_at).toLocaleDateString('fr-FR')}
                                         </div>
                                     </div>
@@ -303,9 +304,10 @@ export default function BillingPage() {
                                 onClick={handleConfirmDeletion}
                                 disabled={selectedChatbots.length < requiredDeletions}
                                 style={{
-                                    background: selectedChatbots.length >= requiredDeletions ? '#ef4444' : '#cbd5e1',
-                                    color: 'white',
-                                    cursor: selectedChatbots.length >= requiredDeletions ? 'pointer' : 'not-allowed'
+                                    background: selectedChatbots.length >= requiredDeletions ? '#ef4444' : 'rgba(255, 255, 255, 0.05)',
+                                    color: selectedChatbots.length >= requiredDeletions ? 'white' : 'rgba(255, 255, 255, 0.2)',
+                                    cursor: selectedChatbots.length >= requiredDeletions ? 'pointer' : 'not-allowed',
+                                    border: '1px solid ' + (selectedChatbots.length >= requiredDeletions ? '#ef4444' : 'rgba(255, 255, 255, 0.08)')
                                 }}
                             >
                                 Supprimer {selectedChatbots.length} chatbot(s) et changer de plan

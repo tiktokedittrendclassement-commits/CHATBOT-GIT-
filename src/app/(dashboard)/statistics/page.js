@@ -109,7 +109,7 @@ export default function StatisticsPage() {
         }
     }
 
-    if (loading) return <div style={{ padding: 40 }}>Chargement...</div>
+    if (loading) return <div style={{ padding: 40, color: 'rgba(255, 255, 255, 0.4)', textAlign: 'center' }}>Chargement...</div>
 
     const isFreePlan = profile?.plan_tier === 'free' || !profile?.plan_tier;
 

@@ -98,12 +98,12 @@ export default function WalletPage() {
                     {/* Top Up Card */}
                     <div className={styles.card}>
                         <div className={styles.cardTitle}>
-                            <CreditCard size={20} style={{ color: '#673DE6' }} />
+                            <CreditCard size={20} style={{ color: '#fff' }} />
                             Recharger le solde
                         </div>
 
                         <div style={{ marginBottom: 24 }}>
-                            <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 500, color: '#334155' }}>Montant à créditer (€)</label>
+                            <label style={{ display: 'block', marginBottom: 12, fontSize: 13, fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Montant à créditer (€)</label>
                             <div style={{ display: 'flex', gap: 12 }}>
                                 <div className={styles.inputWrapper}>
                                     <Input
@@ -126,11 +126,11 @@ export default function WalletPage() {
                                     {processing ? 'Traitement...' : `Payer ${amount || 0}€`}
                                 </Button>
                             </div>
-                            <p style={{ fontSize: 12, color: '#334155', marginTop: 8 }}>Minimum 5€.</p>
+                            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 12 }}>Minimum 5€.</p>
                         </div>
 
                         <div>
-                            <label style={{ fontSize: 13, fontWeight: 500, color: '#334155' }}>Montants rapides :</label>
+                            <label style={{ fontSize: 13, fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Montants rapides :</label>
                             <div className={styles.quickAmounts}>
                                 {[10, 20, 50, 100].map(val => (
                                     <Button

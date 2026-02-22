@@ -147,7 +147,7 @@ export default function SettingsPage() {
                                 <Input
                                     value={profile.email}
                                     disabled
-                                    style={{ background: '#f1f5f9', color: '#334155' }}
+                                    style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', borderColor: 'rgba(255,255,255,0.1)' }}
                                     className={styles.input}
                                 />
                                 <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>
@@ -216,7 +216,7 @@ export default function SettingsPage() {
                 <div className={styles.sectionContent}>
                     <div className={styles.planRow}>
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: 4 }}>
                                 Plan Actuel : <span className={styles.planName}>{profile.plan_tier}</span>
                             </div>
                             <p className={styles.helperText}>Gérez votre abonnement, factures et méthode de paiement.</p>
@@ -275,7 +275,7 @@ export default function SettingsPage() {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>Changer de compte</div>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 4 }}>Changer de compte</div>
                             <p className={styles.helperText}>Déconnectez-vous pour utiliser un autre compte.</p>
                         </div>
                         <Button size="md" onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: '220px', justifyContent: 'center' }}>
@@ -299,12 +299,12 @@ export default function SettingsPage() {
                 <div className={styles.sectionContent}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', marginBottom: 4 }}>Supprimer le compte</div>
+                            <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', marginBottom: 4 }}>Supprimer le compte</div>
                             <p className={styles.helperText}>Cette action est irréversible. Toutes vos données seront effacées.</p>
                         </div>
                         <Button
                             variant="ghost"
-                            style={{ color: '#ef4444', backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}
+                            style={{ color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)' }}
                             onClick={() => {
                                 if (confirm('Êtes-vous ABSOLUMENT sûr ? Cette action est irréversible.')) {
                                     alert('Veuillez contacter le support pour supprimer définitivement votre compte par mesure de sécurité.')

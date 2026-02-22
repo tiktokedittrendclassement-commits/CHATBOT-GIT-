@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import styles from './page.module.css'
-import { ArrowRight, Check, X, Copy, SendHorizontal } from 'lucide-react'
+import { ArrowRight, Check, X, Copy, Send } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import GymsharkDemo from '@/components/gymshark-demo'
 
@@ -50,10 +50,6 @@ function ChatWidget({ tilt }) {
 
   return (
     <div className={`${styles.widgetWrap} ${tilt ? styles.widgetTilt : ''}`}>
-      <div className={styles.chrome}>
-        <div className={styles.dots}><span /><span /><span /></div>
-        <div className={styles.urlBar}>votreboutique.com</div>
-      </div>
       <div className={styles.widgetInner}>
         <div className={styles.wHead}>
           <div className={styles.wAvatar}>V</div>
@@ -75,7 +71,7 @@ function ChatWidget({ tilt }) {
         </div>
         <div className={styles.wFoot}>
           <div className={styles.wInput}>Posez votre question…</div>
-          <button className={styles.wSend}><SendHorizontal size={14} strokeWidth={2.5} /></button>
+          <button className={styles.wSend}><Send size={14} strokeWidth={2.5} /></button>
         </div>
       </div>
     </div>
@@ -245,10 +241,19 @@ const PLANS = [
 ]
 
 export default function Home() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   return (
     <div className={styles.page}>
 
-      <header className={styles.nav}>
+      <header className={`${styles.nav} ${scrolled ? styles.navScrolled : ''}`}>
         <div className={styles.navWrap}>
           <Link href="/" className={styles.logo}>Vendo</Link>
           <div className={styles.navLinks}>
@@ -258,7 +263,7 @@ export default function Home() {
           </div>
           <div className={styles.navEnd}>
             <Link href="/login" className={styles.navLogin}>Connexion</Link>
-            <Link href="/register" className={styles.btnNav}>Commencer gratuitement</Link>
+            <Link href="/register" className={styles.btnNav}>Commencer</Link>
           </div>
         </div>
       </header>
@@ -270,11 +275,11 @@ export default function Home() {
 
         <div className={styles.heroLayout}>
           <div className={styles.heroLeft}>
-            <p className={styles.eyebrow}>Chatbot IA pour boutiques e-commerce</p>
+            <p className={styles.eyebrow}>Chatbot IA pour tout site & application</p>
             <h1 className={styles.h1}>
               Vos clients posent<br />
               des questions.<br />
-              <span className={styles.h1Accent}>Votre bot y repond.</span>
+              <span className={styles.h1Accent}>Votre chatbot y repond.</span>
             </h1>
             <p className={styles.heroPara}>
               Vendo entraine un assistant sur votre catalogue exact.
@@ -321,54 +326,68 @@ export default function Home() {
         </div>
       </section>
 
-      <section className={styles.section} style={{ background: 'var(--surface)', position: 'relative', overflow: 'hidden' }}>
-        <div className={styles.mascotFeatures}>
-          <Spline
-            scene="https://prod.spline.design/8wOkDeeTiFGP4p7b/scene.splinecode"
-            onLoad={(spline) => {
-              // Ensure the scene is properly initialized
-              try {
-                if (spline && spline.setZoom) spline.setZoom(1);
-              } catch (e) {
-                console.warn('Spline initialization check:', e);
-              }
-            }}
-            onError={(e) => {
-              console.warn('Spline loading error:', e);
-            }}
-          />
-          <div className={styles.watermarkCover} />
-        </div>
-        <div className={`${styles.wrap} ${styles.splitBlock}`}>
-          <div className={styles.splitL}>
-            <p className={styles.eyebrow} style={{ color: '#34d399' }}>Ce que fait Vendo</p>
-            <h2 className={styles.h2}>Un bot entraîné{'\n'}sur vos produits.</h2>
-            <ul className={styles.checks}>
-              {CHECK_ITEMS.map(t => (
-                <li key={t}><Check size={14} strokeWidth={3} /><span>{t}</span></li>
-              ))}
-            </ul>
-            <Link href="/register" className={styles.btnFill}>
-              Tester sur ma boutique — gratuit <ArrowRight size={14} />
-            </Link>
-          </div>
-          <div className={styles.splitR}>
-            <div className={styles.compareGrid}>
-              <div className={styles.compareCol}>
-                <p className={styles.compLabel} style={{ color: '#f87171' }}>Avant Vendo</p>
-                {BEFORE.map(t => (
-                  <div key={t} className={`${styles.compRow} ${styles.rowRed}`}>
-                    <X size={12} color="#f87171" style={{ flexShrink: 0 }} /><span>{t}</span>
-                  </div>
-                ))}
+      <section className={styles.mascotSection} id="features">
+        <div className={styles.wrap}>
+          <div className={styles.mascotGrid}>
+            <div className={styles.mascotVisual}>
+              <div className={styles.visualGlow} />
+              <div className={styles.mascotScene}>
+                <Spline
+                  scene="https://prod.spline.design/8wOkDeeTiFGP4p7b/scene.splinecode"
+                  onLoad={(spline) => {
+                    try { if (spline && spline.setZoom) spline.setZoom(1); } catch (e) { }
+                  }}
+                />
+                <div className={styles.watermarkCover} />
               </div>
-              <div className={styles.compareCol}>
-                <p className={styles.compLabel} style={{ color: '#34d399' }}>Avec Vendo</p>
-                {AFTER.map(t => (
-                  <div key={t} className={`${styles.compRow} ${styles.rowGreen}`}>
-                    <Check size={12} color="#34d399" style={{ flexShrink: 0 }} /><span>{t}</span>
+            </div>
+
+            <div className={styles.mascotContent}>
+              <p className={styles.eyebrow} style={{ color: 'var(--accent)', fontWeight: 600 }}>Ce que fait Vendo</p>
+              <h1 className={styles.mascotHeadline}>Un bot entraîné sur vos produits.</h1>
+
+              <div className={styles.mascotStage}>
+                <div className={styles.glassSlate}>
+                  <span className={styles.slateTitle} style={{ color: '#f87171' }}>Avant Vendo</span>
+                  <div className={styles.slateItems}>
+                    <div className={styles.slateItem}>
+                      <X size={14} color="#f87171" style={{ marginTop: 2, flexShrink: 0 }} />
+                      <span>Question à 23h → <span className={styles.slateValue}>Vente perdue</span></span>
+                    </div>
+                    <div className={styles.slateItem}>
+                      <X size={14} color="#f87171" style={{ marginTop: 2, flexShrink: 0 }} />
+                      <span>Email de support → <span className={styles.slateValue}>Délai 24h+</span></span>
+                    </div>
+                    <div className={styles.slateItem}>
+                      <X size={14} color="#f87171" style={{ marginTop: 2, flexShrink: 0 }} />
+                      <span>FAQ ignorée → <span className={styles.slateValue}>Abandon panier</span></span>
+                    </div>
                   </div>
-                ))}
+                </div>
+
+                <div className={styles.glassSlate} style={{ borderLeft: '2px solid var(--accent)' }}>
+                  <span className={styles.slateTitle} style={{ color: 'var(--accent)' }}>Avec Vendo</span>
+                  <div className={styles.slateItems}>
+                    <div className={styles.slateItem}>
+                      <Check size={14} color="var(--accent)" style={{ marginTop: 2, flexShrink: 0 }} />
+                      <span>Réponse en 3s → <span className={styles.slateValue}>Conversion immédiate</span></span>
+                    </div>
+                    <div className={styles.slateItem}>
+                      <Check size={14} color="var(--accent)" style={{ marginTop: 2, flexShrink: 0 }} />
+                      <span>Bot expert → <span className={styles.slateValue}>Équipe libérée</span></span>
+                    </div>
+                    <div className={styles.slateItem}>
+                      <Check size={14} color="var(--accent)" style={{ marginTop: 2, flexShrink: 0 }} />
+                      <span>Doute levé → <span className={styles.slateValue}>Panier validé</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.mascotCta} style={{ marginTop: 40 }}>
+                <Link href="/register" className={styles.btnFill}>
+                  Tester sur ma boutique — gratuit <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
           </div>
@@ -445,11 +464,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div className={styles.trustRow}>
-            {['🔒 Hebergement Europe', '✅ Conforme RGPD', '⚡ Sans engagement'].map(b => (
-              <span key={b} className={styles.trustBadge}>{b}</span>
-            ))}
-          </div>
+
         </div>
       </section>
 

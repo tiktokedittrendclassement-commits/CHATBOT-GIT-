@@ -342,7 +342,7 @@ export default function VendoAssistant() {
                                 <Bot size={22} />
                             </div>
                             <div>
-                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>Vendo Assistant</div>
+                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>Assistant Vendo</div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                     <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%', boxShadow: '0 0 10px #10B981' }}></div>
                                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Expert Vendo Connecté</span>

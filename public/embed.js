@@ -119,7 +119,7 @@
   document.body.appendChild(bubble);
   document.body.appendChild(iframeContainer);
 
-  // Listen for bot config from iframe to update bubble color & letter
+  // Listen for messages from iframe
   window.addEventListener('message', (event) => {
     if (!event.data) return;
 
@@ -153,6 +153,10 @@
       bubble.style.opacity = '1';
       bubble.style.transform = 'translateY(0) scale(1)';
     }
+
+    if (event.data.type === 'vendo-toggle-chat') {
+      toggleChat();
+    }
   });
 
   // Toggle Logic
@@ -166,24 +170,20 @@
         iframeContainer.style.opacity = '1';
         iframeContainer.style.transform = 'translateY(0) scale(1)';
       }, 10);
-      // Show X icon
-      bubbleInner.innerHTML = closeIcon;
-      bubble.style.transform = 'scale(1)';
+
+      // Hide Bubble when open
+      bubble.style.opacity = '0';
+      bubble.style.pointerEvents = 'none';
+      bubble.style.transform = 'translateY(10px) scale(0.9)';
     } else {
       iframeContainer.style.opacity = '0';
       iframeContainer.style.transform = 'translateY(30px) scale(0.95)';
       setTimeout(() => { iframeContainer.style.display = 'none'; }, 400);
 
-      // Restore identity icon/letter
-      bubbleInner.innerHTML = '';
-      if (window.vendoBotAvatar === 'ICON:BOT') {
-        bubbleInner.innerHTML = botIcon;
-      } else if (window.vendoBotAvatar && (window.vendoBotAvatar.startsWith('http') || window.vendoBotAvatar.startsWith('/') || window.vendoBotAvatar.startsWith('data:'))) {
-        bubbleInner.innerHTML = `<img src="${window.vendoBotAvatar}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
-      } else {
-        bubbleInner.appendChild(letterSpan);
-      }
-      bubbleInner.appendChild(greenDot);
+      // Show Bubble when closed
+      bubble.style.opacity = '1';
+      bubble.style.pointerEvents = 'auto';
+      bubble.style.transform = 'translateY(0) scale(1)';
     }
   };
 

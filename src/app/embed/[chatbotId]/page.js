@@ -105,6 +105,12 @@ export default function EmbedPage() {
         }
     }
 
+    const handleClose = () => {
+        if (typeof window !== 'undefined') {
+            window.parent.postMessage({ type: 'vendo-toggle-chat' }, '*')
+        }
+    }
+
     if (error) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'Inter, sans-serif', color: '#64748B' }}>
             {error}
@@ -199,6 +205,30 @@ export default function EmbedPage() {
                         </span>
                     </div>
                 </div>
+
+                {/* Close Button */}
+                <button
+                    onClick={handleClose}
+                    style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        color: 'white',
+                        width: 32,
+                        height: 32,
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        zIndex: 10
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+                >
+                    <X size={18} />
+                </button>
             </div>
 
             {/* Messages */}

@@ -90,7 +90,7 @@
 
   // Close icon (hidden by default)
   const closeIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-  const botIcon = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>';
+  const botIcon = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 65%; height: 65%;"><path d="M4 4L10.5 20L13.5 12L20 4" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   bubble.addEventListener('mouseenter', () => {
     if (!isOpen) bubble.style.transform = 'translateY(-5px) scale(1.05)';

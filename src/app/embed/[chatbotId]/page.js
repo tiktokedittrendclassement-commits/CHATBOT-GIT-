@@ -205,7 +205,9 @@ export default function EmbedPage() {
                     {botConfig.logo_url && (botConfig.logo_url.startsWith('http') || botConfig.logo_url.startsWith('/') || botConfig.logo_url.startsWith('data:')) ? (
                         <img src={botConfig.logo_url} alt={botConfig.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : botConfig.logo_url === 'ICON:BOT' ? (
-                        <Bot size={24} />
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '60%', height: '60%', color: 'white' }}>
+                            <path d="M4 4L10.5 20L13.5 12L20 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
                     ) : (
                         <span style={{
                             fontFamily: 'Inter, sans-serif',

@@ -303,7 +303,9 @@ export default function ChatbotEditor({ botId = null }) {
                                     fontWeight: 'bold', fontSize: 18
                                 }}>
                                     {formData.logo_url === 'ICON:BOT' ? (
-                                        <Bot size={24} />
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '60%', height: '60%', color: 'white' }}>
+                                            <path d="M4 4L10.5 20L13.5 12L20 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
                                     ) : (
                                         <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24 }}>
                                             {formData.logo_url || formData.name?.charAt(0) || 'V'}
@@ -319,7 +321,9 @@ export default function ChatbotEditor({ botId = null }) {
                                         size="sm"
                                         style={{ background: formData.logo_url === 'ICON:BOT' ? 'var(--primary)' : 'transparent', color: '#fff' }}
                                     >
-                                        <Bot size={16} style={{ marginRight: 6 }} /> Robot
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 14, height: 14, marginRight: 6, color: 'white' }}>
+                                            <path d="M4 4L10.5 20L13.5 12L20 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg> Logo Vendo
                                     </Button>
                                     <Button
                                         type="button"

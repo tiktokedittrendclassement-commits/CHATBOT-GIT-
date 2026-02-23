@@ -182,7 +182,7 @@ export default function EmbedPage() {
             }}>
                 <div style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
                 <div style={{
-                    background: 'rgba(255,255,255,0.2)',
+                    background: 'rgba(255,255,255,0.15)',
                     backdropFilter: 'blur(10px)',
                     width: 44,
                     height: 44,
@@ -191,10 +191,11 @@ export default function EmbedPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'white',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    flexShrink: 0
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    flexShrink: 0,
+                    boxShadow: 'none'
                 }}>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white' }}>{brandInitial}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white', textShadow: 'none' }}>{brandInitial}</span>
                 </div>
                 <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>{botConfig.name}</div>
@@ -304,7 +305,7 @@ export default function EmbedPage() {
 
             {/* Input Form */}
             <form onSubmit={handleSend} style={{
-                padding: '20px 24px 30px',
+                padding: '24px 32px 32px',
                 background: themeColors.bgMain,
                 borderTop: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #F1F5F9',
                 display: 'flex',
@@ -315,7 +316,7 @@ export default function EmbedPage() {
                 <input
                     value={input}
                     onChange={e => setInput(e.target.value)}
-                    placeholder="Écrivez votre message..."
+                    placeholder="Posez une question à Vendo..."
                     disabled={loading}
                     style={{
                         flex: 1,
@@ -327,7 +328,8 @@ export default function EmbedPage() {
                         fontFamily: 'Inter, sans-serif',
                         fontWeight: 500,
                         color: themeColors.textMain,
-                        transition: 'all 0.3s'
+                        transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
+                        outline: 'none'
                     }}
                     onFocus={e => {
                         e.target.style.border = `1.5px solid ${brandColor}`
@@ -357,7 +359,7 @@ export default function EmbedPage() {
                         opacity: input.trim() ? 1 : 0.5,
                         transition: 'all 0.3s',
                         flexShrink: 0,
-                        boxShadow: `0 8px 16px ${brandColor}4D`
+                        boxShadow: 'none'
                     }}
                 >
                     <Send size={20} />

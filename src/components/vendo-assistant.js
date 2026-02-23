@@ -25,6 +25,25 @@ const Typewriter = memo(({ text, speed = 8, onComplete }) => {
 
 export default function VendoAssistant() {
     const pathname = usePathname()
+
+    // Safety: Never render the support assistant if we are inside an iframe (like the chatbot embed)
+    const [inIframe, setInIframe] = useState(() => {
+        if (typeof window === 'undefined') return false
+        try { return window.self !== window.top } catch (e) { return true }
+    })
+    const [isEmbedRoute, setIsEmbedRoute] = useState(() => {
+        if (typeof window === 'undefined') return false
+        return window.location.pathname.startsWith('/embed')
+    })
+
+    useEffect(() => {
+        setIsEmbedRoute(prev => prev || document.body.classList.contains('is-embed'))
+    }, [])
+
+    if (inIframe || isEmbedRoute) {
+        return null
+    }
+
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
         { role: 'assistant', content: "Bienvenue sur Vendo. ✨\n\nJe suis votre **Concierge IA**. Je peux vous présenter la puissance de notre plateforme ou **forger le System Prompt d'élite** pour votre futur chatbot.\n\nQuelle est votre mission aujourd'hui ?", shouldType: false }

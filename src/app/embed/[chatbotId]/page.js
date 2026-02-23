@@ -26,7 +26,7 @@ export default function EmbedPage() {
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
-                .select('name, color, welcome_message_new, welcome_message_returning, triggers, theme')
+                .select('name, color, logo_url, welcome_message_new, welcome_message_returning, triggers, theme')
                 .eq('id', params.chatbotId)
                 .single()
 
@@ -40,7 +40,8 @@ export default function EmbedPage() {
                     window.parent.postMessage({
                         type: 'vendo-bot-config',
                         name: data.name,
-                        color: data.color
+                        color: data.color,
+                        avatar: data.logo_url
                     }, '*')
                 }
 
@@ -62,15 +63,6 @@ export default function EmbedPage() {
 
                 if (greeting && greeting.trim().length > 0) {
                     setMessages([{ role: 'assistant', content: greeting }])
-
-                    setTimeout(() => {
-                        window.parent.postMessage({
-                            type: 'vendo-proactive-message',
-                            chatbotId: params.chatbotId,
-                            message: greeting,
-                            sender: data.name || 'Assistant',
-                        }, '*')
-                    }, 2000)
                 }
             }
         }

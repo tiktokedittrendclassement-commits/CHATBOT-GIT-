@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server'
 import { generateChatResponse } from '@/lib/deepseek'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import { VENDO_KNOWLEDGE_BASE } from '@/lib/vendo_knowledge'
+
+// Admin client to bypass RLS for credit checks
+const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 export async function POST(req) {
     try {
@@ -292,7 +299,7 @@ ${GLOBAL_RULES}
         // We need to use a client that can read this. Our public policy allows reading chatbots.
         const { data: chatbot, error: botError } = await supabase
             .from('chatbots')
-            .select('system_prompt, data_sources, user_id')
+            .select('name, system_prompt, data_sources, user_id')
             .eq('id', chatbotId)
             .single()
 
@@ -301,23 +308,37 @@ ${GLOBAL_RULES}
         }
 
         // 0. Check User Credits & Message Limits
-        const { data: profile } = await supabase
+        // Use supabaseAdmin to bypass RLS
+        const { data: profile, error: profileError } = await supabaseAdmin
             .from('profiles')
             .select('credits_balance, plan_tier')
             .eq('id', chatbot.user_id)
             .single()
 
-        if (!profile || profile.credits_balance <= 0) {
+        if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            console.warn("[API Chat] WARNING: SUPABASE_SERVICE_ROLE_KEY is missing. Credit checks might fail due to RLS.");
+        }
+
+        if (profileError) {
+            console.error(`[API Chat] Error fetching profile for user ${chatbot.user_id}:`, profileError);
+        }
+
+        console.log(`[API Chat] Bot: ${chatbotId} | Owner: ${chatbot.user_id}`);
+        console.log(`[API Chat] Profile found: ${!!profile} | Balance: ${profile?.credits_balance} micros`);
+
+        if (!profile || (profile.credits_balance !== undefined && profile.credits_balance <= 0)) {
+            const reason = !profile ? "Profile introuvable" : "Solde insuffisant";
+            console.warn(`[API Chat] Blocking message. Reason: ${reason}`);
             return NextResponse.json({
                 role: 'assistant',
-                content: 'System: This chatbot has run out of credits. Please contact the site owner.'
-            }) // Return as message so looking natural, or error 402
+                content: `System: This chatbot has run out of credits (${reason}). Please contact the site owner.`
+            })
         }
 
         // Check message limit for free plan users
         if (profile.plan_tier === 'free' || !profile.plan_tier) {
             // Count total messages for this user using RPC function
-            const { data: messageCount, error: countError } = await supabase
+            const { data: messageCount, error: countError } = await supabaseAdmin
                 .rpc('get_user_message_count', { p_user_id: chatbot.user_id })
 
             if (!countError && messageCount >= 1000) {
@@ -329,7 +350,7 @@ ${GLOBAL_RULES}
         }
 
         // 2. Prepare Context
-        let systemInstruction = (chatbot.system_prompt || 'You are a helpful assistant.') + GLOBAL_RULES
+        let systemInstruction = `Ton nom est ${chatbot.name || 'Assistant'}.\n` + (chatbot.system_prompt || 'You are a helpful assistant.') + GLOBAL_RULES
 
         if (chatbot.data_sources) {
             systemInstruction += `\n\nCONTEXT:\n${chatbot.data_sources}\n\nUse the above context to answer user questions.`
@@ -350,7 +371,7 @@ ${GLOBAL_RULES}
         let convId = conversationId; // Use conversationId from request if provided
 
         // Deduct Cost (100 micros = 0.0001€)
-        await supabase.rpc('decrement_balance', { p_user_id: chatbot.user_id, p_amount: 100 })
+        await supabaseAdmin.rpc('decrement_balance', { p_user_id: chatbot.user_id, p_amount: 100 })
 
         // Log Usage (Optional but recommended)
         /* await supabase.from('usages').insert({ 
@@ -396,7 +417,11 @@ ${GLOBAL_RULES}
             content: responseText
         })
     } catch (error) {
-        console.error('Chat API Error:', error)
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        console.error('--- CHAT API CRITICAL ERROR ---');
+        console.error('Bot ID:', chatbotId);
+        console.error('Error Details:', error);
+        if (error.stack) console.error('Stack Trace:', error.stack);
+        console.error('-------------------------------');
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 })
     }
 }

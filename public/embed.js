@@ -25,9 +25,9 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
     background: linear-gradient(135deg, #673DE6 0%, #9B5CF6 100%);
     box-shadow: 0 12px 24px rgba(103, 61, 230, 0.3);
     cursor: pointer;
@@ -35,7 +35,10 @@
     align-items: center;
     justify-content: center;
     z-index: 999999;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    visibility: hidden;
   `;
 
   // Desktop adjustment for position
@@ -47,28 +50,28 @@
   // Letter label
   const letterSpan = document.createElement('span');
   letterSpan.style.cssText = `
-    font-family: Inter, -apple-system, sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 900;
     font-style: italic;
     font-size: 28px;
     color: white;
-    line-height: 1;
     user-select: none;
   `;
-  letterSpan.textContent = 'V'; // default, will be updated
+  letterSpan.textContent = ''; // Empty until config received
+  // default, will be updated
 
   // Green dot
   const greenDot = document.createElement('div');
   greenDot.style.cssText = `
     position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 12px;
-    height: 12px;
+    top: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
     background: #10B981;
     border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2.5px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   `;
 
   const bubbleInner = document.createElement('div');
@@ -78,7 +81,8 @@
   bubble.appendChild(greenDot);
 
   // Close icon (hidden by default)
-  const closeIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+  const closeIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+  const botIcon = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>';
 
   bubble.addEventListener('mouseenter', () => {
     if (!isOpen) bubble.style.transform = 'translateY(-5px) scale(1.05)';
@@ -120,12 +124,34 @@
     if (!event.data) return;
 
     if (event.data.type === 'vendo-bot-config') {
-      const { name, color } = event.data;
-      if (name) letterSpan.textContent = name.charAt(0).toUpperCase();
+      const { name, color, avatar } = event.data;
+      console.log('UseVendo: Bot config received:', name, avatar);
+      window.vendoBotName = name;
+      window.vendoBotColor = color;
+      window.vendoBotAvatar = avatar;
+
+      // Handle Avatar (Icon vs Image vs Letter)
+      bubbleInner.innerHTML = '';
+      if (avatar === 'ICON:BOT') {
+        bubbleInner.innerHTML = botIcon;
+      } else if (avatar && (avatar.startsWith('http') || avatar.startsWith('/') || avatar.startsWith('data:'))) {
+        bubbleInner.innerHTML = `<img src="${avatar}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+      } else {
+        const letter = (avatar || name || 'V').charAt(0).toUpperCase();
+        letterSpan.textContent = letter;
+        bubbleInner.appendChild(letterSpan);
+      }
+      bubbleInner.appendChild(greenDot);
+
       if (color) {
         bubble.style.background = `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`;
-        bubble.style.boxShadow = `0 20px 40px ${color}55`;
+        bubble.style.boxShadow = `0 12px 24px ${color}55`;
       }
+
+      // Final reveal once we have the identity
+      bubble.style.visibility = 'visible';
+      bubble.style.opacity = '1';
+      bubble.style.transform = 'translateY(0) scale(1)';
     }
   });
 
@@ -147,9 +173,16 @@
       iframeContainer.style.opacity = '0';
       iframeContainer.style.transform = 'translateY(30px) scale(0.95)';
       setTimeout(() => { iframeContainer.style.display = 'none'; }, 400);
-      // Restore letter + dot
+
+      // Restore identity icon/letter
       bubbleInner.innerHTML = '';
-      bubbleInner.appendChild(letterSpan);
+      if (window.vendoBotAvatar === 'ICON:BOT') {
+        bubbleInner.innerHTML = botIcon;
+      } else if (window.vendoBotAvatar && (window.vendoBotAvatar.startsWith('http') || window.vendoBotAvatar.startsWith('/') || window.vendoBotAvatar.startsWith('data:'))) {
+        bubbleInner.innerHTML = `<img src="${window.vendoBotAvatar}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+      } else {
+        bubbleInner.appendChild(letterSpan);
+      }
       bubbleInner.appendChild(greenDot);
     }
   };
@@ -239,10 +272,11 @@
       flexDirection: 'column'
     });
 
-    const senderName = window.vendoSenderName || 'Assistant Vendo';
-    const avatarHtml = window.vendoAvatarUrl
-      ? `<img src="${window.vendoAvatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`
-      : `<div style="width: 100%; height: 100%; background: #673DE6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+    const senderName = window.vendoSenderName || window.vendoBotName || 'Assistant Vendo';
+    const avatarToUse = window.vendoAvatarUrl || window.vendoBotAvatar;
+    const avatarHtml = avatarToUse
+      ? `<img src="${avatarToUse}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`
+      : `<div style="width: 100%; height: 100%; background: ${window.vendoBotColor || '#673DE6'}; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                </div>`;
 

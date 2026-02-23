@@ -562,7 +562,7 @@ export default function ChatbotEditor({ botId = null }) {
 
                         <div className={styles.codeBlock} style={{ background: '#030308', color: '#8b5cf6', padding: 20, borderRadius: 12, fontSize: 13, fontFamily: 'monospace', overflowX: 'auto', border: '1px solid rgba(255,255,255,0.05)' }}>
                             <span style={{ color: '#E596FD' }}>&lt;script</span> <br />
-                            &nbsp;&nbsp;&nbsp;src=<span style={{ color: '#FFF' }}>&quot;https://usevendo.com/embed.js&quot;</span> <br />
+                            &nbsp;&nbsp;&nbsp;src=<span style={{ color: '#FFF' }}>&quot;{(typeof window !== 'undefined' ? window.location.origin : 'https://usevendo.com')}/embed.js&quot;</span> <br />
                             &nbsp;&nbsp;&nbsp;data-chatbot-id=<span style={{ color: '#FFF' }}>&quot;{botId || 'GENERE_APRES_SAUVEGARDE'}&quot;</span> <br />
                             &nbsp;&nbsp;&nbsp;<span style={{ color: '#E596FD' }}>async</span> <br />
                             <span style={{ color: '#E596FD' }}>&gt;&lt;/script&gt;</span>

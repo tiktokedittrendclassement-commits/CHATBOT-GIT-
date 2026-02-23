@@ -90,3 +90,11 @@ button {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Hide Vendo Assistant when embedded or on embed routes */
+.is-embed .vendo-toggle-btn,
+.is-embed .vendo-invite-card,
+.is-embed .vendo-chat-window,
+.is-embed .vendo-assistant-root {
+  display: none !important;
+}

@@ -6,12 +6,14 @@ export function middleware(request) {
     // 1. Skip paths that should always be accessible
     // - Maintenance page itself
     // - Public assets (images, fonts, etc.)
-    // - API auth (to allow setting the preview cookie)
+    // - API routes (important for the chatbot to work)
+    // - Embed routes (the chatbot widget itself)
     // - _next internal files
     if (
         pathname.startsWith('/maintenance') ||
+        pathname.startsWith('/embed') ||
+        pathname.startsWith('/api') ||
         pathname.includes('.') || // matches assets like favicon.ico, images, etc.
-        pathname.startsWith('/api/auth/preview') ||
         pathname.startsWith('/_next')
     ) {
         return NextResponse.next()
@@ -30,16 +32,14 @@ export function middleware(request) {
     return NextResponse.next()
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
     matcher: [
         /*
          * Match all request paths except for the ones starting with:
-         * - api (API routes)
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 }

@@ -391,10 +391,10 @@ ${GLOBAL_RULES}
         // Let's look up/create conversation based on visitorId + chatbotId?
         if (!convId && visitorId) {
             // Try find active conversation
-            const { data: exist } = await supabase.from('conversations').select('id').eq('chatbot_id', chatbotId).eq('visitor_id', visitorId).limit(1).single()
+            const { data: exist } = await supabaseAdmin.from('conversations').select('id').eq('chatbot_id', chatbotId).eq('visitor_id', visitorId).limit(1).single()
             if (exist) convId = exist.id
             else {
-                const { data: newConv } = await supabase.from('conversations').insert({ chatbot_id: chatbotId, visitor_id: visitorId }).select('id').single()
+                const { data: newConv } = await supabaseAdmin.from('conversations').insert({ chatbot_id: chatbotId, visitor_id: visitorId }).select('id').single()
                 convId = newConv?.id
             }
         }
@@ -402,14 +402,14 @@ ${GLOBAL_RULES}
         if (convId) {
             // Store User Msg
             const lastUserMsg = messages[messages.length - 1]
-            await supabase.from('messages').insert({
+            await supabaseAdmin.from('messages').insert({
                 conversation_id: convId,
                 role: 'user',
                 content: lastUserMsg.content,
                 page_url: pageUrl // Save URL if provided
             })
             // Store Bot Msg
-            await supabase.from('messages').insert({ conversation_id: convId, role: 'assistant', content: responseText })
+            await supabaseAdmin.from('messages').insert({ conversation_id: convId, role: 'assistant', content: responseText })
         }
 
         return NextResponse.json({

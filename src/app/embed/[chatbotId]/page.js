@@ -13,6 +13,7 @@ export default function EmbedPage() {
     const [loading, setLoading] = useState(false)
     const [botConfig, setBotConfig] = useState(null)
     const [error, setError] = useState(null)
+    const [visitorId, setVisitorId] = useState(null)
     const messagesEndRef = useRef(null)
     const messagesContainerRef = useRef(null)
 
@@ -23,6 +24,14 @@ export default function EmbedPage() {
     }
 
     useEffect(() => {
+        // Handle Visitor ID
+        let vid = localStorage.getItem(`vendo_visitor_${params.chatbotId}`)
+        if (!vid) {
+            vid = 'v_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36)
+            localStorage.setItem(`vendo_visitor_${params.chatbotId}`, vid)
+        }
+        setVisitorId(vid)
+
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
@@ -92,6 +101,7 @@ export default function EmbedPage() {
                 body: JSON.stringify({
                     messages: [...messages, userMessage],
                     chatbotId: params.chatbotId,
+                    visitorId: visitorId,
                 })
             })
 

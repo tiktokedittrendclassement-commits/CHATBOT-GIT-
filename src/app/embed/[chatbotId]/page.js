@@ -358,7 +358,7 @@ export default function EmbedPage() {
                         onFocus={e => {
                             e.currentTarget.style.border = `1.5px solid ${brandColor}`
                             e.currentTarget.style.background = themeColors.inputBg
-                            e.currentTarget.style.boxShadow = `0 0 0 4px ${brandColor}26`
+                            e.currentTarget.style.boxShadow = 'none'
                         }}
                         onBlur={e => {
                             e.currentTarget.style.border = `1.5px solid ${themeColors.inputBorder}`

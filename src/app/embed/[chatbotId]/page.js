@@ -258,38 +258,41 @@ export default function EmbedPage() {
                     flex: 1,
                     padding: '24px',
                     overflowY: 'auto',
-                    background: '#0B0E14',
+                    background: themeColors.bgMessages,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 20,
                     scrollBehavior: 'smooth'
                 }}
             >
-                {messages.map((msg, i) => (
-                    <div key={i} style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start'
-                    }}>
-                        <div style={{
-                            maxWidth: '85%',
-                            padding: '14px 18px',
-                            borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                            fontSize: 14.5,
-                            lineHeight: '1.6',
-                            color: msg.role === 'user' ? '#fff' : '#F1F5F9',
-                            background: msg.role === 'user' ? brandColor : '#1E293B',
-                            boxShadow: msg.role === 'user'
-                                ? `0 8px 16px ${brandColor}33`
-                                : '0 2px 8px rgba(0,0,0,0.2)',
-                            border: msg.role === 'assistant' ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                            fontWeight: 500,
-                            whiteSpace: 'pre-wrap'
+                {messages.map((msg, i) => {
+                    const isAssistant = msg.role === 'assistant'
+                    return (
+                        <div key={i} style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: !isAssistant ? 'flex-end' : 'flex-start'
                         }}>
-                            {msg.content}
+                            <div style={{
+                                maxWidth: '85%',
+                                padding: '14px 18px',
+                                borderRadius: !isAssistant ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                                fontSize: 14.5,
+                                lineHeight: '1.6',
+                                color: !isAssistant ? '#fff' : themeColors.textMain,
+                                background: !isAssistant ? brandColor : themeColors.bubbleAssistant,
+                                boxShadow: !isAssistant
+                                    ? `0 8px 16px ${brandColor}33`
+                                    : isDark ? '0 4px 12px rgba(0,0,0,0.2)' : '0 2px 10px rgba(0,0,0,0.03)',
+                                border: isAssistant ? `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` : 'none',
+                                fontWeight: 500,
+                                whiteSpace: 'pre-wrap'
+                            }}>
+                                {msg.content}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                })}
 
                 {loading && (
                     <div style={{ display: 'flex', gap: 5, paddingLeft: 4 }}>

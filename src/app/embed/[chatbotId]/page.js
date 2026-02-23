@@ -26,7 +26,7 @@ export default function EmbedPage() {
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
-                .select('name, color, logo_url, welcome_message_new, welcome_message_returning, triggers, theme')
+                .select('name, color, logo_url, welcome_message_new, welcome_message_returning, triggers, theme, subtitle')
                 .eq('id', params.chatbotId)
                 .single()
 
@@ -194,7 +194,9 @@ export default function EmbedPage() {
                     <div style={{ fontWeight: 800, fontSize: 17, color: '#fff', letterSpacing: '-0.3px' }}>{botConfig.name}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
                         <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%', boxShadow: '0 0 8px #10B981', animation: 'embedPulse 2s infinite' }}></div>
-                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Assistant Expert Connecté</span>
+                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                            {botConfig.subtitle || 'Assistant Expert Connecté'}
+                        </span>
                     </div>
                 </div>
             </div>

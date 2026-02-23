@@ -469,7 +469,7 @@ export default function VendoAssistant() {
                                 onFocus={e => {
                                     e.currentTarget.style.border = '1.5px solid #673DE6'
                                     e.currentTarget.style.background = '#1E293B'
-                                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(103, 61, 230, 0.15)'
+                                    e.currentTarget.style.boxShadow = 'none'
                                 }}
                                 onBlur={e => {
                                     e.currentTarget.style.border = '1.5px solid rgba(255,255,255,0.05)'

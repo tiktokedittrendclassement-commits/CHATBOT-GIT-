@@ -235,7 +235,7 @@ export default function EmbedPage() {
                 ref={messagesContainerRef}
                 style={{
                     flex: 1,
-                    padding: '20px',
+                    padding: '24px',
                     overflowY: 'auto',
                     background: themeColors.bgMessages,
                     display: 'flex',
@@ -304,11 +304,11 @@ export default function EmbedPage() {
 
             {/* Input Form */}
             <form onSubmit={handleSend} style={{
-                padding: '16px 20px 20px',
+                padding: '20px 24px 30px',
                 background: themeColors.bgMain,
-                borderTop: isDark ? '1px solid #1E293B' : '1px solid #F1F5F9',
+                borderTop: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #F1F5F9',
                 display: 'flex',
-                gap: 10,
+                gap: 12,
                 alignItems: 'center',
                 flexShrink: 0
             }}>
@@ -320,8 +320,8 @@ export default function EmbedPage() {
                     style={{
                         flex: 1,
                         border: `1.5px solid ${themeColors.inputBorder}`,
-                        borderRadius: '14px',
-                        padding: '12px 16px',
+                        borderRadius: '16px',
+                        padding: '14px 18px',
                         fontSize: 14,
                         background: themeColors.inputBg,
                         fontFamily: 'Inter, sans-serif',
@@ -332,7 +332,7 @@ export default function EmbedPage() {
                     onFocus={e => {
                         e.target.style.border = `1.5px solid ${brandColor}`
                         e.target.style.background = isDark ? '#1E293B' : '#FFFFFF'
-                        e.target.style.boxShadow = `0 0 0 3px ${brandColor}22`
+                        e.target.style.boxShadow = `0 0 0 4px ${brandColor}22`
                     }}
                     onBlur={e => {
                         e.target.style.border = `1.5px solid ${themeColors.inputBorder}`
@@ -346,9 +346,9 @@ export default function EmbedPage() {
                     style={{
                         background: brandColor,
                         color: '#fff',
-                        width: 44,
-                        height: 44,
-                        borderRadius: '12px',
+                        width: 48,
+                        height: 48,
+                        borderRadius: '14px',
                         border: 'none',
                         display: 'flex',
                         alignItems: 'center',
@@ -357,10 +357,10 @@ export default function EmbedPage() {
                         opacity: input.trim() ? 1 : 0.5,
                         transition: 'all 0.3s',
                         flexShrink: 0,
-                        boxShadow: `0 6px 14px ${brandColor}44`
+                        boxShadow: `0 8px 16px ${brandColor}4D`
                     }}
                 >
-                    <Send size={18} />
+                    <Send size={20} />
                 </button>
             </form>
         </div>

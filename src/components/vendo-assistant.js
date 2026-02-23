@@ -358,7 +358,9 @@ export default function VendoAssistant() {
                                 color: 'white',
                                 border: '1px solid rgba(255,255,255,0.2)'
                             }}>
-                                <Bot size={22} />
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '60%', height: '60%', color: 'white' }}>
+                                    <path d="M4 4L10.5 20L13.5 12L20 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
                             </div>
                             <div>
                                 <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>Assistant Vendo</div>

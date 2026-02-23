@@ -129,7 +129,12 @@ export default function EmbedPage() {
 
     const isDark = botConfig.theme === 'dark'
     const brandColor = botConfig.color || '#673DE6'
-    const brandInitial = botConfig.name ? botConfig.name.substring(0, 2).toUpperCase() : 'A'
+
+    // Prioritize logo_url if it contains 1-2 characters (custom initials)
+    const brandInitial = (botConfig.logo_url && botConfig.logo_url.length <= 2)
+        ? botConfig.logo_url.toUpperCase()
+        : (botConfig.name ? botConfig.name.substring(0, 2).toUpperCase() : 'A')
+
     const quickActions = botConfig.quick_actions || []
 
     const themeColors = {
@@ -322,8 +327,8 @@ export default function EmbedPage() {
             {/* Input Form */}
             <form onSubmit={handleSend} style={{
                 padding: '20px 24px 30px',
-                background: '#0B0E14',
-                borderTop: '1px solid rgba(255,255,255,0.05)',
+                background: themeColors.bgMain,
+                borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}`,
                 display: 'flex',
                 gap: 12,
                 alignItems: 'center',
@@ -336,25 +341,25 @@ export default function EmbedPage() {
                         placeholder={`Posez une question à ${botConfig.name || 'Assistant'}...`}
                         style={{
                             width: '100%',
-                            border: '1.5px solid rgba(255,255,255,0.05)',
+                            border: `1.5px solid ${themeColors.inputBorder}`,
                             borderRadius: '16px',
                             padding: '14px 18px',
                             fontSize: 14,
-                            background: '#1E293B',
+                            background: themeColors.inputBg,
                             fontFamily: 'Inter, sans-serif',
                             fontWeight: 500,
-                            color: '#F1F5F9',
+                            color: themeColors.textMain,
                             transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
                             outline: 'none'
                         }}
                         onFocus={e => {
                             e.currentTarget.style.border = `1.5px solid ${brandColor}`
-                            e.currentTarget.style.background = '#1E293B'
+                            e.currentTarget.style.background = themeColors.inputBg
                             e.currentTarget.style.boxShadow = `0 0 0 4px ${brandColor}26`
                         }}
                         onBlur={e => {
-                            e.currentTarget.style.border = '1.5px solid rgba(255,255,255,0.05)'
-                            e.currentTarget.style.background = '#1E293B'
+                            e.currentTarget.style.border = `1.5px solid ${themeColors.inputBorder}`
+                            e.currentTarget.style.background = themeColors.inputBg
                             e.currentTarget.style.boxShadow = 'none'
                         }}
                     />

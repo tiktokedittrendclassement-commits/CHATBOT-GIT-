@@ -274,7 +274,7 @@
       position: 'fixed',
       bottom: '110px',
       right: '32px',
-      width: '320px',
+      width: '340px',
       background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(20px)',
       webkitBackdropFilter: 'blur(20px)',
@@ -310,24 +310,28 @@
       </div>`;
     }
 
+    const isBrandDark = brandColor === '#000000' || brandColor === '#000' || brandColor === 'black' || (brandColor && brandColor.startsWith('#0'));
+    const teaserNameColor = (isDark && isBrandDark) ? '#FFFFFF' : brandColor;
+    const teaserReplyColor = (isDark && isBrandDark) ? '#FFFFFF' : brandColor;
+
     teaserBubble.innerHTML = `
-            <div style="padding: 16px 18px; display: flex; gap: 14px; align-items: center;">
-                <div style="position: relative; flex-shrink: 0; width: 50px; height: 50px;">
+            <div style="padding: 18px 20px; display: flex; gap: 14px; align-items: start;">
+                <div style="position: relative; flex-shrink: 0; width: 52px; height: 52px; margin-top: 2px;">
                     ${avatarInnerHtml}
                     <div style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: #10B981; border: 3px solid ${isDark ? '#0f172a' : 'white'}; border-radius: 50%;"></div>
                 </div>
-                <div style="flex: 1; overflow: hidden;">
-                    <div style="font-size: 11px; font-weight: 800; color: ${brandColor}; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${senderName}</div>
-                    <div style="font-size: 14.5px; color: ${isDark ? '#F1F5F9' : '#1E293B'}; fontWeight: 600; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${text}</div>
+                <div style="flex: 1; overflow: hidden; padding-right: 20px;">
+                    <div style="font-size: 11px; font-weight: 800; color: ${teaserNameColor}; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; opacity: ${isDark && isBrandDark ? '0.9' : '1'};">${senderName}</div>
+                    <div style="font-size: 15px; color: ${isDark ? '#F1F5F9' : '#1E293B'}; font-weight: 500; line-height: 1.45; word-break: break-word;">${text}</div>
                 </div>
-                 <button id="vendo-close-teaser" style="background: transparent; border: none; color: ${isDark ? 'rgba(255,255,255,0.4)' : '#9ca3af'}; cursor: pointer; padding: 4px; margin-top: -24px; margin-right: -4px; transition: color 0.2s;">
+                 <button id="vendo-close-teaser" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: ${isDark ? 'rgba(255,255,255,0.4)' : '#9ca3af'}; cursor: pointer; padding: 4px; transition: color 0.2s;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
-            <div style="padding: 12px 20px; background: ${isDark ? 'rgba(255,255,255,0.03)' : '#f9fafb'}; border-top: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6'}; display: flex; align-items: center; justify-content: space-between;">
+            <div style="padding: 14px 20px; background: ${isDark ? 'rgba(255,255,255,0.03)' : '#f9fafb'}; border-top: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6'}; display: flex; align-items: center; justify-content: space-between;">
                  <span style="font-size: 11px; color: ${isDark ? 'rgba(255,255,255,0.5)' : '#6b7280'}; font-weight: 500;">À l'instant</span>
-                 <div style="font-size: 12px; font-weight: 700; color: ${brandColor}; display: flex; align-items: center; gap: 4px;">
-                    Répondre <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+                 <div style="font-size: 13px; font-weight: 700; color: ${teaserReplyColor}; display: flex; align-items: center; gap: 6px;">
+                    Répondre <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
                  </div>
             </div>
         `;

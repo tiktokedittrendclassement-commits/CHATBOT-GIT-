@@ -41,7 +41,8 @@ export default function EmbedPage() {
                         type: 'vendo-bot-config',
                         name: data.name,
                         color: data.color,
-                        avatar: data.logo_url
+                        avatar: data.logo_url,
+                        theme: data.theme
                     }, '*')
                 }
 

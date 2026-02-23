@@ -16,6 +16,14 @@
       from { opacity: 0; transform: translateY(20px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+    @keyframes vendo-slide-in-up-premium {
+      0% { opacity: 0; transform: translateY(40px) scale(0.95) rotateX(10deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
+    }
+    @keyframes vendo-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
   `;
   document.head.appendChild(style);
 
@@ -125,11 +133,12 @@
     if (!event.data) return;
 
     if (event.data.type === 'vendo-bot-config') {
-      const { name, color, avatar } = event.data;
-      console.log('UseVendo: Bot config received:', name, avatar);
+      const { name, color, avatar, theme } = event.data;
+      console.log('UseVendo: Bot config received:', name, avatar, theme);
       window.vendoBotName = name;
       window.vendoBotColor = color;
       window.vendoBotAvatar = avatar;
+      window.vendoBotTheme = theme;
 
       // Handle Avatar (Icon vs Image vs Letter)
       bubbleInner.innerHTML = '';
@@ -253,51 +262,68 @@
     // cleanup previous if exists
     removeTeaser();
 
+    const isDark = window.vendoBotTheme === 'dark';
+    const brandColor = window.vendoBotColor || '#673DE6';
+    const senderName = window.vendoSenderName || window.vendoBotName || 'Assistant Vendo';
+    const avatarToUse = window.vendoAvatarUrl || window.vendoBotAvatar;
+
     teaserBubble = document.createElement('div');
     Object.assign(teaserBubble.style, {
       position: 'fixed',
-      bottom: '100px',
-      right: '25px',
-      width: '300px',
-      background: 'white',
-      borderRadius: '16px',
-      boxShadow: '0 12px 36px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04)',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      bottom: '110px',
+      right: '32px',
+      width: '320px',
+      background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(20px)',
+      webkitBackdropFilter: 'blur(20px)',
+      borderRadius: '24px',
+      boxShadow: isDark
+        ? '0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)'
+        : '0 20px 50px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05)',
+      fontFamily: "'Inter', -apple-system, system-ui, sans-serif",
       zIndex: '999998',
       cursor: 'pointer',
       opacity: '0',
-      transform: 'translateY(20px) scale(0.95)',
-      transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+      transformOrigin: 'bottom right',
+      animation: 'vendo-slide-in-up-premium 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards, vendo-float 4s ease-in-out infinite',
       overflow: 'hidden',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)',
+      padding: '4px'
     });
 
-    const senderName = window.vendoSenderName || window.vendoBotName || 'Assistant Vendo';
-    const avatarToUse = window.vendoAvatarUrl || window.vendoBotAvatar;
-    const avatarHtml = avatarToUse
-      ? `<img src="${avatarToUse}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`
-      : `<div style="width: 100%; height: 100%; background: ${window.vendoBotColor || '#673DE6'}; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-               </div>`;
+    let avatarInnerHtml = '';
+    if (avatarToUse && avatarToUse !== 'ICON:BOT' && (avatarToUse.startsWith('http') || avatarToUse.startsWith('/') || avatarToUse.startsWith('data:'))) {
+      avatarInnerHtml = `<img src="${avatarToUse}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+    } else if (avatarToUse === 'ICON:BOT') {
+      avatarInnerHtml = `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+        ${botIcon}
+      </div>`;
+    } else {
+      const letter = (senderName || 'A').charAt(0).toUpperCase();
+      avatarInnerHtml = `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-style: italic; font-size: 20px;">
+        ${letter}
+      </div>`;
+    }
 
     teaserBubble.innerHTML = `
-            <div style="padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start;">
-                <div style="position: relative; flex-shrink: 0; width: 44px; height: 44px;">
-                    ${avatarHtml}
-                    <div style="position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; background: #22c55e; border: 2px solid white; border-radius: 50%;"></div>
+            <div style="padding: 16px 18px; display: flex; gap: 14px; align-items: center;">
+                <div style="position: relative; flex-shrink: 0; width: 50px; height: 50px;">
+                    ${avatarInnerHtml}
+                    <div style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background: #10B981; border: 3px solid ${isDark ? '#0f172a' : 'white'}; border-radius: 50%;"></div>
                 </div>
-                <div style="flex: 1;">
-                    <div style="font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 2px;">${senderName}</div>
-                    <div style="font-size: 13px; color: #4b5563; line-height: 1.4;">${text}</div>
+                <div style="flex: 1; overflow: hidden;">
+                    <div style="font-size: 11px; font-weight: 800; color: ${brandColor}; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${senderName}</div>
+                    <div style="font-size: 14.5px; color: ${isDark ? '#F1F5F9' : '#1E293B'}; fontWeight: 600; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${text}</div>
                 </div>
-                 <button id="vendo-close-teaser" style="background: transparent; border: none; color: #9ca3af; cursor: pointer; padding: 4px; margin-top: -4px; margin-right: -8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                 <button id="vendo-close-teaser" style="background: transparent; border: none; color: ${isDark ? 'rgba(255,255,255,0.4)' : '#9ca3af'}; cursor: pointer; padding: 4px; margin-top: -24px; margin-right: -4px; transition: color 0.2s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
-            <div style="padding: 12px 20px; background: #f9fafb; border-top: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between;">
-                 <span style="font-size: 11px; color: #6b7280; font-weight: 500;">À l'instant</span>
-                 <div style="font-size: 12px; font-weight: 600; color: #673DE6; display: flex; align-items: center; gap: 4px;">
+            <div style="padding: 12px 20px; background: ${isDark ? 'rgba(255,255,255,0.03)' : '#f9fafb'}; border-top: 1px solid ${isDark ? 'rgba(255,255,255,0.05)' : '#f3f4f6'}; display: flex; align-items: center; justify-content: space-between;">
+                 <span style="font-size: 11px; color: ${isDark ? 'rgba(255,255,255,0.5)' : '#6b7280'}; font-weight: 500;">À l'instant</span>
+                 <div style="font-size: 12px; font-weight: 700; color: ${brandColor}; display: flex; align-items: center; gap: 4px;">
                     Répondre <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
                  </div>
             </div>

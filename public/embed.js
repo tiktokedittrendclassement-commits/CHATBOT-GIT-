@@ -147,8 +147,9 @@
       } else if (avatar && (avatar.startsWith('http') || avatar.startsWith('/') || avatar.startsWith('data:'))) {
         bubbleInner.innerHTML = `<img src="${avatar}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
       } else {
-        const letter = (avatar || name || 'V').charAt(0).toUpperCase();
+        const letter = (avatar || name || 'V').substring(0, 2).toUpperCase();
         letterSpan.textContent = letter;
+        letterSpan.style.fontSize = letter.length > 1 ? '22px' : '28px';
         bubbleInner.appendChild(letterSpan);
       }
       bubbleInner.appendChild(greenDot);
@@ -301,8 +302,8 @@
         ${botIcon}
       </div>`;
     } else {
-      const letter = (senderName || 'A').charAt(0).toUpperCase();
-      avatarInnerHtml = `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-style: italic; font-size: 20px;">
+      const letter = (senderName || 'A').substring(0, 2).toUpperCase();
+      avatarInnerHtml = `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-style: italic; font-size: ${letter.length > 1 ? '16px' : '20px'};">
         ${letter}
       </div>`;
     }

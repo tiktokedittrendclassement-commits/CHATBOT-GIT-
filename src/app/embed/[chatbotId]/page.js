@@ -129,7 +129,7 @@ export default function EmbedPage() {
 
     const isDark = botConfig.theme === 'dark'
     const brandColor = botConfig.color || '#673DE6'
-    const brandInitial = botConfig.name?.charAt(0).toUpperCase() || 'A'
+    const brandInitial = botConfig.name ? botConfig.name.substring(0, 2).toUpperCase() : 'A'
     const quickActions = botConfig.quick_actions || []
 
     const themeColors = {
@@ -196,7 +196,14 @@ export default function EmbedPage() {
                     flexShrink: 0,
                     boxShadow: 'none'
                 }}>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white', textShadow: 'none' }}>{brandInitial}</span>
+                    <span style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: 900,
+                        fontStyle: 'italic',
+                        fontSize: brandInitial.length > 1 ? 18 : 22,
+                        color: 'white',
+                        textShadow: 'none'
+                    }}>{brandInitial}</span>
                 </div>
                 <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>{botConfig.name}</div>

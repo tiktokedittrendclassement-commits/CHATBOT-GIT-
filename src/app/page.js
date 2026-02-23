@@ -125,14 +125,10 @@ function MockCustom() {
         <label className={styles.mockLabel}>Style de l'Avatar</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 44, height: 44, borderRadius: 10, background: '#673DE6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '60%', height: '60%', color: 'white' }}>
-              <path d="M4 4L10.5 20L13.5 12L20 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white' }}>V</span>
           </div>
           <div className={`${styles.mockBtnMini} ${styles.mockBtnMiniActive}`} style={{ margin: 0 }}>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 14, height: 14, marginRight: 6, color: 'white' }}>
-              <path d="M4 4L10.5 20L13.5 12L20 4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg> Logo Vendo
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 13, marginRight: 8, color: 'white' }}>V</span> Logo Vendo
           </div>
           <div className={styles.mockBtnMini} style={{ margin: 0 }}>
             Lettre

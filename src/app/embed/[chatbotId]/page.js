@@ -138,8 +138,8 @@ export default function EmbedPage() {
     const quickActions = botConfig.quick_actions || []
 
     const themeColors = {
-        bgMain: isDark ? '#0F172A' : '#FFFFFF',
-        bgMessages: isDark ? '#020617' : '#F8FAFC',
+        bgMain: isDark ? '#0B0E14' : '#FFFFFF',
+        bgMessages: isDark ? '#0B0E14' : '#F8FAFC',
         textMain: isDark ? '#F8FAFC' : '#1E293B',
         textMuted: isDark ? 'rgba(255, 255, 255, 0.5)' : '#64748B',
         bubbleAssistant: isDark ? '#1E293B' : '#FFFFFF',

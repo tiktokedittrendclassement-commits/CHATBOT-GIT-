@@ -91,42 +91,83 @@ export async function POST(req) {
 
         // 4. Credits Deduction & Storage
         if (!isSystemBot) {
-            await supabaseAdmin.rpc('decrement_balance', { p_user_id: chatbot.user_id, p_amount: 100 });
+            try {
+                const { error: deductError } = await supabaseAdmin.rpc('decrement_balance', { p_user_id: chatbot.user_id, p_amount: 100 });
+                if (deductError) console.error('[API Chat] Credit deduction error:', deductError);
+            } catch (err) {
+                console.error('[API Chat] critical deduction error:', err);
+            }
         }
 
         let convId = conversationId;
-        if (!convId && visitorId) {
-            // Find or Create Conversation
-            const { data: exist } = await supabaseAdmin.from('conversations').select('id').eq('chatbot_id', chatbotId).eq('visitor_id', visitorId).limit(1).maybeSingle();
-            if (exist) {
-                convId = exist.id;
-            } else {
-                // Determine user_id for the conversation (owner of the bot)
-                // If it's a system bot, we might not have a clean owner, but standard bots use chatbot.user_id
-                const { data: newConv } = await supabaseAdmin.from('conversations')
-                    .insert({
-                        chatbot_id: (isSystemBot ? null : chatbotId),
-                        visitor_id: visitorId,
-                        user_id: (isSystemBot ? null : chatbot.user_id), // Linked to owner
-                        metadata: isSystemBot ? { system_bot_type: chatbotId } : {}
-                    })
-                    .select('id').single();
-                convId = newConv?.id;
+        const isValidUuid = (id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+        if (!convId && visitorId && isValidUuid(chatbotId)) {
+            try {
+                console.log(`[API Chat] No convId. Looking up visitor: ${visitorId} for bot: ${chatbotId}`);
+                const { data: exist, error: findError } = await supabaseAdmin
+                    .from('conversations')
+                    .select('id')
+                    .eq('chatbot_id', chatbotId)
+                    .eq('visitor_id', visitorId)
+                    .limit(1)
+                    .maybeSingle();
+
+                if (findError) console.error('[API Chat] Error finding conversation:', findError);
+
+                if (exist) {
+                    convId = exist.id;
+                    console.log(`[API Chat] Found existing conversation: ${convId}`);
+                } else {
+                    console.log('[API Chat] No existing conversation. Creating new one...');
+                    const { data: newConv, error: createError } = await supabaseAdmin
+                        .from('conversations')
+                        .insert({
+                            chatbot_id: chatbotId,
+                            visitor_id: visitorId,
+                            // user_id removed as it doesn't exist in schema
+                        })
+                        .select('id')
+                        .single();
+
+                    if (createError) {
+                        console.error('[API Chat] ERROR creating conversation:', createError);
+                    } else {
+                        convId = newConv?.id;
+                        console.log(`[API Chat] Created new conversation: ${convId}`);
+                    }
+                }
+            } catch (err) {
+                console.error('[API Chat] Critical conversation management error:', err);
             }
         }
 
         if (convId) {
-            const lastUserMsg = messages[messages.length - 1];
-            await supabaseAdmin.from('messages').insert([
-                { conversation_id: convId, role: 'user', content: lastUserMsg.content, page_url: pageUrl },
-                { conversation_id: convId, role: 'assistant', content: responseText }
-            ]);
+            try {
+                const lastUserMsg = messages[messages.length - 1];
+                console.log(`[API Chat] Storing messages for conv: ${convId}`);
+                const { error: msgInsertError } = await supabaseAdmin.from('messages').insert([
+                    { conversation_id: convId, role: 'user', content: lastUserMsg.content, page_url: pageUrl },
+                    { conversation_id: convId, role: 'assistant', content: responseText }
+                ]);
+                if (msgInsertError) console.error('[API Chat] Error storing messages:', msgInsertError);
+            } catch (err) {
+                console.error('[API Chat] Critical message storage error:', err);
+            }
+        } else {
+            console.warn(`[API Chat] Skipping message storage. Bot ID: ${chatbotId} | Visitor: ${visitorId} | Is UUID: ${isValidUuid(chatbotId)}`);
         }
 
         return NextResponse.json({
             role: 'assistant',
             content: responseText,
-            debugInfo: { convId, visitorId, chatbotId, botOwnerId: chatbot.user_id }
+            debugInfo: {
+                convId,
+                visitorId,
+                chatbotId,
+                botOwnerId: chatbot?.user_id,
+                storageSkipped: !convId
+            }
         });
 
     } catch (error) {

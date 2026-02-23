@@ -194,16 +194,23 @@ export default function EmbedPage() {
                     color: 'white',
                     border: '1px solid rgba(255,255,255,0.2)',
                     flexShrink: 0,
-                    boxShadow: 'none'
+                    boxShadow: 'none',
+                    overflow: 'hidden'
                 }}>
-                    <span style={{
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: 900,
-                        fontStyle: 'italic',
-                        fontSize: brandInitial.length > 1 ? 18 : 22,
-                        color: 'white',
-                        textShadow: 'none'
-                    }}>{brandInitial}</span>
+                    {botConfig.logo_url && (botConfig.logo_url.startsWith('http') || botConfig.logo_url.startsWith('/') || botConfig.logo_url.startsWith('data:')) ? (
+                        <img src={botConfig.logo_url} alt={botConfig.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : botConfig.logo_url === 'ICON:BOT' ? (
+                        <Bot size={24} />
+                    ) : (
+                        <span style={{
+                            fontFamily: 'Inter, sans-serif',
+                            fontWeight: 900,
+                            fontStyle: 'italic',
+                            fontSize: brandInitial.length > 1 ? 18 : 22,
+                            color: 'white',
+                            textShadow: 'none'
+                        }}>{brandInitial}</span>
+                    )}
                 </div>
                 <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>{botConfig.name}</div>

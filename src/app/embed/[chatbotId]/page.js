@@ -318,8 +318,7 @@ export default function EmbedPage() {
                     <input
                         value={input}
                         onChange={e => setInput(e.target.value)}
-                        placeholder={`Posez une question à ${botConfig.name}...`}
-                        disabled={loading}
+                        placeholder={`Posez une question à ${botConfig.name || 'Assistant'}...`}
                         style={{
                             width: '100%',
                             border: '1.5px solid rgba(255,255,255,0.05)',
@@ -334,20 +333,19 @@ export default function EmbedPage() {
                             outline: 'none'
                         }}
                         onFocus={e => {
-                            e.target.style.border = `1.5px solid ${brandColor}`
-                            e.target.style.background = '#1E293B'
-                            e.target.style.boxShadow = `0 0 0 4px ${brandColor}26`
+                            e.currentTarget.style.border = `1.5px solid ${brandColor}`
+                            e.currentTarget.style.background = '#1E293B'
+                            e.currentTarget.style.boxShadow = `0 0 0 4px ${brandColor}26`
                         }}
                         onBlur={e => {
-                            e.target.style.border = '1.5px solid rgba(255,255,255,0.05)'
-                            e.target.style.background = '#1E293B'
-                            e.target.style.boxShadow = 'none'
+                            e.currentTarget.style.border = '1.5px solid rgba(255,255,255,0.05)'
+                            e.currentTarget.style.background = '#1E293B'
+                            e.currentTarget.style.boxShadow = 'none'
                         }}
                     />
                 </div>
                 <button
                     type="submit"
-                    disabled={loading || !input.trim()}
                     style={{
                         background: brandColor,
                         color: '#fff',
@@ -358,13 +356,12 @@ export default function EmbedPage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        cursor: input.trim() ? 'pointer' : 'not-allowed',
-                        opacity: input.trim() ? 1 : 0.5,
+                        cursor: 'pointer',
                         transition: 'all 0.3s',
-                        flexShrink: 0,
-                        boxShadow: `0 8px 16px ${brandColor}4D`
+                        boxShadow: `0 8px 16px ${brandColor}4D`,
+                        flexShrink: 0
                     }}
-                    onMouseEnter={e => { if (input.trim()) e.currentTarget.style.filter = 'brightness(0.9)' }}
+                    onMouseEnter={e => e.currentTarget.style.filter = 'brightness(0.9)'}
                     onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
                 >
                     <Send size={20} />

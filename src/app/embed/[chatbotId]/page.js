@@ -172,7 +172,7 @@ export default function EmbedPage() {
             {/* Header */}
             <div style={{
                 background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%)`,
-                padding: '20px 24px',
+                padding: '24px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
@@ -197,7 +197,7 @@ export default function EmbedPage() {
                     <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white' }}>{brandInitial}</span>
                 </div>
                 <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, fontSize: 17, color: '#fff', letterSpacing: '-0.3px' }}>{botConfig.name}</div>
+                    <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>{botConfig.name}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
                         <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%', boxShadow: '0 0 8px #10B981', animation: 'embedPulse 2s infinite' }}></div>
                         <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
@@ -210,24 +210,23 @@ export default function EmbedPage() {
                 <button
                     onClick={handleClose}
                     style={{
-                        background: 'rgba(255,255,255,0.15)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        color: 'white',
+                        background: 'rgba(255,255,255,0.1)',
+                        border: 'none',
+                        color: '#fff',
+                        cursor: 'pointer',
                         width: 32,
                         height: 32,
-                        borderRadius: '10px',
+                        borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        cursor: 'pointer',
                         transition: 'all 0.2s',
                         zIndex: 10
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
                 >
-                    <X size={18} />
+                    <X size={16} />
                 </button>
             </div>
 

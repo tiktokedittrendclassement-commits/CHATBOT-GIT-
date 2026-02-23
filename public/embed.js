@@ -95,18 +95,18 @@
   const iframeContainer = document.createElement('div');
   iframeContainer.style.cssText = `
     position: fixed;
-    bottom: 104px;
-    right: 24px;
+    bottom: 30px;
+    right: 32px;
     width: 400px;
     height: 600px;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 60px);
     box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
     border-radius: 28px;
     overflow: hidden;
     z-index: 999998;
     display: none;
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: translateY(20px) scale(0.95);
     transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   `;
 

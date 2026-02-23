@@ -238,10 +238,11 @@ export default function EmbedPage() {
                     flex: 1,
                     padding: '24px',
                     overflowY: 'auto',
-                    background: themeColors.bgMessages,
+                    background: '#0B0E14',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 16
+                    gap: 20,
+                    scrollBehavior: 'smooth'
                 }}
             >
                 {messages.map((msg, i) => (
@@ -252,16 +253,16 @@ export default function EmbedPage() {
                     }}>
                         <div style={{
                             maxWidth: '85%',
-                            padding: '12px 16px',
-                            borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                            fontSize: 14,
+                            padding: '14px 18px',
+                            borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                            fontSize: 14.5,
                             lineHeight: '1.6',
-                            color: msg.role === 'user' ? '#fff' : themeColors.bubbleTextAssistant,
-                            background: msg.role === 'user' ? brandColor : themeColors.bubbleAssistant,
+                            color: msg.role === 'user' ? '#fff' : '#F1F5F9',
+                            background: msg.role === 'user' ? brandColor : '#1E293B',
                             boxShadow: msg.role === 'user'
-                                ? `0 6px 14px ${brandColor}33`
-                                : isDark ? '0 4px 12px rgba(0,0,0,0.2)' : '0 2px 6px rgba(0,0,0,0.04)',
-                            border: msg.role === 'assistant' ? (isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.04)') : 'none',
+                                ? `0 8px 16px ${brandColor}33`
+                                : '0 2px 8px rgba(0,0,0,0.2)',
+                            border: msg.role === 'assistant' ? '1px solid rgba(255,255,255,0.05)' : 'none',
                             fontWeight: 500,
                             whiteSpace: 'pre-wrap'
                         }}>
@@ -305,43 +306,45 @@ export default function EmbedPage() {
 
             {/* Input Form */}
             <form onSubmit={handleSend} style={{
-                padding: '24px 32px 32px',
-                background: themeColors.bgMain,
-                borderTop: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #F1F5F9',
+                padding: '20px 24px 30px',
+                background: '#0B0E14',
+                borderTop: '1px solid rgba(255,255,255,0.05)',
                 display: 'flex',
                 gap: 12,
                 alignItems: 'center',
                 flexShrink: 0
             }}>
-                <input
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    placeholder="Posez une question à Vendo..."
-                    disabled={loading}
-                    style={{
-                        flex: 1,
-                        border: `1.5px solid ${themeColors.inputBorder}`,
-                        borderRadius: '16px',
-                        padding: '14px 18px',
-                        fontSize: 14,
-                        background: themeColors.inputBg,
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: 500,
-                        color: themeColors.textMain,
-                        transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
-                        outline: 'none'
-                    }}
-                    onFocus={e => {
-                        e.target.style.border = `1.5px solid ${brandColor}`
-                        e.target.style.background = isDark ? '#1E293B' : '#FFFFFF'
-                        e.target.style.boxShadow = `0 0 0 4px ${brandColor}22`
-                    }}
-                    onBlur={e => {
-                        e.target.style.border = `1.5px solid ${themeColors.inputBorder}`
-                        e.target.style.background = themeColors.inputBg
-                        e.target.style.boxShadow = 'none'
-                    }}
-                />
+                <div style={{ flex: 1, position: 'relative' }}>
+                    <input
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                        placeholder={`Posez une question à ${botConfig.name}...`}
+                        disabled={loading}
+                        style={{
+                            width: '100%',
+                            border: '1.5px solid rgba(255,255,255,0.05)',
+                            borderRadius: '16px',
+                            padding: '14px 18px',
+                            fontSize: 14,
+                            background: '#1E293B',
+                            fontFamily: 'Inter, sans-serif',
+                            fontWeight: 500,
+                            color: '#F1F5F9',
+                            transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
+                            outline: 'none'
+                        }}
+                        onFocus={e => {
+                            e.target.style.border = `1.5px solid ${brandColor}`
+                            e.target.style.background = '#1E293B'
+                            e.target.style.boxShadow = `0 0 0 4px ${brandColor}26`
+                        }}
+                        onBlur={e => {
+                            e.target.style.border = '1.5px solid rgba(255,255,255,0.05)'
+                            e.target.style.background = '#1E293B'
+                            e.target.style.boxShadow = 'none'
+                        }}
+                    />
+                </div>
                 <button
                     type="submit"
                     disabled={loading || !input.trim()}
@@ -359,8 +362,10 @@ export default function EmbedPage() {
                         opacity: input.trim() ? 1 : 0.5,
                         transition: 'all 0.3s',
                         flexShrink: 0,
-                        boxShadow: 'none'
+                        boxShadow: `0 8px 16px ${brandColor}4D`
                     }}
+                    onMouseEnter={e => { if (input.trim()) e.currentTarget.style.filter = 'brightness(0.9)' }}
+                    onMouseLeave={e => e.currentTarget.style.filter = 'brightness(1)'}
                 >
                     <Send size={20} />
                 </button>

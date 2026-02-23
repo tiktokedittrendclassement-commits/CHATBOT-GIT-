@@ -94,6 +94,8 @@ export default function EmbedPage() {
         setInput('')
         setLoading(true)
 
+        const currentVisitorId = visitorId || localStorage.getItem(`vendo_visitor_${params.chatbotId}`)
+
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
@@ -101,7 +103,7 @@ export default function EmbedPage() {
                 body: JSON.stringify({
                     messages: [...messages, userMessage],
                     chatbotId: params.chatbotId,
-                    visitorId: visitorId,
+                    visitorId: currentVisitorId,
                 })
             })
 

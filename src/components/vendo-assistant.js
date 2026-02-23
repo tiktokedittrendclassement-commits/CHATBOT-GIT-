@@ -50,8 +50,21 @@ export default function VendoAssistant() {
     ])
     const [teaserText, setTeaserText] = useState(null)
     const messagesContainerRef = useRef(null)
+    const [visitorId, setVisitorId] = useState(null)
     const [isTyping, setIsTyping] = useState(false)
     const [input, setInput] = useState('')
+
+    // Initialize Visitor ID
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            let vid = localStorage.getItem('vendo_assistant_visitor_id')
+            if (!vid) {
+                vid = 'va_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36)
+                localStorage.setItem('vendo_assistant_visitor_id', vid)
+            }
+            setVisitorId(vid)
+        }
+    }, [])
 
     const scrollToBottom = () => {
         if (messagesContainerRef.current) {
@@ -78,13 +91,15 @@ export default function VendoAssistant() {
         setIsTyping(true)
 
         try {
+            const currentVisitorId = visitorId || localStorage.getItem('vendo_assistant_visitor_id')
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: newMessages,
                     chatbotId: 'VENDO_SUPPORT',
-                    visitorId: 'vendo-visitor-' + Math.random().toString(36).substr(2, 9)
+                    visitorId: currentVisitorId
                 })
             })
 

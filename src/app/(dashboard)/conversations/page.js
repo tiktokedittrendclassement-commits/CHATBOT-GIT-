@@ -11,96 +11,138 @@ import styles from './page.module.css'
 export default function ConversationsPage() {
     const { user } = useAuth()
     const [conversations, setConversations] = useState([])
+    const [chatbots, setChatbots] = useState([])
+    const [selectedBotId, setSelectedBotId] = useState('all')
     const [loading, setLoading] = useState(true)
 
+    // Fetch Chatbots for filter
+    useEffect(() => {
+        if (!user) return
+        const fetchBots = async () => {
+            const { data } = await supabase
+                .from('chatbots')
+                .select('id, name')
+                .eq('user_id', user.id)
+            setChatbots(data || [])
+        }
+        fetchBots()
+    }, [user])
+
+    // Fetch Conversations based on filter
     useEffect(() => {
         if (!user) return
 
         const fetchConversations = async () => {
-            const { data: myBots } = await supabase
-                .from('chatbots')
-                .select('id, name, color')
-                .eq('user_id', user.id)
+            setLoading(true)
 
-            if (!myBots?.length) {
+            // 1. Get bot IDs to filter by
+            let botIds = []
+            if (selectedBotId === 'all') {
+                const { data: myBots } = await supabase
+                    .from('chatbots')
+                    .select('id')
+                    .eq('user_id', user.id)
+                botIds = myBots?.map(b => b.id) || []
+            } else {
+                botIds = [selectedBotId]
+            }
+
+            if (!botIds.length) {
+                setConversations([])
                 setLoading(false)
                 return
             }
 
-            const botIds = myBots.map(b => b.id)
-
-            const { data } = await supabase
+            // 2. Fetch conversations for those bots
+            const { data, error } = await supabase
                 .from('conversations')
                 .select(`id, created_at, visitor_id, chatbot_id, chatbots ( name, color )`)
                 .in('chatbot_id', botIds)
                 .order('created_at', { ascending: false })
 
+            if (error) {
+                console.error('[Conversations] Fetch error:', error)
+            }
+
             setConversations(data || [])
             setLoading(false)
-            // --- DEBUG CHECK ---
-            const { data: allConvs } = await supabase.from('conversations').select('id').limit(10)
-            console.log('[Dashboard Debug] Total conversations found in DB:', allConvs?.length || 0)
-            // --------------------
         }
 
         fetchConversations()
-    }, [user])
-
-    if (loading) return (
-        <div className={styles.loading}>
-            Chargement des conversations...
-        </div>
-    )
+    }, [user, selectedBotId])
 
     return (
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <h1 className={styles.heading}>Conversations</h1>
-                <p className={styles.subheading}>Suivez les échanges avec vos visiteurs</p>
+                <div>
+                    <h1 className={styles.heading}>Conversations</h1>
+                    <p className={styles.subheading}>Suivez les échanges avec vos visiteurs</p>
+                </div>
+
+                <div className={styles.filters}>
+                    <select
+                        className={styles.filterSelect}
+                        value={selectedBotId}
+                        onChange={(e) => setSelectedBotId(e.target.value)}
+                    >
+                        <option value="all">Tous les Chatbots</option>
+                        {chatbots.map(bot => (
+                            <option key={bot.id} value={bot.id}>
+                                {bot.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {/* List */}
             <div className={styles.list}>
-                {conversations.map(conv => {
-                    const color = conv.chatbots?.color || '#673DE6'
-                    const initial = conv.chatbots?.name?.charAt(0).toUpperCase() || 'V'
-                    const visitorLabel = conv.visitor_id ? `Visiteur #${conv.visitor_id.substring(0, 6)}` : 'Visiteur Anonyme'
+                {loading ? (
+                    <div className={styles.loading}>Chargement...</div>
+                ) : (
+                    <>
+                        {conversations.map(conv => {
+                            const color = conv.chatbots?.color || '#673DE6'
+                            const initial = conv.chatbots?.name?.charAt(0).toUpperCase() || 'V'
+                            const visitorLabel = conv.visitor_id ? `Visiteur #${conv.visitor_id.substring(0, 6)}` : 'Visiteur Anonyme'
 
-                    return (
-                        <Link key={conv.id} href={`/conversations/${conv.id}`} className={styles.item}>
-                            {/* Avatar */}
-                            <div className={styles.icon} style={{
-                                background: `linear-gradient(135deg, ${color} 0%, ${color}aa 100%)`,
-                                boxShadow: `0 8px 16px ${color}22`
-                            }}>
-                                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 20, color: 'white' }}>{initial}</span>
+                            return (
+                                <Link key={conv.id} href={`/conversations/${conv.id}`} className={styles.item}>
+                                    {/* Avatar */}
+                                    <div className={styles.icon} style={{
+                                        background: `linear-gradient(135deg, ${color} 0%, ${color}aa 100%)`,
+                                        boxShadow: `0 8px 16px ${color}22`
+                                    }}>
+                                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 20, color: 'white' }}>{initial}</span>
+                                    </div>
+
+                                    {/* Info */}
+                                    <div className={styles.info}>
+                                        <div className={styles.topRow}>
+                                            <span className={styles.botName}>{conv.chatbots?.name}</span>
+                                            <span className={styles.badge} style={{ color: color }}>Actif</span>
+                                        </div>
+                                        <span className={styles.visitorInfo}>Discussion avec {visitorLabel}</span>
+                                    </div>
+
+                                    {/* Date + arrow */}
+                                    <div className={styles.meta}>
+                                        <span className={styles.date}>{formatDate(conv.created_at)}</span>
+                                        <ChevronRight size={16} className={styles.arrow} />
+                                    </div>
+                                </Link>
+                            )
+                        })}
+
+                        {conversations.length === 0 && (
+                            <div className={styles.empty}>
+                                <MessageSquare size={48} className={styles.emptyIcon} />
+                                <h3 className={styles.emptyTitle}>Aucune conversation</h3>
+                                <p className={styles.emptyText}>Les échanges avec vos chatbots apparaîtront ici.</p>
                             </div>
-
-                            {/* Info */}
-                            <div className={styles.info}>
-                                <div className={styles.topRow}>
-                                    <span className={styles.botName}>{conv.chatbots?.name}</span>
-                                    <span className={styles.badge}>Actif</span>
-                                </div>
-                                <span className={styles.visitorInfo}>Discussion avec {visitorLabel}</span>
-                            </div>
-
-                            {/* Date + arrow */}
-                            <div className={styles.meta}>
-                                <span className={styles.date}>{formatDate(conv.created_at)}</span>
-                                <ChevronRight size={16} className={styles.arrow} />
-                            </div>
-                        </Link>
-                    )
-                })}
-
-                {conversations.length === 0 && (
-                    <div className={styles.empty}>
-                        <MessageSquare size={48} className={styles.emptyIcon} />
-                        <h3 className={styles.emptyTitle}>Aucune conversation</h3>
-                        <p className={styles.emptyText}>Les échanges avec vos chatbots apparaîtront ici.</p>
-                    </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

@@ -107,6 +107,7 @@ export default function EmbedPage() {
 
             const data = await response.json()
             if (data.error) throw new Error(data.error)
+            if (data.debugInfo) console.log('[Embed Debug]', data.debugInfo)
             setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
         } catch (err) {
             if (err.name === 'AbortError') return

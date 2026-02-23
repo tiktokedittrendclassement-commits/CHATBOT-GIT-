@@ -390,31 +390,69 @@ ${GLOBAL_RULES}
 
         // Let's look up/create conversation based on visitorId + chatbotId?
         if (!convId && visitorId) {
+            console.log(`[API Chat] No convId. Looking up visitor: ${visitorId} for bot: ${chatbotId}`);
             // Try find active conversation
-            const { data: exist } = await supabaseAdmin.from('conversations').select('id').eq('chatbot_id', chatbotId).eq('visitor_id', visitorId).limit(1).single()
-            if (exist) convId = exist.id
-            else {
-                const { data: newConv } = await supabaseAdmin.from('conversations').insert({ chatbot_id: chatbotId, visitor_id: visitorId }).select('id').single()
-                convId = newConv?.id
+            const { data: exist, error: findError } = await supabaseAdmin
+                .from('conversations')
+                .select('id')
+                .eq('chatbot_id', chatbotId)
+                .eq('visitor_id', visitorId)
+                .limit(1)
+                .maybeSingle();
+
+            if (findError) console.error('[API Chat] Error finding conversation:', findError);
+
+            if (exist) {
+                convId = exist.id;
+                console.log(`[API Chat] Found existing conversation: ${convId}`);
+            } else {
+                console.log('[API Chat] No existing conversation. Creating new one...');
+                const { data: newConv, error: createError } = await supabaseAdmin
+                    .from('conversations')
+                    .insert({ chatbot_id: chatbotId, visitor_id: visitorId })
+                    .select('id')
+                    .single();
+
+                if (createError) {
+                    console.error('[API Chat] ERROR creating conversation:', createError);
+                } else {
+                    convId = newConv?.id;
+                    console.log(`[API Chat] Created new conversation: ${convId}`);
+                }
             }
         }
 
         if (convId) {
-            // Store User Msg
-            const lastUserMsg = messages[messages.length - 1]
-            await supabaseAdmin.from('messages').insert({
+            const lastUserMsg = messages[messages.length - 1];
+            console.log(`[API Chat] Storing messages for conv: ${convId}`);
+
+            const { error: userMsgError } = await supabaseAdmin.from('messages').insert({
                 conversation_id: convId,
                 role: 'user',
                 content: lastUserMsg.content,
-                page_url: pageUrl // Save URL if provided
-            })
-            // Store Bot Msg
-            await supabaseAdmin.from('messages').insert({ conversation_id: convId, role: 'assistant', content: responseText })
+                page_url: pageUrl
+            });
+            if (userMsgError) console.error('[API Chat] Error storing user message:', userMsgError);
+
+            const { error: botMsgError } = await supabaseAdmin.from('messages').insert({
+                conversation_id: convId,
+                role: 'assistant',
+                content: responseText
+            });
+            if (botMsgError) console.error('[API Chat] Error storing bot message:', botMsgError);
+        } else {
+            console.warn('[API Chat] Warning: No convId found or created. Messages will not be stored.');
         }
 
         return NextResponse.json({
             role: 'assistant',
-            content: responseText
+            content: responseText,
+            debugInfo: {
+                convId,
+                visitorId,
+                chatbotId,
+                botOwnerId: chatbot.user_id,
+            }
         })
     } catch (error) {
         console.error('--- CHAT API CRITICAL ERROR ---');

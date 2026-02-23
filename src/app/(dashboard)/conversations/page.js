@@ -37,6 +37,10 @@ export default function ConversationsPage() {
 
             setConversations(data || [])
             setLoading(false)
+            // --- DEBUG CHECK ---
+            const { data: allConvs } = await supabase.from('conversations').select('id').limit(10)
+            console.log('[Dashboard Debug] Total conversations found in DB:', allConvs?.length || 0)
+            // --------------------
         }
 
         fetchConversations()

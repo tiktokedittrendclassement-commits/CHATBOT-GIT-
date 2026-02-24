@@ -180,3 +180,24 @@
     display: flex;
     gap: 12px;
 }
+
+@media (max-width: 768px) {
+    .header {
+        padding: 0 16px;
+    }
+
+    .inputLabel {
+        width: 60px;
+        font-size: 11px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .sendBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}

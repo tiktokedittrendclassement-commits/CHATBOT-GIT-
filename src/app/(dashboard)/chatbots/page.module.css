@@ -146,6 +146,12 @@
     letter-spacing: -0.02em;
 }
 
+.headerActions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
@@ -153,8 +159,32 @@
         gap: 20px;
     }
 
+    .headerActions {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .headerActions>* {
+        flex: 1;
+        min-width: calc(50% - 8px);
+        font-size: 13px !important;
+    }
+
     .grid {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerActions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .headerActions>* {
+        min-width: 100%;
+        width: 100%;
     }
 }

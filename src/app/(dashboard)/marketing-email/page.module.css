@@ -28,7 +28,9 @@
 
 .headerActions {
     display: flex;
-    gap: 16px;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 /* Layout Grid */
@@ -37,6 +39,12 @@
     grid-template-columns: 320px 1fr;
     gap: 32px;
     align-items: start;
+    min-width: 0;
+}
+
+.sidebar,
+.mainContent {
+    min-width: 0;
 }
 
 /* Sidebar Card */
@@ -298,7 +306,7 @@ input:checked+.slider:before {
 }
 
 .tableContainer {
-    width: 100%;
+    width: calc(100% + 64px);
     overflow-x: auto;
     margin: 0 -32px;
 }
@@ -458,19 +466,32 @@ input:checked+.slider:before {
 
     .headerActions {
         width: 100%;
-        flex-direction: column;
+        gap: 12px;
     }
 
     .headerActions>* {
-        width: 100%;
+        flex: 1;
+        min-width: calc(50% - 6px);
     }
 
     .card {
         padding: 24px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .tableContainer {
-        margin: 0 -16px;
+        width: calc(100% + 48px);
+        margin: 0 -24px;
+        max-width: none;
+    }
+
+    .sidebar,
+    .mainContent {
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
     }
 
     .table th:nth-child(3),
@@ -482,6 +503,12 @@ input:checked+.slider:before {
     .table th,
     .table td {
         padding: 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    .headerActions>* {
+        min-width: 100%;
     }
 }
 

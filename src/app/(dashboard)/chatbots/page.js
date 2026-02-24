@@ -69,7 +69,7 @@ export default function ChatbotsPage() {
                     <h1 className={styles.heading}>Mes Chatbots</h1>
                     <p className={styles.subheading}>Gérez vos assistants IA</p>
                 </div>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <div className={styles.headerActions}>
                     {chatbots.length > 0 && (
                         <Button
                             variant="outline"

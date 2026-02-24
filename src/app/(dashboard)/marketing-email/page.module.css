@@ -55,9 +55,7 @@
     overflow: hidden;
 }
 
-.card:hover {
-    /* Hover disabled */
-}
+
 
 .cardTitle {
     font-size: 18px;
@@ -171,9 +169,7 @@
     transition: all 0.2s ease;
 }
 
-.saveBtn:hover {
-    /* Hover disabled */
-}
+
 
 .saveBtn:disabled {
     background: rgba(255, 255, 255, 0.1);
@@ -337,9 +333,7 @@ input:checked+.slider:before {
     transition: all 0.3s;
 }
 
-.table tr:hover {
-    /* Hover disabled */
-}
+
 
 .leadEmail {
     font-weight: 700;
@@ -442,12 +436,63 @@ input:checked+.slider:before {
     box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
-.composeBtn:hover {
-    /* Hover disabled */
-}
+
 
 @media (max-width: 1024px) {
     .grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .heading {
+        font-size: 28px;
+    }
+
+    .headerActions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .headerActions>* {
+        width: 100%;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .tableContainer {
+        margin: 0 -16px;
+    }
+
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        display: none;
+        /* Hide Source/URL on mobile to save space */
+    }
+
+    .table th,
+    .table td {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .botItem {
+        padding: 16px 20px;
+    }
+
+    .table th:nth-child(4),
+    .table td:nth-child(4) {
+        display: none;
+        /* Hide Date on very small screens */
     }
 }

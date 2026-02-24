@@ -173,3 +173,33 @@
     font-weight: 500;
     line-height: 1.6;
 }
+
+/* Marketing Whatsapp Responsive */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .heading {
+        font-size: 26px;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .lockedBox {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .upgradeBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}

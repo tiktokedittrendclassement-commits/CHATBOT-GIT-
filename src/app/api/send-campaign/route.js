@@ -2,7 +2,14 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Initialize Resend lazily only if API key is present
+let resend;
+const getResend = () => {
+    if (!resend && process.env.RESEND_API_KEY) {
+        resend = new Resend(process.env.RESEND_API_KEY);
+    }
+    return resend;
+};
 
 // Admin client to bypass RLS for bulk operations
 const supabaseAdmin = createClient(
@@ -79,7 +86,7 @@ export async function POST(req) {
                 const senderName = firstBot?.sender_name || firstBot?.name || 'Vendo'
                 const replyTo = firstBot?.reply_to
 
-                const { data, error } = await resend.emails.send({
+                const { data, error } = await getResend().emails.send({
                     from: `${senderName} <contact@usevendo.com>`,
                     to: [email],
                     reply_to: replyTo || undefined,

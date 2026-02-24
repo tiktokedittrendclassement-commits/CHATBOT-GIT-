@@ -22,14 +22,12 @@
 
 .sidebar {
     width: 280px;
-    -webkit-backdrop-filter: blur(24px);
-    backdrop-filter: blur(24px);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     height: 100vh;
     z-index: 50;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebarHeader {
@@ -159,16 +157,14 @@
     flex-direction: column;
     min-width: 0;
     height: 100vh;
-    background-color: transparent;
+    background-color: #09090b;
     position: relative;
     z-index: 1;
 }
 
 .topBar {
     height: 72px;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(9, 9, 11, 0.95);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -176,6 +172,7 @@
     position: sticky;
     top: 0;
     z-index: 40;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .breadcrumbs {
@@ -284,6 +281,7 @@
     flex: 1;
     padding: 40px;
     overflow-y: auto;
+    background-color: #09090b;
 }
 
 .childrenWrapper {

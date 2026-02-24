@@ -1,0 +1,182 @@
+.composer {
+    width: 100%;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+/* Removed composerMinimized styles as it's no longer floating */
+
+.header {
+    height: 60px;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    cursor: default;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.title {
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.headerActions {
+    display: flex;
+    gap: 8px;
+}
+
+.actionBtn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.inputGroup {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.inputLabel {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.3);
+    width: 80px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.subjectInput {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    width: 100%;
+    padding: 8px 0;
+    outline: none;
+    font-weight: 600;
+}
+
+.editorContainer {
+    padding: 24px;
+    flex: 1;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor {
+    flex: 1;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.6;
+    outline: none;
+    min-height: 350px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+}
+
+.editor:empty:before {
+    content: attr(data-placeholder);
+    color: rgba(255, 255, 255, 0.15);
+}
+
+.toolbar {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.01);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toolbarBtn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.toolbarBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.toolbarBtnActive {
+    background: rgba(124, 58, 237, 0.15);
+    color: #a78bfa;
+}
+
+.footer {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sendBtn {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
+}
+
+.sendBtn:hover {
+    background: #6d28d9;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
+}
+
+.sendBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.secondaryActions {
+    display: flex;
+    gap: 12px;
+}

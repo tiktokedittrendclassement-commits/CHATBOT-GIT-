@@ -27,15 +27,15 @@
 
 /* Badge Agency - Indigo Theme */
 .badgeAgency {
-    font-size: 12px;
-    background: rgba(124, 58, 237, 0.1);
-    color: #818CF8;
-    padding: 4px 12px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.5);
+    padding: 6px 14px;
     border-radius: 20px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Agency Banner - Indigo Theme */
@@ -81,21 +81,25 @@
 
 .upgradeBtn {
     margin-left: auto;
-    background: var(--primary);
-    color: white;
+    background: #09090b;
+    /* Zinc 950 */
+    color: #fff;
     font-weight: 700;
+    font-size: 14px;
+    padding: 10px 20px;
     border-radius: 12px;
-    padding: 12px 24px;
-    border: 1px solid var(--primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.2);
 }
 
 .upgradeBtn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
+    background: #18181b;
+    /* Zinc 900 */
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Grid Layout */
@@ -233,13 +237,13 @@
 }
 
 .countBadge {
-    background: rgba(124, 58, 237, 0.1);
-    color: #818CF8;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 800;
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .emptyState {
@@ -253,4 +257,39 @@
     background: rgba(255, 255, 255, 0.02);
     border: 1px dashed rgba(255, 255, 255, 0.1);
     border-radius: 28px;
+}
+
+.filterContainer {
+    margin-left: auto;
+}
+
+.filterSelect {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 160px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+.filterSelect:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.filterOption {
+    background-color: #111827;
+    color: #fff;
 }

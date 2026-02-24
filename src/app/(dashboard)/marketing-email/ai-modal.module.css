@@ -1,0 +1,321 @@
+.container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* Base Modal (Floating Teaser) */
+.modal {
+    pointer-events: auto;
+    position: fixed;
+    bottom: 110px;
+    right: 30px;
+    width: 320px;
+    background: rgba(15, 23, 42, 0.6);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    animation: slideInUpPremium 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: bottom right;
+}
+
+/* Expanded State */
+.fullWindow {
+    bottom: 30px;
+    right: 30px;
+    width: 400px;
+    height: 600px;
+    max-height: calc(100vh - 100px);
+    border-radius: 28px;
+    animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Header (Full Window) */
+.header {
+    background: linear-gradient(135deg, #673DE6 0%, #8B5CF6 100%);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.headerIcon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.headerInfo {
+    flex: 1;
+}
+
+.headerName {
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+    letter-spacing: -0.4px;
+}
+
+.headerStatus {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.onlineDot {
+    width: 6px;
+    height: 6px;
+    background: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10B981;
+}
+
+.statusLabel {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Teaser Body */
+.cardBody {
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.avatarWrapper {
+    position: relative;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #673DE6 0%, #8B5CF6 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 16px rgba(103, 61, 230, 0.2);
+}
+
+/* Messages Area (Full Window) */
+.messages {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #0B0E14;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.messages::-webkit-scrollbar {
+    display: none;
+}
+
+.messageBubble {
+    padding: 14px 18px;
+    border-radius: 20px 20px 20px 4px;
+    background: #1E293B;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #F8FAFC;
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 85%;
+    font-weight: 500;
+    white-space: pre-wrap;
+}
+
+/* Teaser Footer and Prompts */
+.footer {
+    margin: 0 4px 4px;
+    padding: 10px 16px;
+    background: rgba(103, 61, 230, 0.1);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.promptArea {
+    padding: 20px 24px 30px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: #0B0E14;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Modified prompt for Teaser state (Image 1) */
+.teaserPrompt {
+    margin: 0 8px 8px;
+    background: rgba(103, 61, 230, 0.05);
+    border-radius: 20px;
+    padding: 8px 12px;
+}
+
+.promptInput {
+    flex: 1;
+    background: #1E293B;
+    border: 1.5px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 14px 18px;
+    color: #F1F5F9;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    font-weight: 500;
+}
+
+.promptInput:focus {
+    border-color: #673DE6;
+    background: #1E293B;
+}
+
+.sendPromptBtn {
+    width: 48px;
+    height: 48px;
+    background: #673DE6;
+    border: none;
+    border-radius: 14px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 8px 16px rgba(103, 61, 230, 0.3);
+}
+
+/* Bot Actions (Répondre button etc) */
+.primaryBtn {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    background: #673DE6;
+    padding: 6px 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.secondaryBtn {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.closeBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.closeBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.closeBtnAbsolute {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+}
+
+.tag {
+    font-size: 11px;
+    font-weight: 800;
+    color: #8B5CF6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.title {
+    font-size: 14.5px;
+    color: white;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.time {
+    font-size: 11px;
+    color: #94A3B8;
+    font-weight: 600;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes slideInUpPremium {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

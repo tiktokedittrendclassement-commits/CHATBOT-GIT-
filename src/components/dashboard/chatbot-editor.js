@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getContrastColor } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
@@ -32,7 +33,9 @@ export default function ChatbotEditor({ botId = null }) {
         system_prompt: 'Tu es un assistant commercial humain, chaleureux et direct. Réponds de manière concise, sans utiliser de formatage complexe (pas d\'astérisques). Ta mission est d\'aider le visiteur avec bienveillance.',
         data_sources: '',
         triggers: [],
-        theme: 'light'
+        theme: 'light',
+        sender_name: '',
+        reply_to: ''
     })
 
     const PLAN_LIMITS = {
@@ -123,7 +126,9 @@ export default function ChatbotEditor({ botId = null }) {
                         system_prompt: data.system_prompt,
                         data_sources: data.data_sources || '',
                         triggers: data.triggers?.map(t => ({ ...t, id: t.id || Math.random().toString(36).substr(2, 9) })) || [],
-                        theme: data.theme || 'light'
+                        theme: data.theme || 'light',
+                        sender_name: data.sender_name || '',
+                        reply_to: data.reply_to || ''
                     })
                 }
             }
@@ -132,6 +137,20 @@ export default function ChatbotEditor({ botId = null }) {
 
         init()
     }, [botId, user?.id])
+
+    // Proactive trigger for Vendo Assistant
+    useEffect(() => {
+        if (!botId) {
+            const timer = setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {
+                    detail: {
+                        message: "Si tu veux que je crée ton sytem prompt ou t'as data je suis là"
+                    }
+                }))
+            }, 800)
+            return () => clearTimeout(timer)
+        }
+    }, [botId])
 
     // Helper to manage triggers array state
     const updateTrigger = (id, updates) => {
@@ -148,7 +167,8 @@ export default function ChatbotEditor({ botId = null }) {
             spawn: '2',
             despawn: '8',
             message: 'Bonjour ! 👋',
-            page: ''
+            page: '',
+            oncePerUser: false
         }
         setFormData(prev => ({
             ...prev,
@@ -187,7 +207,9 @@ export default function ChatbotEditor({ botId = null }) {
                 system_prompt: formData.system_prompt,
                 data_sources: formData.data_sources,
                 triggers: formData.triggers,
-                theme: formData.theme
+                theme: formData.theme,
+                sender_name: formData.sender_name,
+                reply_to: formData.reply_to
             }
 
             if (botId) {
@@ -298,12 +320,12 @@ export default function ChatbotEditor({ botId = null }) {
                                     width: 44, height: 44, borderRadius: 14, overflow: 'hidden',
                                     border: '1px solid rgba(255, 255, 255, 0.1)', flexShrink: 0,
                                     background: formData.color || '#C8A882',
-                                    color: '#fff',
+                                    color: getContrastColor(formData.color || '#C8A882'),
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     fontWeight: 'bold', fontSize: 18
                                 }}>
                                     {formData.logo_url === 'ICON:BOT' ? (
-                                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24, color: 'white' }}>V</span>
+                                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24, color: getContrastColor(formData.color || '#C8A882') }}>V</span>
                                     ) : (
                                         <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 24 }}>
                                             {formData.logo_url || formData.name?.charAt(0) || 'V'}
@@ -501,6 +523,19 @@ export default function ChatbotEditor({ botId = null }) {
                                                 />
                                             </div>
                                         </div>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+                                            <input
+                                                type="checkbox"
+                                                id={`once-${trigger.id}`}
+                                                checked={trigger.oncePerUser || false}
+                                                onChange={(e) => updateTrigger(trigger.id, { oncePerUser: e.target.checked })}
+                                                style={{ width: 18, height: 18, cursor: 'pointer', accentColor: 'var(--primary)' }}
+                                            />
+                                            <label htmlFor={`once-${trigger.id}`} style={{ fontSize: 13, cursor: 'pointer', color: 'rgba(255, 255, 255, 0.8)' }}>
+                                                Nouveaux visiteurs uniquement (S'affiche une seule fois par utilisateur)
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -540,6 +575,34 @@ export default function ChatbotEditor({ botId = null }) {
                                 onChange={(e) => setFormData({ ...formData, system_prompt: e.target.value })}
                             />
                             <p className={styles.hint}>Instructions pour le comportement du bot (ton, style, etc).</p>
+                        </div>
+
+                        <div className={styles.field} style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                            <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 15, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <Settings size={14} />
+                                Personnalisation Email
+                            </h4>
+
+                            <div style={{ marginBottom: 15 }}>
+                                <label style={{ fontSize: 12, marginBottom: 6, display: 'block' }}>Nom de l'expéditeur</label>
+                                <Input
+                                    value={formData.sender_name}
+                                    onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
+                                    placeholder="Ex: Thomas de Vendo"
+                                />
+                                <p className={styles.hint}>Nom qui apparaîtra dans la boîte mail du client.</p>
+                            </div>
+
+                            <div>
+                                <label style={{ fontSize: 12, marginBottom: 6, display: 'block' }}>Email de réponse (Reply-to)</label>
+                                <Input
+                                    type="email"
+                                    value={formData.reply_to}
+                                    onChange={(e) => setFormData({ ...formData, reply_to: e.target.value })}
+                                    placeholder="Ex: contact@ma-marque.com"
+                                />
+                                <p className={styles.hint}>Les réponses des clients iront sur cette adresse.</p>
+                            </div>
                         </div>
                     </div>
 

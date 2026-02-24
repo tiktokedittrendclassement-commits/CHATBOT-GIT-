@@ -50,7 +50,7 @@ export async function POST(req) {
             // Fetch Custom Bot Config
             const { data, error: botError } = await supabase
                 .from('chatbots')
-                .select('name, system_prompt, data_sources, user_id')
+                .select('name, system_prompt, data_sources, user_id, welcome_email_subject, welcome_email_body')
                 .eq('id', chatbotId)
                 .single();
 
@@ -102,6 +102,7 @@ export async function POST(req) {
         let convId = conversationId;
         const isValidUuid = (id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
+        // Session Management: Lookup existing or create new
         if (!convId && visitorId && isValidUuid(chatbotId)) {
             try {
                 console.log(`[API Chat] No convId. Looking up visitor: ${visitorId} for bot: ${chatbotId}`);
@@ -125,7 +126,6 @@ export async function POST(req) {
                         .insert({
                             chatbot_id: chatbotId,
                             visitor_id: visitorId,
-                            // user_id removed as it doesn't exist in schema
                         })
                         .select('id')
                         .single();
@@ -142,9 +142,72 @@ export async function POST(req) {
             }
         }
 
+        // 5. Detect & Capture Leads (Email detection)
+        const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+        const lastUserMsg = messages[messages.length - 1];
+        const detectedEmails = lastUserMsg.content.match(emailRegex);
+
+        if (detectedEmails && detectedEmails.length > 0 && isValidUuid(chatbotId)) {
+            const email = detectedEmails[0].toLowerCase();
+            console.log(`[API Chat] Email detected: ${email}. Saving lead...`);
+
+            try {
+                // Save lead (upsert to avoid duplicates for same visitor/bot)
+                await supabaseAdmin.from('leads').upsert({
+                    chatbot_id: chatbotId,
+                    email: email,
+                    visitor_id: visitorId,
+                    source_page: pageUrl
+                }, { onConflict: 'chatbot_id,email' });
+
+                console.log(`[API Chat] Lead saved successfully.`);
+
+                // 6. Automated Email Notification
+                if (process.env.NEXT_PUBLIC_SITE_URL || req.headers.get('host')) {
+                    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || `http://${req.headers.get('host')}`;
+                    try {
+                        await fetch(`${baseUrl}/api/send-email`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: profile?.email || 'admin@usevendo.com', // Notification to bot owner
+                                subject: `🎉 Nouveau Lead : ${email}`,
+                                body: `Un nouveau lead a été capturé par ton chatbot <strong>${chatbot.name}</strong>.<br><br><strong>Email :</strong> ${email}<br><strong>Page :</strong> ${pageUrl || 'Inconnue'}`,
+                                chatbotName: chatbot.name
+                            })
+                        });
+                        console.log(`[API Chat] Notification email triggered.`);
+                    } catch (eError) {
+                        console.error('[API Chat] Failed to trigger notification email:', eError);
+                    }
+                }
+
+                // 7. Automated Responder (Welcome Email to Visitor)
+                if (chatbot.welcome_email_body && (process.env.NEXT_PUBLIC_SITE_URL || req.headers.get('host'))) {
+                    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || `http://${req.headers.get('host')}`;
+                    try {
+                        await fetch(`${baseUrl}/api/send-email`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: email,
+                                subject: chatbot.welcome_email_subject || 'Merci de votre visite !',
+                                body: chatbot.welcome_email_body,
+                                chatbotName: chatbot.name
+                            })
+                        });
+                        console.log(`[API Chat] Automated welcome email triggered for lead: ${email}`);
+                    } catch (wrError) {
+                        console.error('[API Chat] Failed to trigger welcome email:', wrError);
+                    }
+                }
+            } catch (leadError) {
+                console.error('[API Chat] Error saving lead (Table might not exist yet):', leadError);
+            }
+        }
+
         if (convId) {
             try {
-                const lastUserMsg = messages[messages.length - 1];
                 console.log(`[API Chat] Storing messages for conv: ${convId}`);
                 const { error: msgInsertError } = await supabaseAdmin.from('messages').insert([
                     { conversation_id: convId, role: 'user', content: lastUserMsg.content, page_url: pageUrl },

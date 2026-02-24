@@ -21,31 +21,53 @@ import {
     TrendingUp,
     ChevronRight,
     Bell,
-    User
+    User,
+    Mail
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const navItems = [
     { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
-    { href: '/chatbots', label: 'Mes Chatbots', icon: Bot },
-    { href: '/conversations', label: 'Conversations', icon: MessageSquare },
-    { href: '/statistics', label: 'Statistiques IA', icon: TrendingUp },
-    { href: '/wallet', label: 'Portefeuille', icon: Wallet },
-    { href: '/billing', label: 'Abonnement', icon: CreditCard },
-    { href: '/settings', label: 'Paramètres', icon: Settings },
+    { href: '/chatbots', label: 'mes chatbots', icon: Bot },
+    { href: '/conversations', label: 'conversation', icon: MessageSquare },
+    { href: '/statistics', label: 'statistique ia', icon: TrendingUp },
+    { href: '/marketing-email', label: 'marketing email', icon: Mail },
+    { href: '/marketing-whatsapp', label: 'marketing whatsapp', icon: MessageSquare },
+    { href: '/insights', label: 'visiteurs', icon: Users },
+    { href: '/reseller', label: 'revendeur', icon: Users },
+    { href: '/wallet', label: 'portefeuille', icon: Wallet },
+    { href: '/billing', label: 'abonnement', icon: CreditCard },
+    { href: '/settings', label: 'parametre', icon: Settings },
 ]
 
 export default function DashboardLayout({ children }) {
     const pathname = usePathname()
-    const { user } = useAuth()
+    const { user, signOut } = useAuth()
     const router = useRouter()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     // Breadcrumbs logic
     const pathParts = pathname.split('/').filter(part => part)
+
+    // Translation map for path parts
+    const translations = {
+        'dashboard': 'Tableau de bord',
+        'chatbots': 'Mes Chatbots',
+        'conversations': 'Conversations',
+        'statistics': 'Statistiques IA',
+        'insights': 'Visiteurs',
+        'wallet': 'Portefeuille',
+        'billing': 'Abonnement',
+        'settings': 'Paramètres',
+        'reseller': 'Revendeur',
+        'marketing-email': 'Marketing Email',
+        'marketing-whatsapp': 'Marketing WhatsApp',
+        'new': 'Nouveau'
+    }
+
     const breadcrumbs = pathParts.map((part, index) => {
         const href = `/${pathParts.slice(0, index + 1).join('/')}`
-        const label = part.charAt(0).toUpperCase() + part.slice(1).replace('-', ' ')
+        const label = translations[part.toLowerCase()] || (part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' '))
         return { href, label, isLast: index === pathParts.length - 1 }
     })
     const [profile, setProfile] = useState(null)
@@ -60,30 +82,21 @@ export default function DashboardLayout({ children }) {
     }, [user])
 
     const getNavItems = () => {
-        const items = [...navItems]
-
-        // Always add Marketing links (locked state handled in pages)
-        items.splice(3, 0, { href: '/marketing-email', label: 'Marketing Email', icon: MessageSquare })
-        items.splice(4, 0, { href: '/marketing-whatsapp', label: 'Marketing WhatsApp', icon: MessageSquare })
-
-        // Add Insights (Visible to all, locked for non-agency)
-        items.splice(3, 0, { href: '/insights', label: 'Visiteurs', icon: Users }) // Changed to Users icon
-
-        // Add Reseller link for Agency users
-        items.splice(3, 0, { href: '/reseller', label: 'Revendeur', icon: Users })
-
-        return items
+        return navItems
     }
 
     const currentNavItems = getNavItems()
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
-        router.refresh()
+        await signOut()
+    }
+
+    const handleLinkClick = () => {
+        setMobileMenuOpen(false)
     }
 
     return (
-        <div className={styles.container} data-theme="dark">
+        <div className={styles.container}>
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${mobileMenuOpen ? styles.open : ''}`}>
                 <div className={styles.sidebarHeader}>
@@ -102,7 +115,7 @@ export default function DashboardLayout({ children }) {
                             key={item.href}
                             href={item.href}
                             className={`${styles.navItem} ${pathname === item.href ? styles.active : ''}`}
-                            onClick={() => setMobileMenuOpen(false)}
+                            onClick={handleLinkClick}
                         >
                             <item.icon size={20} />
                             <span>{item.label}</span>
@@ -146,7 +159,7 @@ export default function DashboardLayout({ children }) {
                             ) : (
                                 <>
                                     <ChevronRight size={14} className={styles.breadcrumbSeparator} />
-                                    <span className={styles.breadcrumbActive}>Dashboard</span>
+                                    <span className={styles.breadcrumbActive}>Tableau de bord</span>
                                 </>
                             )}
                         </div>

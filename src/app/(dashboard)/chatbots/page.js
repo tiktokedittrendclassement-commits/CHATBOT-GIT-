@@ -8,7 +8,7 @@ import styles from './page.module.css'
 import Link from 'next/link'
 import { Plus, Bot, Trash, ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { formatDate } from '@/lib/utils'
+import { formatDate, getContrastColor } from '@/lib/utils'
 
 export default function ChatbotsPage() {
     const { user } = useAuth()
@@ -38,6 +38,27 @@ export default function ChatbotsPage() {
 
         fetchChatbots()
     }, [user])
+
+    // Onboarding Message Popup (Once ever)
+    useEffect(() => {
+        if (!user || loading) return
+
+        if (localStorage.getItem('vendo_assistant_sent_forever_chatbots-list-onboarding')) return
+
+        const timer = setTimeout(() => {
+            if (localStorage.getItem('vendo_assistant_sent_forever_chatbots-list-onboarding')) return
+
+            window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {
+                detail: {
+                    message: "C'est ici que tu crées tes chatbots",
+                    oncePerUser: true,
+                    triggerId: 'chatbots-list-onboarding'
+                }
+            }))
+        }, 1500)
+
+        return () => clearTimeout(timer)
+    }, [user?.id, loading])
 
     if (loading) return <div className={styles.loading}>Chargement des chatbots...</div>
 
@@ -115,7 +136,12 @@ export default function ChatbotsPage() {
                                     }}
                                     style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--primary)' }}
                                 />
-                                <div className={styles.botIcon} style={{ background: bot.color || '#000', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 13, borderRadius: 14 }}>
+                                <div className={styles.botIcon} style={{
+                                    background: bot.color || '#000',
+                                    color: getContrastColor(bot.color || '#000'),
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontWeight: 'bold', fontSize: 13, borderRadius: 14
+                                }}>
                                     {bot.logo_url === 'ICON:BOT' ? (
                                         <Bot size={20} />
                                     ) : bot.logo_url && (bot.logo_url.startsWith('http') || bot.logo_url.startsWith('/') || bot.logo_url.startsWith('data:')) ? (

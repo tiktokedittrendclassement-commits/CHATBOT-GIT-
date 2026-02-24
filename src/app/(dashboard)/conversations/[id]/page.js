@@ -140,7 +140,22 @@ export default function ConversationDetailPage() {
                 </Link>
                 <div style={{ flex: 1, minWidth: 0 }}>
                     <h1 className="top-bar-title" style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.4px', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{conversation.chatbots?.name}</h1>
-                    <span style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.4)', fontWeight: 500 }}>{visitorLabel}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.4)', fontWeight: 500 }}>{visitorLabel}</span>
+                        {messages.find(m => m.page_url)?.page_url && (
+                            <>
+                                <span style={{ color: 'rgba(255,255,255,0.1)' }}>•</span>
+                                <a
+                                    href={messages.find(m => m.page_url).page_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ fontSize: 11, color: brandColor, textDecoration: 'none', fontWeight: 600, opacity: 0.8 }}
+                                >
+                                    Source
+                                </a>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -196,28 +211,59 @@ export default function ConversationDetailPage() {
                             Aucun message
                         </div>
                     ) : (
-                        messages.map((msg) => (
-                            <div key={msg.id} style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start'
-                            }}>
-                                <div className="message-bubble" style={{
-                                    borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                                    color: msg.role === 'user' ? '#fff' : 'rgba(255, 255, 255, 0.8)',
-                                    background: msg.role === 'user' ? brandColor : 'rgba(255, 255, 255, 0.05)',
-                                    boxShadow: msg.role === 'user'
-                                        ? `0 10px 20px -5px ${brandColor}66`
-                                        : 'none',
-                                    border: msg.role === 'assistant' ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
-                                }}>
-                                    {msg.content}
+                        messages.map((msg, idx) => {
+                            const prevMsg = messages[idx - 1]
+                            let showSeparator = false
+
+                            if (prevMsg) {
+                                const prevTime = new Date(prevMsg.created_at).getTime()
+                                const currTime = new Date(msg.created_at).getTime()
+                                const diffHours = (currTime - prevTime) / (1000 * 60 * 60)
+                                if (diffHours > 2) {
+                                    showSeparator = true
+                                }
+                            }
+
+                            return (
+                                <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                    {showSeparator && (
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 12,
+                                            margin: '12px 0',
+                                            opacity: 0.5
+                                        }}>
+                                            <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.1)' }}></div>
+                                            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '1px', whiteSpace: 'nowrap' }}>
+                                                Nouvelle Session
+                                            </span>
+                                            <div style={{ flex: 1, height: '1px', background: 'rgba(255, 255, 255, 0.1)' }}></div>
+                                        </div>
+                                    )}
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start'
+                                    }}>
+                                        <div className="message-bubble" style={{
+                                            borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                                            color: msg.role === 'user' ? '#fff' : 'rgba(255, 255, 255, 0.8)',
+                                            background: msg.role === 'user' ? brandColor : 'rgba(255, 255, 255, 0.05)',
+                                            boxShadow: msg.role === 'user'
+                                                ? `0 10px 20px -5px ${brandColor}66`
+                                                : 'none',
+                                            border: msg.role === 'assistant' ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+                                        }}>
+                                            {msg.content}
+                                        </div>
+                                        <div style={{ fontSize: 10, color: 'rgba(255, 255, 255, 0.2)', marginTop: 4, paddingLeft: 4, paddingRight: 4, fontWeight: 500 }}>
+                                            {msg.created_at ? formatDate(msg.created_at) : ''}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div style={{ fontSize: 10, color: 'rgba(255, 255, 255, 0.2)', marginTop: 4, paddingLeft: 4, paddingRight: 4, fontWeight: 500 }}>
-                                    {msg.created_at ? formatDate(msg.created_at) : ''}
-                                </div>
-                            </div>
-                        ))
+                            )
+                        })
                     )}
                 </div>
             </div>

@@ -7,11 +7,12 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import styles from './page.module.css'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const router = useRouter()
@@ -70,21 +71,26 @@ export default function LoginPage() {
 
                     <div className={styles.field}>
                         <label htmlFor="password">Mot de passe</label>
-                        <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            required
-                            style={{
-                                background: 'rgba(255,255,255,0.05)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                color: '#fff',
-                                height: 48,
-                                borderRadius: 12
-                            }}
-                        />
+                        <div className={styles.passwordWrapper}>
+                            <Input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                                required
+                                className={styles.passwordInput}
+                            />
+                            <button
+                                type="button"
+                                className={styles.passwordToggle}
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex="-1"
+                                style={{ color: 'white' }}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     <Button type="submit" disabled={loading} className={styles.submit}>

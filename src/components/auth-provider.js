@@ -36,6 +36,8 @@ export const AuthProvider = ({ children }) => {
 
     const signOut = async () => {
         await supabase.auth.signOut()
+        sessionStorage.removeItem('vendo_welcome_seen')
+        sessionStorage.removeItem('vendo_dashboard_welcome_seen')
         setUser(null)
         router.push('/login')
     }

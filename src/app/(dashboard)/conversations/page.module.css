@@ -97,12 +97,30 @@
 }
 
 .botName {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 800;
-    color: #7c3aed;
+    color: #fff;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin-bottom: 4px;
+}
+
+.topRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2px;
+}
+
+.badge {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .visitorInfo {

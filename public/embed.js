@@ -20,9 +20,10 @@
       0% { opacity: 0; transform: translateY(40px) scale(0.95) rotateX(10deg); }
       100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
     }
-    @keyframes vendo-float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+    @keyframes vendo-online-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
   `;
   document.head.appendChild(style);
@@ -72,14 +73,12 @@
   const greenDot = document.createElement('div');
   greenDot.style.cssText = `
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 14px;
-    height: 14px;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
     background: #10B981;
     border-radius: 50%;
-    border: 2.5px solid white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   `;
 
   const bubbleInner = document.createElement('div');
@@ -121,55 +120,257 @@
 
   // Iframe
   const iframe = document.createElement('iframe');
-  iframe.src = `${baseUrl}/embed/${chatbotId}`;
+  const currentUrl = encodeURIComponent(window.location.href);
+  iframe.src = `${baseUrl}/embed/${chatbotId}?u=${currentUrl}`;
   iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
 
   iframeContainer.appendChild(iframe);
   document.body.appendChild(bubble);
   document.body.appendChild(iframeContainer);
 
-  // Listen for messages from iframe
+  // Consolidated Message Listener
   window.addEventListener('message', (event) => {
-    if (!event.data) return;
+    if (!event.data || typeof event.data !== 'object') return;
 
-    if (event.data.type === 'vendo-bot-config') {
-      const { name, color, avatar, theme } = event.data;
-      console.log('UseVendo: Bot config received:', name, avatar, theme);
-      window.vendoBotName = name;
-      window.vendoBotColor = color;
-      window.vendoBotAvatar = avatar;
-      window.vendoBotTheme = theme;
+    // console.log('UseVendo: Message received:', event.data.type);
 
-      // Handle Avatar (Icon vs Image vs Letter)
-      bubbleInner.innerHTML = '';
-      if (avatar === 'ICON:BOT') {
-        bubbleInner.innerHTML = botIcon;
-      } else if (avatar && (avatar.startsWith('http') || avatar.startsWith('/') || avatar.startsWith('data:'))) {
-        bubbleInner.innerHTML = `<img src="${avatar}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
-      } else {
-        // Prioritize avatar if it's 1-2 chars (custom initials), otherwise fallback to name
-        const letter = (avatar && avatar.length <= 2) ? avatar.toUpperCase() : (name || 'V').substring(0, 2).toUpperCase();
-        letterSpan.textContent = letter;
-        letterSpan.style.fontSize = letter.length > 1 ? '22px' : '28px';
-        bubbleInner.appendChild(letterSpan);
-      }
-      bubbleInner.appendChild(greenDot);
+    switch (event.data.type) {
+      case 'vendo-bot-config':
+        const { name, color, avatar, theme } = event.data;
+        window.vendoBotName = name;
+        window.vendoBotColor = color;
+        window.vendoBotAvatar = avatar;
+        window.vendoBotTheme = theme;
 
-      if (color) {
-        bubble.style.background = `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`;
-        bubble.style.boxShadow = `0 12px 24px ${color}55`;
-      }
+        bubbleInner.innerHTML = '';
+        if (avatar === 'ICON:BOT') {
+          bubbleInner.innerHTML = botIcon;
+        } else if (avatar && (avatar.startsWith('http') || avatar.startsWith('/') || avatar.startsWith('data:'))) {
+          bubbleInner.innerHTML = `<img src="${avatar}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+        } else {
+          const letter = (avatar && avatar.length <= 2) ? avatar.toUpperCase() : (name || 'V').substring(0, 2).toUpperCase();
+          letterSpan.textContent = letter;
+          letterSpan.style.fontSize = letter.length > 1 ? '22px' : '28px';
+          bubbleInner.appendChild(letterSpan);
+        }
+        bubbleInner.appendChild(greenDot);
 
-      // Final reveal once we have the identity
-      bubble.style.visibility = 'visible';
-      bubble.style.opacity = '1';
-      bubble.style.transform = 'translateY(0) scale(1)';
-    }
+        if (color) {
+          bubble.style.background = `linear-gradient(135deg, ${color} 0%, ${color} 100%)`;
+          bubble.style.boxShadow = `0 12px 24px ${color}33`;
+        }
 
-    if (event.data.type === 'vendo-toggle-chat') {
-      toggleChat();
+        bubble.style.visibility = 'visible';
+        bubble.style.opacity = '1';
+        bubble.style.transform = 'translateY(0) scale(1)';
+        break;
+
+      case 'vendo-visitor-id':
+        console.log('UseVendo: Visitor ID received:', event.data.visitorId);
+        sessionStorage.setItem('vendo_visitor_id', event.data.visitorId);
+        sessionStorage.setItem('vendo_active_chatbot_id', event.data.chatbotId);
+        break;
+
+      case 'vendo-toggle-chat':
+        toggleChat();
+        break;
+
+      case 'vendo-proactive-message':
+        window.vendoSenderName = event.data.sender;
+        window.vendoAvatarUrl = event.data.avatar;
+        showTeaser(event.data.message);
+        break;
+
+      case 'vendo-init-triggers':
+        const triggers = event.data.triggers;
+        if (!triggers || !Array.isArray(triggers)) return;
+        triggers.forEach(trigger => {
+          const sessionKey = `vendo_trigger_sent_session_${trigger.id || trigger.message}`;
+          const persistentKey = `vendo_trigger_sent_forever_${trigger.id || trigger.message}`;
+
+          // If restricted to once per user (forever), check localStorage
+          if (trigger.oncePerUser && localStorage.getItem(persistentKey)) return;
+
+          // Otherwise check session storage (default behavior for repeat visitors in same session)
+          if (sessionStorage.getItem(sessionKey)) return;
+
+          if (trigger.page && !window.location.href.includes(trigger.page)) return;
+
+          const executeTrigger = () => {
+            if (trigger.oncePerUser && localStorage.getItem(persistentKey)) return;
+            if (sessionStorage.getItem(sessionKey)) return;
+
+            showTeaser(trigger.message, trigger);
+
+            // Mark as sent
+            sessionStorage.setItem(sessionKey, 'true');
+            if (trigger.oncePerUser) {
+              localStorage.setItem(persistentKey, 'true');
+            }
+          };
+
+          if (trigger.type === 'time') {
+            setTimeout(executeTrigger, (parseInt(trigger.spawn) || 5) * 1000);
+          } else if (trigger.type === 'scroll') {
+            const onScroll = () => {
+              const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+              if (scrollPercent >= parseInt(trigger.spawn)) {
+                executeTrigger();
+                window.removeEventListener('scroll', onScroll);
+              }
+            };
+            onScroll();
+            window.addEventListener('scroll', onScroll);
+          }
+        });
+        break;
     }
   });
+
+  // Global Tracking API
+  window.Vendo = {
+    recordSale: async function (amount, currency = 'EUR') {
+      const visitorId = sessionStorage.getItem('vendo_visitor_id');
+      const activeChatbotId = chatbotId || sessionStorage.getItem('vendo_active_chatbot_id');
+
+      if (!activeChatbotId) {
+        console.error('UseVendo: Cannot record sale. No active chatbot ID found.');
+        return;
+      }
+
+      console.log(`UseVendo: Recording sale of ${amount} ${currency} for bot ${activeChatbotId}...`);
+
+      try {
+        const response = await fetch(`${baseUrl}/api/record-sale`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chatbotId: activeChatbotId,
+            amount: amount,
+            currency: currency,
+            visitorId: visitorId
+          })
+        });
+        const data = await response.json();
+        if (data.success) {
+          console.log('UseVendo: Sale recorded successfully.');
+        } else {
+          console.error('UseVendo: Failed to record sale:', data.error);
+        }
+      } catch (err) {
+        console.error('UseVendo: Error recording sale:', err);
+      }
+    }
+  };
+
+  // Automatic Sale Detection (Zero-Code)
+  let pendingAmount = 0; // "Memory" to handle race conditions where price resets to 0 on success
+
+  async function detectAutoSale() {
+    const url = window.location.href.toLowerCase();
+    const bodyText = document.body.innerText.toLowerCase();
+
+    // Patterns for success in URL OR in the page text (for modals/SPAs)
+    const successPatterns = ['thank_you', 'order-confirmation', 'checkout/success', 'order-received', 'confirmation'];
+    const successTextPatterns = ['merci pour votre achat', 'commande confirmée', 'paiement accepté', 'order successful', 'félicitations'];
+
+    const isSuccessPage = successPatterns.some(p => url.includes(p)) ||
+      successTextPatterns.some(p => bodyText.includes(p));
+
+    // Patterns for "Checkout" or "Cart" to pre-capture price
+    const checkoutPatterns = ['checkout', 'panier', 'cart', 'paiement', 'recapitulatif'];
+    const isCheckoutPage = checkoutPatterns.some(p => url.includes(p)) ||
+      checkoutPatterns.some(p => bodyText.includes(p));
+
+    // Scanning for totals
+    let currentAmount = 0;
+    // 1. SHOPIFY HEURISTIC
+    if (window.Shopify && window.Shopify.checkout) {
+      currentAmount = window.Shopify.checkout.total_price;
+      if (currentAmount > 0) console.log('UseVendo: Shopify order detected, currentAmount:', currentAmount);
+    }
+    // 2. GENERIC DOM SCRAPING
+    else {
+      const selectors = [
+        '.total-price', '#total-price', '.order-total', '.amount-total',
+        '.cart-total-amount', '#cartTotal', '.summary-total span:last-child',
+        '.checkout-total', '.total-amount'
+      ];
+
+      for (const s of selectors) {
+        const elements = document.querySelectorAll(s);
+        for (const el of elements) {
+          if (el.offsetParent !== null) { // Only visible elements
+            const text = el.innerText;
+            const matched = text.match(/(\d+([\s,.]\d+)?)/);
+            if (matched) {
+              const val = matched[0].replace(/\s/g, '').replace(',', '.');
+              if (parseFloat(val) > 0) {
+                currentAmount = val;
+                break;
+              }
+            }
+          }
+        }
+        if (currentAmount > 0) break;
+      }
+    }
+
+    // Pre-capture amount if we are checking out
+    if (isCheckoutPage && currentAmount > 0) {
+      if (currentAmount !== pendingAmount) {
+        console.log('UseVendo: Pre-captured price for detection:', currentAmount);
+        pendingAmount = currentAmount;
+      }
+    }
+
+    if (!isSuccessPage) {
+      // console.log('UseVendo: Not a success page. Current amount:', currentAmount, 'Pending amount:', pendingAmount);
+      return;
+    }
+
+    // Check if we already recorded a sale for this "session" state
+    const storageKey = `vendo_sale_recorded_${chatbotId || 'global'}`;
+    if (sessionStorage.getItem(storageKey)) {
+      console.log('UseVendo: Sale already recorded for this session state, skipping.');
+      return;
+    }
+
+    // Final amount is either what we see now, or what we saw just before (pre-captured)
+    const finalAmount = currentAmount || pendingAmount;
+
+    if (finalAmount > 0) {
+      console.log('UseVendo: Sale success detected! Amount:', finalAmount);
+      sessionStorage.setItem(storageKey, 'true');
+      await window.Vendo.recordSale(finalAmount);
+      pendingAmount = 0; // Reset
+    } else {
+      console.warn('UseVendo: Success detected but could not find a price in DOM or memory.');
+    }
+  }
+
+  // Periodic check (High frequency for modals)
+  setInterval(detectAutoSale, 1000); // Check every 1s
+
+  // Also monitor navigation
+  const checkNav = () => {
+    // We don't clear the recorded status here because some SPAs stay on same "session"
+    detectAutoSale();
+  };
+
+  window.addEventListener('popstate', checkNav);
+  const originalPush = history.pushState;
+  history.pushState = function () {
+    originalPush.apply(this, arguments);
+    setTimeout(checkNav, 1000); // Give page time to render
+  };
+
+  // Initial check
+  if (document.readyState === 'complete') {
+    checkNav();
+  } else {
+    window.addEventListener('load', checkNav);
+  }
 
   // Toggle Logic
   let isOpen = false;
@@ -205,53 +406,6 @@
   // Teaser Bubble Logic
   let teaserBubble = null;
 
-  window.addEventListener('message', (event) => {
-    if (!event.data) return;
-
-    if (event.data.type === 'vendo-proactive-message') {
-      // We can check if it's for OUR bot 
-      // Storing these globally so showTeaser can access them. 
-      // In a cleaner implementation we'd pass them as args.
-      window.vendoSenderName = event.data.sender;
-      window.vendoAvatarUrl = event.data.avatar;
-      showTeaser(event.data.message);
-    }
-
-    if (event.data.type === 'vendo-init-triggers') {
-      const triggers = event.data.triggers;
-      if (!triggers || !Array.isArray(triggers)) return;
-
-      triggers.forEach(trigger => {
-        // Check if trigger was already executed in this session
-        const storageKey = `vendo_trigger_${trigger.id || trigger.message}`; // Fallback to message hash if no ID
-        if (sessionStorage.getItem(storageKey)) return;
-
-        // Check if trigger is restricted to a specific page
-        if (trigger.page && !window.location.href.includes(trigger.page)) return;
-
-        const executeTrigger = () => {
-          if (sessionStorage.getItem(storageKey)) return; // Double check
-          showTeaser(trigger.message, trigger);
-          sessionStorage.setItem(storageKey, 'true');
-        };
-
-        if (trigger.type === 'time') {
-          setTimeout(executeTrigger, (parseInt(trigger.spawn) || 5) * 1000);
-        } else if (trigger.type === 'scroll') {
-          const onScroll = () => {
-            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-            if (scrollPercent >= parseInt(trigger.spawn)) {
-              executeTrigger();
-              window.removeEventListener('scroll', onScroll);
-            }
-          };
-          // Check immediately in case we are already scrolled
-          onScroll();
-          window.addEventListener('scroll', onScroll);
-        }
-      });
-    }
-  });
 
   // State for auto-dismiss
   let autoCloseTimer = null;
@@ -275,7 +429,7 @@
       bottom: '110px',
       right: '32px',
       width: '340px',
-      background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      background: isDark ? 'rgba(15, 23, 42, 1)' : 'rgba(255, 255, 255, 1)',
       backdropFilter: 'blur(20px)',
       webkitBackdropFilter: 'blur(20px)',
       borderRadius: '24px',

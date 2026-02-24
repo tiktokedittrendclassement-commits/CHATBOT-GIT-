@@ -4,24 +4,6 @@ import { useState, useRef, useEffect, memo } from 'react'
 import { MessageCircle, X, Send, Bot, Sparkles, HelpCircle } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
-const Typewriter = memo(({ text, speed = 8, onComplete }) => {
-    const [displayedText, setDisplayedText] = useState('')
-    const [index, setIndex] = useState(0)
-
-    useEffect(() => {
-        if (index < text.length) {
-            const timeout = setTimeout(() => {
-                setDisplayedText(prev => prev + text[index])
-                setIndex(prev => prev + 1)
-            }, speed)
-            return () => clearTimeout(timeout)
-        } else if (onComplete) {
-            onComplete()
-        }
-    }, [index, text, speed, onComplete])
-
-    return <span>{displayedText}</span>
-})
 
 export default function VendoAssistant() {
     const pathname = usePathname()
@@ -76,7 +58,19 @@ export default function VendoAssistant() {
     }
 
     const markAsTyped = (index) => {
-        // Implementation for markAsTyped if needed
+        setMessages(prev => {
+            const updated = [...prev]
+            if (updated[index]) {
+                updated[index] = { ...updated[index], shouldType: false }
+            }
+            return updated
+        })
+    }
+
+    const copyToEmail = (content) => {
+        window.dispatchEvent(new CustomEvent('vendo-assistant-copy-to-email', {
+            detail: { content }
+        }))
     }
 
     const handleSend = async (e) => {
@@ -111,8 +105,12 @@ export default function VendoAssistant() {
                 setMessages(prev => [...prev, {
                     role: 'assistant',
                     content: data.content,
-                    shouldType: true
+                    shouldType: false
                 }])
+                // Broadcast response for contextual pages (like Marketing Email)
+                window.dispatchEvent(new CustomEvent('vendo-assistant-response', {
+                    detail: { content: data.content }
+                }))
             } else {
                 throw new Error('Contenu vide')
             }
@@ -121,7 +119,7 @@ export default function VendoAssistant() {
             setMessages(prev => [...prev, {
                 role: 'assistant',
                 content: "Désolé, j'ai rencontré un problème pour me connecter. Vérifiez que la clé API DeepSeek est bien configurée dans .env.local.",
-                shouldType: true
+                shouldType: false
             }])
         } finally {
             setIsTyping(false)
@@ -129,12 +127,10 @@ export default function VendoAssistant() {
         }
     }
 
-    // Proactive Welcome Message & Event Listeners
+    // Proactive Welcome Message (Landing Page Only)
     useEffect(() => {
-        // Trigger welcome message after 1 second ONLY on the landing page
         if (pathname !== '/') return
 
-        // Check if already shown in this session
         const alreadyShown = sessionStorage.getItem('vendo_teaser_shown')
         if (alreadyShown) return
 
@@ -145,20 +141,56 @@ export default function VendoAssistant() {
             }
         }, 500)
 
+        return () => clearTimeout(timer)
+    }, [pathname, isOpen])
+
+    const DEFAULT_MESSAGE = {
+        role: 'assistant',
+        content: "Bienvenue sur Vendo. ✨\n\nJe suis votre **Concierge IA**. Je peux vous présenter la puissance de notre plateforme ou **forger le System Prompt d'élite** pour votre futur chatbot.\n\nQuelle est votre mission aujourd'hui ?",
+        shouldType: false
+    }
+
+    // Reset messages when navigating or closing
+    useEffect(() => {
+        if (!isOpen && pathname !== '/marketing-email') {
+            setMessages([DEFAULT_MESSAGE])
+        }
+    }, [pathname, isOpen])
+
+    // Global Event Listeners (Universal)
+    useEffect(() => {
         const handleProactiveTrigger = (e) => {
-            if (e.detail?.message) {
-                setTeaserText(e.detail.message)
-                setIsOpen(false)
+            const { message, oncePerUser, triggerId } = e.detail || {}
+            if (!message) return
+
+            if (oncePerUser && triggerId) {
+                const persistentKey = `vendo_assistant_sent_forever_${triggerId}`
+                if (localStorage.getItem(persistentKey)) return
+
+                // Set it immediately so it doesn't fire again
+                localStorage.setItem(persistentKey, 'true')
             }
+
+            setTeaserText(message)
+            setIsOpen(false)
+        }
+
+        const handleAssistantOpen = (e) => {
+            if (e.detail?.messages) {
+                setMessages(e.detail.messages)
+            }
+            setIsOpen(true)
+            setTeaserText(null)
         }
 
         window.addEventListener('vendo-proactive-trigger', handleProactiveTrigger)
+        window.addEventListener('vendo-assistant-open', handleAssistantOpen)
 
         return () => {
-            clearTimeout(timer)
             window.removeEventListener('vendo-proactive-trigger', handleProactiveTrigger)
+            window.removeEventListener('vendo-assistant-open', handleAssistantOpen)
         }
-    }, [pathname, isOpen])
+    }, [])
 
     // Simple Auto-dismiss (5 seconds)
     useEffect(() => {
@@ -229,7 +261,7 @@ export default function VendoAssistant() {
                         zIndex: 9998,
                         cursor: 'pointer',
                         transformOrigin: 'bottom right',
-                        animation: 'slideInUpPremium 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, float 4s ease-in-out infinite',
+                        animation: 'slideInUpPremium 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         display: 'flex',
                         flexDirection: 'column',
                         overflow: 'hidden',
@@ -261,6 +293,33 @@ export default function VendoAssistant() {
                             <div style={{ fontSize: 13, fontWeight: 800, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Assistant Vendo</div>
                             <div style={{ fontSize: 14.5, color: '#F1F5F9', fontWeight: 600, lineHeight: 1.5 }}>{teaserText}</div>
                         </div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                setTeaserText(null)
+                            }}
+                            style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                border: 'none',
+                                color: '#94A3B8',
+                                cursor: 'pointer',
+                                width: 24,
+                                height: 24,
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s',
+                                zIndex: 10,
+                                position: 'absolute',
+                                top: 12,
+                                right: 12
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                            onMouseLeave={e => e.currentTarget.style.color = '#94A3B8'}
+                        >
+                            <X size={14} />
+                        </button>
                     </div>
                     <div style={{
                         margin: '0 4px 4px',
@@ -417,9 +476,18 @@ export default function VendoAssistant() {
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 20,
-                            scrollBehavior: 'smooth'
+                            scrollBehavior: 'smooth',
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none'
                         }}
+                        className="v-hide-scrollbar"
                     >
+                        <style dangerouslySetInnerHTML={{
+                            __html: `
+                            .v-hide-scrollbar::-webkit-scrollbar {
+                                display: none;
+                            }
+                        `}} />
                         {messages.map((msg, idx) => (
                             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
                                 <div style={{
@@ -435,13 +503,37 @@ export default function VendoAssistant() {
                                     whiteSpace: 'pre-wrap',
                                     fontWeight: 500
                                 }}>
-                                    {msg.role === 'assistant' && msg.shouldType ? (
-                                        <Typewriter text={msg.content} onComplete={() => {
-                                            markAsTyped(idx);
-                                            scrollToBottom();
-                                        }} />
-                                    ) : (
-                                        msg.content
+                                    {msg.content}
+                                    {msg.role === 'assistant' && pathname === '/marketing-email' && (
+                                        <div style={{ marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 10, display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button
+                                                onClick={() => copyToEmail(msg.content)}
+                                                style={{
+                                                    background: 'rgba(103, 61, 230, 0.2)',
+                                                    color: '#A78BFA',
+                                                    border: '1px solid rgba(167, 139, 250, 0.2)',
+                                                    padding: '6px 12px',
+                                                    borderRadius: 10,
+                                                    fontSize: 12,
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 6,
+                                                    transition: 'all 0.2s'
+                                                }}
+                                                onMouseEnter={e => {
+                                                    e.currentTarget.style.background = '#673DE6'
+                                                    e.currentTarget.style.color = '#fff'
+                                                }}
+                                                onMouseLeave={e => {
+                                                    e.currentTarget.style.background = 'rgba(103, 61, 230, 0.2)'
+                                                    e.currentTarget.style.color = '#A78BFA'
+                                                }}
+                                            >
+                                                <Sparkles size={14} /> Utiliser pour l'email
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
                             </div>

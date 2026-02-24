@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Send, X, Bot } from 'lucide-react'
 import { useParams } from 'next/navigation'
+import { getContrastColor } from '@/lib/utils'
 
 export default function EmbedPage() {
     const params = useParams()
@@ -14,6 +15,8 @@ export default function EmbedPage() {
     const [botConfig, setBotConfig] = useState(null)
     const [error, setError] = useState(null)
     const [visitorId, setVisitorId] = useState(null)
+    const [pageUrl, setPageUrl] = useState('')
+    const [conversationId, setConversationId] = useState(null)
     const messagesEndRef = useRef(null)
     const messagesContainerRef = useRef(null)
 
@@ -32,6 +35,11 @@ export default function EmbedPage() {
         }
         setVisitorId(vid)
 
+        // Capture Page URL from query param 'u'
+        const urlParams = new URLSearchParams(window.location.search)
+        const u = urlParams.get('u')
+        if (u) setPageUrl(u)
+
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
@@ -44,7 +52,6 @@ export default function EmbedPage() {
             } else {
                 setBotConfig(data)
 
-                // Send bot config to parent window to update the bubble button
                 if (typeof window !== 'undefined') {
                     window.parent.postMessage({
                         type: 'vendo-bot-config',
@@ -52,6 +59,13 @@ export default function EmbedPage() {
                         color: data.color,
                         avatar: data.logo_url,
                         theme: data.theme
+                    }, '*')
+
+                    // Also share visitor ID for sale tracking
+                    window.parent.postMessage({
+                        type: 'vendo-visitor-id',
+                        visitorId: vid,
+                        chatbotId: params.chatbotId
                     }, '*')
                 }
 
@@ -104,12 +118,17 @@ export default function EmbedPage() {
                     messages: [...messages, userMessage],
                     chatbotId: params.chatbotId,
                     visitorId: currentVisitorId,
+                    pageUrl: pageUrl,
+                    conversationId: conversationId
                 })
             })
 
             const data = await response.json()
             if (data.error) throw new Error(data.error)
-            if (data.debugInfo) console.log('[Embed Debug]', data.debugInfo)
+            if (data.debugInfo) {
+                console.log('[Embed Debug]', data.debugInfo)
+                if (data.debugInfo.convId) setConversationId(data.debugInfo.convId)
+            }
             setMessages(prev => [...prev, { role: 'assistant', content: data.content }])
         } catch (err) {
             if (err.name === 'AbortError') return
@@ -190,7 +209,7 @@ export default function EmbedPage() {
 
             {/* Header */}
             <div style={{
-                background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%)`,
+                background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColor} 100%)`,
                 padding: '24px',
                 display: 'flex',
                 alignItems: 'center',
@@ -218,14 +237,14 @@ export default function EmbedPage() {
                     {botConfig.logo_url && (botConfig.logo_url.startsWith('http') || botConfig.logo_url.startsWith('/') || botConfig.logo_url.startsWith('data:')) ? (
                         <img src={botConfig.logo_url} alt={botConfig.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : botConfig.logo_url === 'ICON:BOT' ? (
-                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white' }}>V</span>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: getContrastColor(brandColor) }}>V</span>
                     ) : (
                         <span style={{
                             fontFamily: 'Inter, sans-serif',
                             fontWeight: 900,
                             fontStyle: 'italic',
                             fontSize: brandInitial.length > 1 ? 18 : 22,
-                            color: 'white',
+                            color: getContrastColor(brandColor),
                             textShadow: 'none'
                         }}>{brandInitial}</span>
                     )}

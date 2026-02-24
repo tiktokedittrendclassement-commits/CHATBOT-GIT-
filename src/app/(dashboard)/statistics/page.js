@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Brain, MessageSquare, AlertCircle, FileText, List, Sparkles, Lock } from 'lucide-react'
+import { CustomSelect } from '@/components/ui/custom-select'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -44,11 +45,12 @@ export default function StatisticsPage() {
     }, [user])
 
     const runAnalysis = async () => {
+        console.log('[Analysis] Starting for bot:', selectedBot)
         setAnalyzing(true)
-        setAnalysis(null) // Reset previous
+        setAnalysis(null)
 
         try {
-            // 1. Fetch Messages Client-Side (leveraging RLS)
+            // 1. Fetch Messages
             let query = supabase
                 .from('messages')
                 .select(`
@@ -60,18 +62,17 @@ export default function StatisticsPage() {
                 `)
                 .eq('role', 'user')
                 .order('created_at', { ascending: false })
-                .limit(50) // Limit to last 50 for quick analysis
+                .limit(50)
 
             if (selectedBot !== 'all') {
                 query = query.eq('conversations.chatbot_id', selectedBot)
             } else if (chatbots.length > 0) {
-                // If 'all', ensure we only get messages from user's bots (RLS handles this usually via conversation owner check)
-                // But let's filter to be safe if RLS on messages is loose
                 const botIds = chatbots.map(b => b.id)
                 query = query.in('conversations.chatbot_id', botIds)
             }
 
             const { data: messages, error } = await query
+            console.log('[Analysis] Messages fetched:', messages?.length || 0)
 
             if (error) throw error
 
@@ -79,31 +80,36 @@ export default function StatisticsPage() {
 
             if (!messages || messages.length === 0) {
                 setAnalysis({
-                    summary: "Pas assez de données pour l'analyse.",
+                    summary: "Pas assez de données pour l'analyse. Essayez de discuter davantage avec votre chatbot.",
                     topQuestions: [],
                     recommendations: { prompt: "", missingData: [] }
                 })
-                setAnalyzing(false)
                 return
             }
 
-            // 2. Call Analysis API
+            // 2. Call API
+            console.log('[Analysis] Calling AI API...')
             const response = await fetch('/api/analyze-stats', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: messages,
-                    contextInfo: `Chatbot Name: ${selectedBot === 'all' ? 'All Chatbots' : chatbots.find(b => b.id === selectedBot)?.name}`
+                    contextInfo: `Chatbot Name: ${selectedBot === 'all' ? 'Tous les chatbots' : chatbots.find(b => b.id === selectedBot)?.name}`
                 })
             })
 
+            if (!response.ok) {
+                const errData = await response.json()
+                throw new Error(errData.error || 'Erreur serveur API')
+            }
+
             const result = await response.json()
+            console.log('[Analysis] Success:', result.summary?.substring(0, 50))
             setAnalysis(result)
 
         } catch (err) {
-            if (err.name === 'AbortError') return;
-            console.error(err)
-            alert("Erreur lors de l'analyse: " + err.message)
+            console.error('[Analysis] Error:', err)
+            alert("Erreur lors de l'analyse : " + (err.message || "Erreur inconnue"))
         } finally {
             setAnalyzing(false)
         }
@@ -132,16 +138,14 @@ export default function StatisticsPage() {
                     <p className={styles.subheading}>Analysez vos conversations pour améliorer votre assistant.</p>
                 </div>
                 <div className={styles.headerActions}>
-                    <select
+                    <CustomSelect
+                        options={[
+                            { value: 'all', label: 'Tous les chatbots' },
+                            ...chatbots.map(bot => ({ value: bot.id, label: bot.name }))
+                        ]}
                         value={selectedBot}
-                        onChange={(e) => setSelectedBot(e.target.value)}
-                        className={styles.select}
-                    >
-                        <option value="all">Tous les chatbots</option>
-                        {chatbots.map(bot => (
-                            <option key={bot.id} value={bot.id}>{bot.name}</option>
-                        ))}
-                    </select>
+                        onChange={(val) => setSelectedBot(val)}
+                    />
 
                     {isFreePlan ? (
                         <Link href="/billing">

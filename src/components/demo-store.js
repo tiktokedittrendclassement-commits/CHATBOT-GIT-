@@ -306,7 +306,10 @@ export default function DemoStore() {
                             </div>
                         </div>
                         <Button
-                            onClick={() => { setCheckoutStatus('success'); }}
+                            onClick={() => {
+                                if (window.Vendo) window.Vendo.recordSale(cartTotal);
+                                setCheckoutStatus('success');
+                            }}
                             style={{ background: '#000', color: '#fff', height: 60, padding: '0 48px', borderRadius: 0, fontWeight: 900 }}>PAYER {cartTotal.toFixed(2)} €</Button>
                     </div>
                     <div style={{ opacity: 0.5 }}>

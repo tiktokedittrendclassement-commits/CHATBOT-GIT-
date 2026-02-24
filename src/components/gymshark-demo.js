@@ -311,7 +311,17 @@ export default function VestoDemo() {
                             <span>Total</span>
                             <span>{cartTotal} €</span>
                         </div>
-                        <button style={{ width: '100%', background: 'var(--primary)', color: 'white', padding: 18, borderRadius: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Procéder au paiement</button>
+                        <button
+                            onClick={() => {
+                                if (window.Vendo) window.Vendo.recordSale(cartTotal);
+                                alert('Vente simulée enregistrée ! Le montant de ' + cartTotal + '€ a été ajouté à votre tableau de bord.');
+                                setCart([]);
+                                setCartOpen(false);
+                            }}
+                            style={{ width: '100%', background: 'var(--primary)', color: 'white', padding: 18, borderRadius: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}
+                        >
+                            Procéder au paiement
+                        </button>
                     </div>
                 )}
             </div>

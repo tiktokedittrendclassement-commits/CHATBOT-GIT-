@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import Link from 'next/link'
 import { MessageSquare, ChevronRight } from 'lucide-react'
+import { CustomSelect } from '@/components/ui/custom-select'
 import { formatDate } from '@/lib/utils'
 import styles from './page.module.css'
 
@@ -56,7 +57,8 @@ export default function ConversationsPage() {
             // 2. Fetch conversations for those bots
             const { data, error } = await supabase
                 .from('conversations')
-                .select(`id, created_at, visitor_id, chatbot_id, chatbots ( name, color )`)
+                .select(`id, created_at, visitor_id, chatbot_id, chatbots ( name, color ), messages!inner(page_url)`)
+                .eq('messages.role', 'user') // Join with user messages to get page_url
                 .in('chatbot_id', botIds)
                 .order('created_at', { ascending: false })
 
@@ -81,18 +83,14 @@ export default function ConversationsPage() {
                 </div>
 
                 <div className={styles.filters}>
-                    <select
-                        className={styles.filterSelect}
+                    <CustomSelect
+                        options={[
+                            { value: 'all', label: 'Tous les Chatbots' },
+                            ...chatbots.map(bot => ({ value: bot.id, label: bot.name }))
+                        ]}
                         value={selectedBotId}
-                        onChange={(e) => setSelectedBotId(e.target.value)}
-                    >
-                        <option value="all">Tous les Chatbots</option>
-                        {chatbots.map(bot => (
-                            <option key={bot.id} value={bot.id}>
-                                {bot.name}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={(val) => setSelectedBotId(val)}
+                    />
                 </div>
             </div>
 
@@ -106,6 +104,10 @@ export default function ConversationsPage() {
                             const color = conv.chatbots?.color || '#673DE6'
                             const initial = conv.chatbots?.name?.charAt(0).toUpperCase() || 'V'
                             const visitorLabel = conv.visitor_id ? `Visiteur #${conv.visitor_id.substring(0, 6)}` : 'Visiteur Anonyme'
+
+                            // Get unique URLs from messages
+                            const urls = conv.messages ? [...new Set(conv.messages.map(m => m.page_url).filter(Boolean))] : []
+                            const sourceUrl = urls[0] || 'Direct / Inconnu'
 
                             return (
                                 <Link key={conv.id} href={`/conversations/${conv.id}`} className={styles.item}>
@@ -121,9 +123,15 @@ export default function ConversationsPage() {
                                     <div className={styles.info}>
                                         <div className={styles.topRow}>
                                             <span className={styles.botName}>{conv.chatbots?.name}</span>
-                                            <span className={styles.badge} style={{ color: color }}>Actif</span>
+                                            <span className={styles.badge}>Actif</span>
                                         </div>
                                         <span className={styles.visitorInfo}>Discussion avec {visitorLabel}</span>
+                                        {sourceUrl && (
+                                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <span style={{ opacity: 0.6 }}>Page:</span>
+                                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>{sourceUrl}</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Date + arrow */}

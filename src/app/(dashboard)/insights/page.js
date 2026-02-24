@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Globe, MapPin, Users, Lock, ArrowUpRight } from 'lucide-react'
+import { CustomSelect } from '@/components/ui/custom-select'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -14,11 +15,14 @@ export default function InsightsPage() {
     const [profile, setProfile] = useState(null)
     const [visitedPages, setVisitedPages] = useState([])
     const [totalVisits, setTotalVisits] = useState(0)
+    const [chatbots, setChatbots] = useState([])
+    const [selectedBotId, setSelectedBotId] = useState('all')
 
     useEffect(() => {
         if (!user) return
 
         const fetchData = async () => {
+            // 1. Check Plan
             // 1. Check Plan
             const { data: profileData } = await supabase
                 .from('profiles')
@@ -27,19 +31,13 @@ export default function InsightsPage() {
                 .single()
             setProfile(profileData)
 
-            if (profileData?.plan_tier !== 'agency') {
-                setLoading(false)
-                return
-            }
+            // 2. Fetch User's Chatbots
+            const { data: bots } = await supabase.from('chatbots').select('id, name').eq('user_id', user.id)
+            setChatbots(bots || [])
 
-            // 2. Fetch Message Data with URLs
-            // We group by page_url manually since we can't do complex GROUP BY in client-side Supabase easy without RPC
-            // So we fetch relevant messages and aggregate locally.
-            // Fetch messages from user's chatbots
-
-            // First get user's chatbot IDs
-            const { data: bots } = await supabase.from('chatbots').select('id').eq('user_id', user.id)
-            const botIds = bots?.map(b => b.id) || []
+            const botIds = selectedBotId === 'all'
+                ? (bots?.map(b => b.id) || [])
+                : [selectedBotId]
 
             if (botIds.length > 0) {
                 const { data: messages } = await supabase
@@ -47,9 +45,8 @@ export default function InsightsPage() {
                     .select('page_url, created_at, conversations!inner(chatbot_id)')
                     .eq('role', 'user')
                     .in('conversations.chatbot_id', botIds)
-                    .not('page_url', 'is', null) // Only where URL exists
                     .order('created_at', { ascending: false })
-                    .limit(500) // Limit sample
+                    .limit(1000) // Increase sample
 
                 if (messages) {
                     setTotalVisits(messages.length)
@@ -57,7 +54,7 @@ export default function InsightsPage() {
                     // Aggregate
                     const urlMap = {}
                     messages.forEach(msg => {
-                        const url = msg.page_url
+                        const url = msg.page_url || 'Direct / Interne'
                         if (!urlMap[url]) {
                             urlMap[url] = { url, count: 0, last_visit: msg.created_at }
                         }
@@ -72,7 +69,7 @@ export default function InsightsPage() {
         }
 
         fetchData()
-    }, [user])
+    }, [user, selectedBotId])
 
     if (loading) return <div style={{ padding: 40 }}>Chargement...</div>
 
@@ -87,6 +84,18 @@ export default function InsightsPage() {
                     </h1>
                     <p className={styles.subheading}>Découvrez sur quelles pages vos utilisateurs interagissent avec vos chatbots.</p>
                 </div>
+                {chatbots.length > 0 && (
+                    <div className={styles.filterContainer}>
+                        <CustomSelect
+                            options={[
+                                { value: 'all', label: 'Tous les chatbots' },
+                                ...chatbots.map(bot => ({ value: bot.id, label: bot.name }))
+                            ]}
+                            value={selectedBotId}
+                            onChange={(val) => setSelectedBotId(val)}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Banner for Non-Agency */}
@@ -118,7 +127,7 @@ export default function InsightsPage() {
                         </div>
                         <div>
                             <div className={styles.statLabel}>Interactions Totales</div>
-                            <div className={styles.statValue}>{isAgency ? totalVisits : '---'}</div>
+                            <div className={styles.statValue}>{totalVisits}</div>
                         </div>
                     </div>
                     <div className={styles.infoBox}>
@@ -133,7 +142,7 @@ export default function InsightsPage() {
                         <Globe size={16} className="text-slate-400" />
                     </div>
 
-                    {isAgency && visitedPages.length > 0 ? (
+                    {visitedPages.length > 0 ? (
                         <div>
                             {visitedPages.map((page, i) => (
                                 <div key={i} className={styles.listItem} style={{ padding: '16px 24px' }}>
@@ -142,9 +151,9 @@ export default function InsightsPage() {
                                             {i + 1}
                                         </div>
                                         <div style={{ overflow: 'hidden', minWidth: 0 }}>
-                                            <a href={page.url} target="_blank" rel="noopener noreferrer" className={styles.urlLink}>
+                                            <a href={page.url.startsWith('http') ? page.url : '#'} target="_blank" rel="noopener noreferrer" className={styles.urlLink}>
                                                 {page.url}
-                                                <ArrowUpRight size={12} />
+                                                {page.url.startsWith('http') && <ArrowUpRight size={12} />}
                                             </a>
                                             <div className={styles.lastVisit}>
                                                 Dernière visite : {new Date(page.last_visit).toLocaleDateString()}

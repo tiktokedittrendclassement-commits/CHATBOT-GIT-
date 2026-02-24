@@ -122,6 +122,28 @@ export default function DashboardPage() {
         fetchData()
     }, [user])
 
+    // Welcome Message Popup (Once per session)
+    useEffect(() => {
+        if (!user || !profile || loading) return
+
+        if (sessionStorage.getItem('vendo_welcome_seen')) return
+
+        const timer = setTimeout(() => {
+            // Re-check just in case session storage was set in another tab/render
+            if (sessionStorage.getItem('vendo_welcome_seen')) return
+
+            const firstName = profile.full_name?.split(' ')[0] || 'Membre'
+            const message = `Bienvenue sur le tableau de bord ${firstName}`
+
+            window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {
+                detail: { message }
+            }))
+            sessionStorage.setItem('vendo_welcome_seen', 'true')
+        }, 1500)
+
+        return () => clearTimeout(timer)
+    }, [user?.id, profile?.id, loading])
+
     if (loading) return <div className={styles.loading}>Chargement du tableau de bord...</div>
 
     // Calculate max revenue for chart scaling
@@ -133,9 +155,9 @@ export default function DashboardPage() {
             <div className={styles.header}>
                 <div>
                     <h1 className={styles.heading}>
-                        Hello, {profile?.full_name?.split(' ')[0] || 'Premium Member'}
+                        Bonjour, {profile?.full_name?.split(' ')[0] || 'Membre Premium'}
                     </h1>
-                    <p className={styles.subheading}>Here is your business overview for today.</p>
+                    <p className={styles.subheading}>Voici l'aperçu de votre activité aujourd'hui.</p>
                 </div>
                 <div className={styles.headerActions}>
                     <Link href="/billing">

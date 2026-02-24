@@ -287,6 +287,7 @@
     flex: 1;
     padding: 40px;
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #09090b;
 }
 
@@ -365,6 +366,12 @@
 
     .breadcrumbs {
         font-size: 12px;
+        gap: 8px;
+    }
+
+    .breadcrumbIcon {
+        display: none;
+        /* Save space on mobile */
     }
 
     .breadcrumbItem:not(:last-child) {

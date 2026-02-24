@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let resend;
+const getResend = () => {
+    if (!resend && process.env.RESEND_API_KEY) {
+        resend = new Resend(process.env.RESEND_API_KEY);
+    }
+    return resend;
+};
 
 export async function POST(req) {
     try {
@@ -15,7 +21,7 @@ export async function POST(req) {
             return NextResponse.json({ success: true, simulated: true })
         }
 
-        const { data, error } = await resend.emails.send({
+        const { data, error } = await getResend().emails.send({
             from: `${senderName || chatbotName || 'Vendo'} <contact@usevendo.com>`,
             to: [to],
             reply_to: replyTo || undefined,

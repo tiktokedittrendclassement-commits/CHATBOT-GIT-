@@ -13,6 +13,12 @@ export async function POST(req) {
     try {
         const { to, subject, body, chatbotName, senderName, replyTo } = await req.json()
 
+        // Validation de l'email destinataire
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        if (!to || !emailRegex.test(to.trim())) {
+            return NextResponse.json({ error: 'Adresse email destinataire invalide' }, { status: 400 })
+        }
+
         if (!process.env.RESEND_API_KEY) {
             console.log('--- EMAIL SIMULATION (No API Key) ---')
             console.log(`To: ${to}`)

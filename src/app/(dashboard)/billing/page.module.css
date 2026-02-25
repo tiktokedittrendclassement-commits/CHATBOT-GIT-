@@ -22,8 +22,8 @@
 
 /* Info Box */
 .infoBox {
-    background: rgba(124, 58, 237, 0.05);
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    background: rgba(139, 92, 246, 0.03);
+    border: 1px solid rgba(139, 92, 246, 0.1);
     border-radius: 20px;
     padding: 24px;
     margin-bottom: 48px;
@@ -79,20 +79,20 @@
 .card:hover {
     transform: translateY(-8px);
     background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(124, 58, 237, 0.3);
+    border-color: rgba(139, 92, 246, 0.3);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .recommendedCard {
-    border-color: rgba(124, 58, 237, 0.4);
-    background: rgba(124, 58, 237, 0.03);
+    border-color: rgba(139, 92, 246, 0.4);
+    background: rgba(139, 92, 246, 0.03);
 }
 
 .badge {
     position: absolute;
     top: 0;
     right: 0;
-    background: #7c3aed;
+    background: #8B5CF6;
     color: white;
     font-size: 11px;
     font-weight: 900;
@@ -143,7 +143,7 @@
 }
 
 .checkIcon {
-    color: #7c3aed;
+    color: #8B5CF6;
     flex-shrink: 0;
 }
 
@@ -202,4 +202,216 @@
     .card {
         padding: 32px;
     }
+}
+
+/* Modal UI Overhaul */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 3, 8, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modalContent {
+    background: #09090b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), 0 0 30px rgba(139, 92, 246, 0.05);
+    position: relative;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modalTitle {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+}
+
+.closeBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    padding: 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.closeBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.warningBox {
+    background: rgba(239, 68, 68, 0.03);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 32px;
+}
+
+.warningHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ef4444;
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.warningSub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+}
+
+.botList {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.botCard {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.botCard:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateX(4px);
+}
+
+.botCardSelected {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+.botCardSelected:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: #ef4444;
+}
+
+.checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.botCardSelected .checkbox {
+    background: #ef4444;
+    border-color: #ef4444;
+}
+
+.botInfo {
+    flex: 1;
+}
+
+.botName {
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.botDate {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modalActions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.cancelBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0 24px;
+    height: 48px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.cancelBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.deleteConfirmBtn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 0 32px;
+    height: 48px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
+}
+
+.deleteConfirmBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: none;
+}
+
+.deleteConfirmBtn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.4);
+    background: #f87171;
 }

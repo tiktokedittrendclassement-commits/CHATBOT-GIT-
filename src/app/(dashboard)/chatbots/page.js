@@ -143,7 +143,7 @@ export default function ChatbotsPage() {
                                     fontWeight: 'bold', fontSize: 13, borderRadius: 14
                                 }}>
                                     {bot.logo_url === 'ICON:BOT' ? (
-                                        <Bot size={20} />
+                                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 16 }}>V</span>
                                     ) : bot.logo_url && (bot.logo_url.startsWith('http') || bot.logo_url.startsWith('/') || bot.logo_url.startsWith('data:')) ? (
                                         <img src={bot.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8 }} />
                                     ) : (

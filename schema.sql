@@ -7,7 +7,7 @@ create table profiles (
   email text,
   full_name text,
   plan_tier text default 'free', -- free, pro, agency
-  credits_balance int default 10, -- 10 free credits to start
+  credits_balance bigint default 0, -- 0 free credits to start
   stripe_customer_id text, -- or lemon_squeezy_customer_id
   lemon_squeezy_customer_id text,
   subscription_status text default 'active', -- active, past_due, canceled

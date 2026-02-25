@@ -7,12 +7,14 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import styles from '../login/page.module.css' // Reuse styles
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [fullName, setFullName] = useState('')
+    const [isRegistered, setIsRegistered] = useState(false)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -22,11 +24,21 @@ export default function RegisterPage() {
         setLoading(true)
         setError(null)
 
+        const trimmedEmail = email.trim()
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+        if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+            setError("Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)")
+            setLoading(false)
+            return
+        }
+
         try {
-            const { error } = await supabase.auth.signUp({
-                email,
+            const { data, error } = await supabase.auth.signUp({
+                email: trimmedEmail,
                 password,
                 options: {
+                    emailRedirectTo: `${window.location.origin}/login`,
                     data: {
                         full_name: fullName,
                     },
@@ -34,18 +46,47 @@ export default function RegisterPage() {
             })
 
             if (error) {
-                setError(error.message)
+                if (error.message === 'User already registered') {
+                    setError("Cet utilisateur est déjà enregistré.")
+                } else if (error.message === 'Password should be at least 6 characters') {
+                    setError("Le mot de passe doit contenir au moins 6 caractères.")
+                } else {
+                    setError(error.message)
+                }
+                return
+            }
+
+            // Check if email confirmation is required (session will be null)
+            if (!data.session) {
+                setIsRegistered(true)
             } else {
-                // Email confirmation disabled, so user is signed in.
-                // Redirect to dashboard.
                 router.push('/dashboard')
                 router.refresh()
             }
         } catch (err) {
-            setError('An unexpected error occurred')
+            setError('Une erreur inattendue est survenue')
         } finally {
             setLoading(false)
         }
+    }
+
+    if (isRegistered) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.card}>
+                    <h1 className={styles.title}>Presque fini !</h1>
+                    <p className={styles.subtitle}>Un email de confirmation a été envoyé à <strong>{email}</strong>.</p>
+                    <p className={styles.text} style={{ color: 'rgba(255,255,255,0.6)', marginTop: 20, textAlign: 'center' }}>
+                        Veuillez cliquer sur le lien dans l'email pour activer votre compte.
+                    </p>
+                    <div style={{ marginTop: 30, textAlign: 'center' }}>
+                        <Link href="/login">
+                            <Button className={styles.submit}>Aller à la page de connexion</Button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -89,6 +130,8 @@ export default function RegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="vous@exemple.com"
                             required
+                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                            title="Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)"
                             style={{
                                 background: 'rgba(255,255,255,0.05)',
                                 border: '1px solid rgba(255,255,255,0.1)',
@@ -101,21 +144,26 @@ export default function RegisterPage() {
 
                     <div className={styles.field}>
                         <label htmlFor="password">Mot de passe</label>
-                        <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            required
-                            style={{
-                                background: 'rgba(255,255,255,0.05)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                color: '#fff',
-                                height: 48,
-                                borderRadius: 12
-                            }}
-                        />
+                        <div className={styles.passwordWrapper}>
+                            <Input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                                required
+                                className={styles.passwordInput}
+                            />
+                            <button
+                                type="button"
+                                className={styles.passwordToggle}
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex="-1"
+                                style={{ color: 'white' }}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     <Button type="submit" disabled={loading} className={styles.submit}>

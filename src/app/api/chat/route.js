@@ -143,7 +143,7 @@ export async function POST(req) {
         }
 
         // 5. Detect & Capture Leads (Email detection)
-        const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+        const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi;
         const lastUserMsg = messages[messages.length - 1];
         const detectedEmails = lastUserMsg.content.match(emailRegex);
 

@@ -193,125 +193,74 @@ export default function BillingPage() {
                 </div>
             </div>
 
-            {/* Chatbot Deletion Modal */}
+            {/* Chatbot Deletion Modal Overhaul */}
             {showDeleteModal && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000
-                }}>
-                    <div style={{
-                        background: '#0F172A',
-                        borderRadius: 24,
-                        padding: 32,
-                        maxWidth: 600,
-                        width: '90%',
-                        maxHeight: '80vh',
-                        overflow: 'auto',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)'
-                    }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                            <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>
-                                Sélectionner les chatbots à supprimer
-                            </h2>
-                            <button
-                                onClick={() => setShowDeleteModal(false)}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    padding: 8,
-                                    color: 'rgba(255, 255, 255, 0.4)'
-                                }}
-                            >
-                                <X size={24} />
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <div className={styles.modalHeader}>
+                            <h2 className={styles.modalTitle}>Sélectionner les chatbots à supprimer</h2>
+                            <button className={styles.closeBtn} onClick={() => setShowDeleteModal(false)}>
+                                <X size={20} />
                             </button>
                         </div>
 
-                        <div style={{
-                            padding: 16,
-                            background: 'rgba(245, 158, 11, 0.05)',
-                            borderRadius: 12,
-                            marginBottom: 24,
-                            border: '1px solid rgba(245, 158, 11, 0.2)'
-                        }}>
-                            <p style={{ margin: 0, color: '#f59e0b', fontSize: 14 }}>
-                                ⚠️ Vous devez supprimer <strong>{requiredDeletions}</strong> chatbot(s) pour passer au plan{' '}
-                                <strong>{targetPlan === 'free' ? 'Gratuit' : 'Pro'}</strong>.
+                        <div className={styles.warningBox}>
+                            <div className={styles.warningHeader}>
+                                <AlertCircle size={18} />
+                                <span>Action requise</span>
+                            </div>
+                            <p className={styles.infoText} style={{ color: '#ef4444', fontWeight: 700, opacity: 1, marginBottom: 8 }}>
+                                Supprimez {requiredDeletions} chatbot(s) pour passer au plan {targetPlan === 'free' ? 'Gratuit' : 'Pro'}.
                             </p>
-                            <p style={{ margin: '8px 0 0 0', color: 'rgba(255, 255, 255, 0.5)', fontSize: 13 }}>
-                                Sélectionnés: {selectedChatbots.length} / {requiredDeletions} minimum
-                            </p>
+                            <div className={styles.warningSub}>
+                                Sélectionnés: {selectedChatbots.length} sur {requiredDeletions} minimum
+                            </div>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-                            {chatbots.map(bot => (
-                                <label
-                                    key={bot.id}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 12,
-                                        padding: 16,
-                                        border: selectedChatbots.includes(bot.id) ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.08)',
-                                        borderRadius: 16,
-                                        cursor: 'pointer',
-                                        background: selectedChatbots.includes(bot.id) ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255, 255, 255, 0.03)',
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedChatbots.includes(bot.id)}
-                                        onChange={(e) => {
-                                            if (e.target.checked) {
-                                                setSelectedChatbots([...selectedChatbots, bot.id])
-                                            } else {
+                        <div className={styles.botList}>
+                            {chatbots.map(bot => {
+                                const isSelected = selectedChatbots.includes(bot.id)
+                                return (
+                                    <div
+                                        key={bot.id}
+                                        className={`${styles.botCard} ${isSelected ? styles.botCardSelected : ''}`}
+                                        onClick={() => {
+                                            if (isSelected) {
                                                 setSelectedChatbots(selectedChatbots.filter(id => id !== bot.id))
+                                            } else {
+                                                setSelectedChatbots([...selectedChatbots, bot.id])
                                             }
                                         }}
-                                        style={{ width: 18, height: 18, cursor: 'pointer', accentColor: 'var(--primary)' }}
-                                    />
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: 600, marginBottom: 4, color: '#fff' }}>{bot.name}</div>
-                                        <div style={{ fontSize: 13, color: 'rgba(255, 255, 255, 0.4)' }}>
-                                            Créé le {new Date(bot.created_at).toLocaleDateString('fr-FR')}
+                                    >
+                                        <div className={styles.checkbox}>
+                                            {isSelected && <Check size={14} color="#fff" strokeWidth={4} />}
                                         </div>
+                                        <div className={styles.botInfo}>
+                                            <div className={styles.botName}>{bot.name}</div>
+                                            <div className={styles.botDate}>
+                                                Bot ID: {bot.id.slice(0, 8)}... • {new Date(bot.created_at).toLocaleDateString('fr-FR')}
+                                            </div>
+                                        </div>
+                                        {isSelected && <Trash size={18} color="#ef4444" />}
                                     </div>
-                                    {selectedChatbots.includes(bot.id) && (
-                                        <Trash size={20} style={{ color: '#ef4444' }} />
-                                    )}
-                                </label>
-                            ))}
+                                )
+                            })}
                         </div>
 
-                        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-                            <Button
-                                variant="outline"
-                                onClick={() => setShowDeleteModal(false)}
-                            >
+                        <div className={styles.modalActions}>
+                            <button className={styles.cancelBtn} onClick={() => setShowDeleteModal(false)}>
                                 Annuler
-                            </Button>
-                            <Button
+                            </button>
+                            <button
+                                className={styles.deleteConfirmBtn}
                                 onClick={handleConfirmDeletion}
                                 disabled={selectedChatbots.length < requiredDeletions}
-                                style={{
-                                    background: selectedChatbots.length >= requiredDeletions ? '#ef4444' : 'rgba(255, 255, 255, 0.05)',
-                                    color: selectedChatbots.length >= requiredDeletions ? 'white' : 'rgba(255, 255, 255, 0.2)',
-                                    cursor: selectedChatbots.length >= requiredDeletions ? 'pointer' : 'not-allowed',
-                                    border: '1px solid ' + (selectedChatbots.length >= requiredDeletions ? '#ef4444' : 'rgba(255, 255, 255, 0.08)')
-                                }}
                             >
-                                Supprimer {selectedChatbots.length} chatbot(s) et changer de plan
-                            </Button>
+                                {selectedChatbots.length < requiredDeletions
+                                    ? `Sélectionnez ${requiredDeletions - selectedChatbots.length} de plus`
+                                    : `Confirmer la suppression (${selectedChatbots.length})`
+                                }
+                            </button>
                         </div>
                     </div>
                 </div>

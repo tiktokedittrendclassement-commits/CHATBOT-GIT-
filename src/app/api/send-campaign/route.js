@@ -55,12 +55,18 @@ export async function POST(req) {
             return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 })
         }
 
-        // De-duplicate emails
-        const uniqueEmails = [...new Set(leads.map(l => l.email.toLowerCase()))]
+        // De-duplicate and validate emails
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        const uniqueEmails = [...new Set(
+            leads
+                .map(l => l.email.toLowerCase().trim())
+                .filter(email => emailRegex.test(email))
+        )]
+
         console.log(`[API Campaign] Chatbots found: ${chatbots.length}`);
         console.log(`[API Campaign] Bot IDs: ${JSON.stringify(botIds)}`);
         console.log(`[API Campaign] Leads found: ${leads.length}`);
-        console.log(`[API Campaign] Unique emails: ${uniqueEmails.length}`);
+        console.log(`[API Campaign] Valid Unique emails: ${uniqueEmails.length}`);
 
         if (uniqueEmails.length === 0) {
             console.log('[API Campaign] No leads found for these bots.');

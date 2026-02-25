@@ -22,9 +22,6 @@ export default function VendoAssistant() {
         setIsEmbedRoute(prev => prev || document.body.classList.contains('is-embed'))
     }, [])
 
-    if (inIframe || isEmbedRoute) {
-        return null
-    }
 
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
@@ -202,6 +199,8 @@ export default function VendoAssistant() {
 
         return () => clearTimeout(timer)
     }, [isOpen, teaserText])
+
+    if (inIframe || isEmbedRoute) return null
 
     if (!teaserText && !isOpen) return (
         <button

@@ -22,16 +22,34 @@ export default function LoginPage() {
         setLoading(true)
         setError(null)
 
+        const trimmedEmail = email.trim()
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+        if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+            setError("Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)")
+            setLoading(false)
+            return
+        }
+
         try {
             const { error } = await supabase.auth.signInWithPassword({
-                email,
+                email: trimmedEmail,
                 password,
             })
 
-            if (error) throw error
+            if (error) {
+                if (error.message === 'Invalid login credentials') {
+                    setError("Email ou mot de passe incorrect.")
+                } else if (error.message === 'Email not confirmed') {
+                    setError("Veuillez confirmer votre adresse email.")
+                } else {
+                    setError(error.message)
+                }
+                return
+            }
             router.push('/dashboard')
         } catch (err) {
-            setError(err.message)
+            setError('Une erreur inattendue est survenue')
         } finally {
             setLoading(false)
         }
@@ -59,6 +77,8 @@ export default function LoginPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="vous@exemple.com"
                             required
+                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                            title="Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)"
                             style={{
                                 background: 'rgba(255,255,255,0.05)',
                                 border: '1px solid rgba(255,255,255,0.1)',

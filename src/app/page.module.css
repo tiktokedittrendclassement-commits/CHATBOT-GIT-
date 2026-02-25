@@ -9,8 +9,8 @@
   --borderH: rgba(255, 255, 255, 0.15);
   --fg: #ffffff;
   --muted: #888899;
-  --accent: #7c3aed;
-  --aRgb: 124, 58, 237;
+  --accent: #673DE6;
+  --aRgb: 103, 61, 230;
   background: var(--bg);
   color: var(--fg);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -80,6 +80,7 @@
   color: #fff;
 }
 
+
 .navEnd {
   flex: 1;
   display: flex;
@@ -99,6 +100,7 @@
   opacity: 1;
 }
 
+
 .btnNav {
   background: #fff;
   color: #000;
@@ -113,6 +115,7 @@
 .btnNav:hover {
   transform: scale(1.05);
 }
+
 
 /* ════════════════════════════════════════════
    HERO
@@ -163,6 +166,7 @@
   top: 30%;
   right: 10%;
   background: radial-gradient(circle, rgba(var(--aRgb), .15), transparent 70%);
+  pointer-events: none;
 }
 
 .heroLayout {
@@ -174,6 +178,11 @@
   gap: 80px;
   opacity: 1;
   transform: none;
+}
+
+.heroLeft {
+  position: relative;
+  z-index: 5;
 }
 
 .heroRight {
@@ -235,15 +244,8 @@
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.2),
     inset 0 0 20px rgba(255, 255, 255, 0.02);
-  transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
-.glassSlate:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
-}
 
 .slateTitle {
   font-size: 11px;
@@ -396,6 +398,7 @@
   box-shadow: 0 20px 40px rgba(255, 255, 255, 0.2);
 }
 
+
 .btnText {
   color: #fff;
   font-size: 15px;
@@ -408,6 +411,7 @@
 .btnText:hover {
   opacity: 1;
 }
+
 
 .heroMeta {
   font-size: 13px;
@@ -480,6 +484,7 @@
 .widgetTilt:hover {
   transform: perspective(2000px) rotateY(-12deg) rotateX(3deg) scale(1.02) translateZ(0);
 }
+
 
 .chrome {
   background: #1A1D23;
@@ -751,6 +756,7 @@
   /* Subtle arrow movement */
 }
 
+
 /* ════════════════════════════════════════════
    SECTIONS
 ════════════════════════════════════════════ */
@@ -957,6 +963,7 @@
     0 0 40px rgba(var(--aRgb), 0.1);
 }
 
+
 .stepImg {
   width: 100%;
   height: auto;
@@ -1045,7 +1052,7 @@
 
 .mockCodeBlock {
   background: #030308;
-  color: #8b5cf6;
+  color: var(--accent);
   padding: 20px;
   border-radius: 12px;
   font-size: 13px;
@@ -1136,6 +1143,7 @@
   transform: translateY(-8px);
   border-color: var(--accent);
 }
+
 
 .planFill {
   background: var(--surface);
@@ -1297,6 +1305,7 @@
   transform: scale(1.05) translateY(-4px);
   box-shadow: 0 40px 100px rgba(255, 255, 255, 0.15), 0 20px 40px rgba(0, 0, 0, 0.5);
 }
+
 
 .footer {
   padding: 80px 40px;

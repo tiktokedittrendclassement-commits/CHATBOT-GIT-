@@ -193,6 +193,25 @@ input:-webkit-autofill:active {
 }
 
 /* Hide native browser eye */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+}
+
+/* Specifically for the password visibility toggle in Edge/Chrome */
+input::-webkit-reveal {
+    display: none;
+}
+
 @media (max-width: 480px) {
     .card {
         padding: 32px 24px;

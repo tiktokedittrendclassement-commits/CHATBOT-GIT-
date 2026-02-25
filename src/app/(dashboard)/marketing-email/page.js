@@ -168,6 +168,14 @@ export default function MarketingEmailPage() {
 
     const saveEmailTemplate = async () => {
         if (!selectedBot) return
+        if (editingEmail.reply_to) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+            if (!emailRegex.test(editingEmail.reply_to.trim())) {
+                alert("Veuillez entrer une adresse email de réponse valide (ex: contact@domaine.com)")
+                return
+            }
+        }
+
         setSaving(true)
         const { error } = await supabase
             .from('chatbots')
@@ -175,7 +183,7 @@ export default function MarketingEmailPage() {
                 welcome_email_subject: editingEmail.subject,
                 welcome_email_body: editingEmail.body,
                 custom_sender_name: editingEmail.sender_name,
-                reply_to: editingEmail.reply_to
+                reply_to: editingEmail.reply_to?.trim()
             })
             .eq('id', selectedBot.id)
 
@@ -379,6 +387,9 @@ export default function MarketingEmailPage() {
                                     value={editingEmail.reply_to}
                                     onChange={(e) => setEditingEmail({ ...editingEmail, reply_to: e.target.value })}
                                     placeholder="Ex: contact@ma-marque.com"
+                                    type="email"
+                                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                    title="Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)"
                                 />
                                 <p style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.3)', marginTop: 6, fontWeight: 500 }}>
                                     Les réponses des clients iront sur cette adresse.

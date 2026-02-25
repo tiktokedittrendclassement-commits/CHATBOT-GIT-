@@ -6,7 +6,7 @@ import { useAuth } from '@/components/auth-provider'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { User, Lock, LogOut, CreditCard, Trash2, AlertTriangle, CheckCircle } from 'lucide-react'
+import { User, Lock, LogOut, CreditCard, Trash2, AlertTriangle, CheckCircle, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -27,6 +27,8 @@ export default function SettingsPage() {
         newPassword: '',
         confirmPassword: ''
     })
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     useEffect(() => {
         if (!user) return
@@ -108,6 +110,44 @@ export default function SettingsPage() {
         router.push('/login')
     }
 
+    const handleDeleteAccount = async () => {
+        if (!confirm('Êtes-vous ABSOLUMENT sûr ? Cette action est irréversible et supprimera TOUTES vos données (bots, conversations, crédits).')) {
+            return
+        }
+
+        setSaving(true)
+        setMessage(null)
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) throw new Error('Session non trouvée')
+
+            const response = await fetch('/api/auth/delete-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                }
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Erreur lors de la suppression du compte')
+            }
+
+            // Successfully deleted
+            alert('Votre compte a été supprimé avec succès.')
+            await signOut()
+            router.push('/register')
+        } catch (error) {
+            console.error('Deletion error:', error)
+            setMessage({ type: 'error', text: error.message })
+        } finally {
+            setSaving(false)
+        }
+    }
+
     if (loading) return <div style={{ padding: 40 }}>Chargement des paramètres...</div>
 
     return (
@@ -176,23 +216,43 @@ export default function SettingsPage() {
                             <div className={styles.twoCols}>
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.label}>Nouveau mot de passe</label>
-                                    <Input
-                                        type="password"
-                                        value={passwords.newPassword}
-                                        onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })}
-                                        placeholder="••••••••"
-                                        className={styles.input}
-                                    />
+                                    <div className={styles.passwordWrapper}>
+                                        <Input
+                                            type={showNewPassword ? 'text' : 'password'}
+                                            value={passwords.newPassword}
+                                            onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })}
+                                            placeholder="••••••••"
+                                            className={styles.passwordInput}
+                                        />
+                                        <button
+                                            type="button"
+                                            className={styles.passwordToggle}
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            tabIndex="-1"
+                                        >
+                                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.label}>Confirmer le mot de passe</label>
-                                    <Input
-                                        type="password"
-                                        value={passwords.confirmPassword}
-                                        onChange={e => setPasswords({ ...passwords, confirmPassword: e.target.value })}
-                                        placeholder="••••••••"
-                                        className={styles.input}
-                                    />
+                                    <div className={styles.passwordWrapper}>
+                                        <Input
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            value={passwords.confirmPassword}
+                                            onChange={e => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+                                            placeholder="••••••••"
+                                            className={styles.passwordInput}
+                                        />
+                                        <button
+                                            type="button"
+                                            className={styles.passwordToggle}
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            tabIndex="-1"
+                                        >
+                                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div className={styles.actions}>
@@ -304,14 +364,17 @@ export default function SettingsPage() {
                         </div>
                         <Button
                             variant="ghost"
-                            style={{ color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)' }}
-                            onClick={() => {
-                                if (confirm('Êtes-vous ABSOLUMENT sûr ? Cette action est irréversible.')) {
-                                    alert('Veuillez contacter le support pour supprimer définitivement votre compte par mesure de sécurité.')
-                                }
+                            disabled={saving}
+                            style={{
+                                color: '#ef4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                cursor: saving ? 'not-allowed' : 'pointer',
+                                opacity: saving ? 0.7 : 1
                             }}
+                            onClick={handleDeleteAccount}
                         >
-                            Supprimer mon compte
+                            {saving ? 'Suppression...' : 'Supprimer mon compte'}
                         </Button>
                     </div>
                 </div>

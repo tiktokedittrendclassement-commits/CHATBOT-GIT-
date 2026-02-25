@@ -193,6 +193,14 @@ export default function ChatbotEditor({ botId = null }) {
             return
         }
 
+        if (formData.reply_to) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+            if (!emailRegex.test(formData.reply_to.trim())) {
+                alert("Veuillez entrer une adresse email de réponse valide (ex: contact@domaine.com)")
+                return
+            }
+        }
+
         setLoading(true)
 
         try {
@@ -209,7 +217,7 @@ export default function ChatbotEditor({ botId = null }) {
                 triggers: formData.triggers,
                 theme: formData.theme,
                 sender_name: formData.sender_name,
-                reply_to: formData.reply_to
+                reply_to: formData.reply_to?.trim()
             }
 
             if (botId) {
@@ -600,6 +608,8 @@ export default function ChatbotEditor({ botId = null }) {
                                     value={formData.reply_to}
                                     onChange={(e) => setFormData({ ...formData, reply_to: e.target.value })}
                                     placeholder="Ex: contact@ma-marque.com"
+                                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                    title="Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)"
                                 />
                                 <p className={styles.hint}>Les réponses des clients iront sur cette adresse.</p>
                             </div>

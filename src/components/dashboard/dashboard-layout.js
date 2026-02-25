@@ -166,12 +166,7 @@ export default function DashboardLayout({ children }) {
                     </div>
 
                     <div className={styles.topBarRight}>
-                        <div className={styles.profileSummary}>
-                            <div className={styles.profileAvatar}>
-                                <User size={18} />
-                            </div>
-                            <span className={styles.profileName}>{user?.email?.split('@')[0]}</span>
-                        </div>
+                        {/* Profile summary removed */}
                     </div>
                 </header>
 

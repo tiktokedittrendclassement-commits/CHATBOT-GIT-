@@ -5,7 +5,6 @@ import Link from 'next/link'
 import styles from './page.module.css'
 import { ArrowRight, Check, X, Copy, Send, Bot, Palette, Code, Sun, Moon, MessageSquare, Zap } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import GymsharkDemo from '@/components/gymshark-demo'
 
 const Spline = dynamic(() => import('@splinetool/react-spline'), {
   ssr: false,
@@ -216,12 +215,12 @@ function MockEmbed() {
       <p className={styles.mockHint} style={{ marginBottom: 16 }}>
         Copiez ce code dans la balise &lt;body&gt; de votre site :
       </p>
-      <div className={styles.mockCodeBlock}>
-        {`<script 
-   src="https://usevendo.com/embed.js" 
-   data-chatbot-id="96d933b7-cecc-42dc-a5ae-0b36da990a04" 
-   async 
-></script>`}
+      <div className={styles.mockCodeBlock} style={{ color: '#8b5cf6' }}>
+        <span style={{ color: '#E596FD' }}>&lt;script</span> <br />
+        &nbsp;&nbsp;src=<span style={{ color: '#FFF' }}>"https://usevendo.com/embed.js"</span> <br />
+        &nbsp;&nbsp;data-chatbot-id=<span style={{ color: '#FFF' }}>"96d933b7-cecc-42dc-a5ae-0b36da990a04"</span> <br />
+        &nbsp;&nbsp;<span style={{ color: '#E596FD' }}>async</span> <br />
+        <span style={{ color: '#E596FD' }}>&gt;&lt;/script&gt;</span>
       </div>
     </div>
   )
@@ -266,7 +265,7 @@ const PLANS = [
   {
     n: 'Gratuit', p: '0', d: 'Testez sans engagement.',
     items: ['1 chatbot', '1 000 messages au total', 'Nom et ton personnalisables', "Script d'integration inclus"],
-    fill: false, cta: 'Tester gratuitement',
+    fill: false, cta: 'Tester sans abonnement',
   },
   {
     n: 'Croissance', p: '49', d: 'Pour les boutiques qui veulent vendre plus.',
@@ -298,7 +297,6 @@ export default function Home() {
           <Link href="/" className={styles.logo}>Vendo</Link>
           <div className={styles.navLinks}>
             <Link href="#how" className={styles.navA}>Fonctionnement</Link>
-            <Link href="#demo" className={styles.navA}>Demo</Link>
             <Link href="#pricing" className={styles.navA}>Tarifs</Link>
           </div>
           <div className={styles.navEnd}>
@@ -328,10 +326,9 @@ export default function Home() {
             </p>
             <div className={styles.heroCtaRow}>
               <Link href="/register" className={styles.btnFill}>
-                Tester gratuitement — sans carte
+                Tester sans abonnement
                 <ArrowRight size={15} strokeWidth={2.5} />
               </Link>
-              <Link href="#demo" className={styles.btnText}>{"Voir la demo ↓"}</Link>
             </div>
             <p className={styles.heroMeta}>Compatible Shopify · WordPress · Wix · Tout site custom</p>
           </div>
@@ -468,22 +465,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="demo" className={styles.section} style={{ background: 'var(--surface)' }}>
-        <div className={styles.wrap}>
-          <div className={styles.centerHead}>
-            <p className={styles.eyebrow}>Demo interactive</p>
-            <h2 className={styles.h2c}>Essayez-le vous-même.</h2>
-            <p className={styles.centerSub}>
-              Demandez une taille, un delai, une comparaison produit.
-              C’est exactement ce que verront vos clients.
-            </p>
-          </div>
-          <div className={styles.demoBox}>
-            <GymsharkDemo />
-          </div>
-        </div>
-      </section>
-
       <section id="pricing" className={styles.section}>
         <div className={styles.wrap}>
           <div className={styles.centerHead}>
@@ -521,7 +502,7 @@ export default function Home() {
             La prochaine question de vos clients<br />
             peut trouver sa reponse ce soir.
           </h2>
-          <p className={styles.ctaSub}>Sans carte. Sans dev. En 3 minutes.</p>
+          <p className={styles.ctaSub}>Sans dev. En 3 minutes.</p>
           <Link href="/register" className={styles.btnFillLg}>
             Creer mon assistant maintenant
             <ArrowRight size={17} strokeWidth={2.5} />

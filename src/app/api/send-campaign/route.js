@@ -93,7 +93,7 @@ export async function POST(req) {
                 const replyTo = firstBot?.reply_to
 
                 const { data, error } = await getResend().emails.send({
-                    from: `${senderName} <contact@usevendo.com>`,
+                    from: `${senderName} <team@usevendo.com>`,
                     to: [email],
                     reply_to: replyTo || undefined,
                     subject: subject,

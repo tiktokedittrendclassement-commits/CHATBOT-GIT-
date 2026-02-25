@@ -28,7 +28,7 @@ export async function POST(req) {
         }
 
         const { data, error } = await getResend().emails.send({
-            from: `${senderName || chatbotName || 'Vendo'} <contact@usevendo.com>`,
+            from: `${senderName || chatbotName || 'Vendo'} <team@usevendo.com>`,
             to: [to],
             reply_to: replyTo || undefined,
             subject: subject || `Nouveau message de ${chatbotName || 'ton assistant'}`,

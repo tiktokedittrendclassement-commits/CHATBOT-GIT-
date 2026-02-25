@@ -14,6 +14,7 @@ export default function RegisterPage() {
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [fullName, setFullName] = useState('')
+    const [consent, setConsent] = useState(false)
     const [isRegistered, setIsRegistered] = useState(false)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -29,6 +30,12 @@ export default function RegisterPage() {
 
         if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
             setError("Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)")
+            setLoading(false)
+            return
+        }
+
+        if (!consent) {
+            setError("Vous devez accepter la politique de confidentialité et les CGU pour continuer.")
             setLoading(false)
             return
         }
@@ -165,6 +172,18 @@ export default function RegisterPage() {
                             </button>
                         </div>
                     </div>
+
+                    <label className={styles.consentField}>
+                        <input
+                            type="checkbox"
+                            checked={consent}
+                            onChange={(e) => setConsent(e.target.checked)}
+                            required
+                        />
+                        <span className={styles.consentText}>
+                            J&apos;accepte la <Link href="/politique-de-confidentialite">politique de confidentialité</Link> et les <Link href="/cgu-cgv">CGU/CGV</Link> de Vendo.
+                        </span>
+                    </label>
 
                     <Button type="submit" disabled={loading} className={styles.submit}>
                         {loading ? 'Création...' : 'Créer un compte'}

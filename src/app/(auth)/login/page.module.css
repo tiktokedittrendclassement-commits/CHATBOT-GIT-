@@ -56,9 +56,43 @@
 }
 
 .form {
-    display: flex;
-    flex-direction: column;
     gap: 20px;
+}
+
+.consentField {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.consentField input {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--accent, #7c3aed);
+}
+
+.consentText {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.consentText a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(255, 255, 255, 0.2);
+    transition: all 0.2s;
+}
+
+.consentText a:hover {
+    color: #7c3aed;
+    text-decoration-color: #7c3aed;
 }
 
 .field {

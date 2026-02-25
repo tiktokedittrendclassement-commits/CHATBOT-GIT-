@@ -1,0 +1,20 @@
+{% schema %}
+{
+  "name": "Vendo Assistant",
+  "target": "body",
+  "settings": [
+    {
+      "type": "text",
+      "id": "chatbot_id",
+      "label": "Chatbot ID",
+      "info": "Récupérez votre ID sur le dashboard Vendo",
+      "default": "default"
+    }
+  ]
+}
+{% endschema %}
+
+<script 
+  src="https://usevendo.com/api/embed?id={{ block.settings.chatbot_id }}"
+  defer
+></script>

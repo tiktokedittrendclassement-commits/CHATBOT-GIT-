@@ -281,7 +281,7 @@ export default function SettingsPage() {
                             </div>
                             <p className={styles.helperText}>Gérez votre abonnement, factures et méthode de paiement.</p>
                         </div>
-                        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <div className={styles.actionsWrapper}>
                             {profile.plan_tier !== 'free' ? (
                                 <Button
                                     size="md"
@@ -290,18 +290,6 @@ export default function SettingsPage() {
 
                                         setLoading(true);
                                         try {
-                                            // Check limits
-                                            const { count } = await supabase
-                                                .from('chatbots')
-                                                .select('*', { count: 'exact', head: true })
-                                                .eq('user_id', user.id);
-
-                                            if (count > 1) {
-                                                alert(`Impossible de se désabonner : Vous avez ${count} chatbots. Le plan Gratuit n'en autorise qu'un seul. Veuillez en supprimer avant de résilier.`);
-                                                setLoading(false);
-                                                return;
-                                            }
-
                                             // Downgrade
                                             await supabase
                                                 .from('profiles')
@@ -321,24 +309,24 @@ export default function SettingsPage() {
                                             setLoading(false);
                                         }
                                     }}
-                                    style={{ minWidth: '220px', justifyContent: 'center' }}
+                                    className={styles.actionBtn}
                                 >
                                     Se désabonner
                                 </Button>
                             ) : (
-                                <Link href="/billing">
-                                    <Button size="md" style={{ minWidth: '220px', justifyContent: 'center' }}>Gérer mon plan</Button>
+                                <Link href="/billing" className={styles.actionBtnLink}>
+                                    <Button size="md" className={styles.actionBtn}>Gérer mon plan</Button>
                                 </Link>
                             )}
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className={styles.dangerZoneRow}>
                         <div>
                             <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 4 }}>Changer de compte</div>
                             <p className={styles.helperText}>Déconnectez-vous pour utiliser un autre compte.</p>
                         </div>
-                        <Button size="md" onClick={handleSignOut} style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: '220px', justifyContent: 'center' }}>
+                        <Button size="md" onClick={handleSignOut} className={styles.actionBtn}>
                             <LogOut size={16} />
                             Déconnexion
                         </Button>
@@ -357,7 +345,7 @@ export default function SettingsPage() {
                     <h2 className={styles.sectionTitle}>Zone de Danger</h2>
                 </div>
                 <div className={styles.sectionContent}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className={styles.dangerZoneRow}>
                         <div>
                             <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', marginBottom: 4 }}>Supprimer le compte</div>
                             <p className={styles.helperText}>Cette action est irréversible. Toutes vos données seront effacées.</p>

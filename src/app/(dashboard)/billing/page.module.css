@@ -370,12 +370,28 @@
     justify-content: flex-end;
 }
 
+@media (max-width: 768px) {
+    .modalActions {
+        flex-direction: column;
+    }
+
+    .modalActions button {
+        width: 100%;
+        order: 1;
+    }
+
+    .modalActions .cancelBtn {
+        order: 2;
+    }
+}
+
 .cancelBtn {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     padding: 0 24px;
-    height: 48px;
+    min-height: 48px;
+    height: auto;
     border-radius: 14px;
     font-weight: 700;
     font-size: 14px;
@@ -393,8 +409,9 @@
     background: #ef4444;
     color: #fff;
     border: none;
-    padding: 0 32px;
-    height: 48px;
+    padding: 10px 32px;
+    min-height: 48px;
+    height: auto;
     border-radius: 14px;
     font-weight: 800;
     font-size: 14px;

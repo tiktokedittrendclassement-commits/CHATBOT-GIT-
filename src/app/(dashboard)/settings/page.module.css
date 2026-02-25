@@ -157,9 +157,62 @@
 
     .planRow {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+        align-items: stretch;
+        gap: 20px;
     }
+
+    .planName {
+        font-size: 20px;
+    }
+
+    .dangerZoneRow {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 20px;
+    }
+
+    .dangerZoneRow button {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .actionsWrapper {
+        width: 100%;
+    }
+
+    .actionBtnLink {
+        width: 100%;
+        display: block;
+    }
+
+    .actionBtn {
+        width: 100% !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+    }
+}
+
+.actionsWrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.actionBtnLink {
+    text-decoration: none;
+}
+
+.actionBtn {
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.dangerZoneRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .passwordWrapper {

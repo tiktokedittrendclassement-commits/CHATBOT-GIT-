@@ -53,7 +53,7 @@ function ChatWidget({ tilt }) {
         <div className={styles.wHead}>
           <div className={styles.wAvatar}>V</div>
           <div>
-            <p className={styles.wName}>Assistant Vendo</p>
+            <p className={styles.wName}>Chatbot Vendo</p>
             <p className={styles.wSub}><span className={styles.wDot} />En ligne · repond en 3s</p>
           </div>
           <span className={styles.wX}><X size={13} /></span>
@@ -105,8 +105,8 @@ function MockCustom() {
         Personnalisation
       </div>
       <div className={styles.field}>
-        <label className={styles.mockLabel}>Nom de l'Assistant</label>
-        <div className={styles.mockInput}>Mon Assistant Vendo</div>
+        <label className={styles.mockLabel}>Nom du Chatbot</label>
+        <div className={styles.mockInput}>Mon Chatbot Vendo</div>
       </div>
       <div className={styles.field}>
         <label className={styles.mockLabel}>Sous-titre / Statut</label>
@@ -275,7 +275,7 @@ const PLANS = [
   {
     n: 'Agence', p: '249', d: 'Gerez plusieurs clients sous votre marque.',
     items: ['Chatbots illimites', 'Messages illimites', 'WhatsApp marketing', 'Marque blanche complète', 'Droits de revente'],
-    fill: false, cta: "Contacter l’equipe",
+    fill: false, cta: 'Demarrer maintenant',
   },
 ]
 
@@ -402,7 +402,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className={styles.glassSlate} style={{ borderLeft: '2px solid var(--accent)' }}>
+                <div className={`${styles.glassSlate} ${styles.glassSlateAccent}`}>
                   <span className={styles.slateTitle} style={{ color: 'var(--accent)' }}>Avec Vendo</span>
                   <div className={styles.slateItems}>
                     <div className={styles.slateItem}>
@@ -423,7 +423,7 @@ export default function Home() {
 
               <div className={styles.mascotCta} style={{ marginTop: 40 }}>
                 <Link href="/register" className={styles.btnFill}>
-                  Tester sur ma boutique — gratuit <ArrowRight size={14} />
+                  Tester sur ma boutique <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
@@ -504,7 +504,7 @@ export default function Home() {
           </h2>
           <p className={styles.ctaSub}>Sans dev. En 3 minutes.</p>
           <Link href="/register" className={styles.btnFillLg}>
-            Creer mon assistant maintenant
+            Creer mon chatbot maintenant
             <ArrowRight size={17} strokeWidth={2.5} />
           </Link>
           <p className={styles.ctaMeta}>Compatible Shopify · WordPress · Wix · Tout site custom</p>
@@ -518,6 +518,10 @@ export default function Home() {
             <Link href="/login">Connexion</Link>
             <Link href="#how">Fonctionnement</Link>
             <Link href="#pricing">Tarifs</Link>
+            <Link href="/mentions-legales">Mentions Légales</Link>
+            <Link href="/politique-de-confidentialite">Confidentialité</Link>
+            <Link href="/cgu-cgv">CGU/CGV</Link>
+            <Link href="/politique-de-remboursement">Remboursement</Link>
           </div>
           <span className={styles.footerCopy}>© {new Date().getFullYear()} Vendo</span>
         </div>

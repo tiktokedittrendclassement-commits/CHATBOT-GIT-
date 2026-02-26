@@ -6,6 +6,7 @@ import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Brain, MessageSquare, AlertCircle, FileText, List, Sparkles, Lock } from 'lucide-react'
 import { CustomSelect } from '@/components/ui/custom-select'
+import { PlanRestriction } from '@/components/ui/plan-restriction'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -19,6 +20,7 @@ export default function StatisticsPage() {
     const [messageCount, setMessageCount] = useState(0)
 
     const [profile, setProfile] = useState(null)
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
     useEffect(() => {
         if (!user) return
@@ -119,10 +121,24 @@ export default function StatisticsPage() {
 
     const isFreePlan = profile?.plan_tier === 'free' || !profile?.plan_tier;
 
-    // Modified runAnalysis to block free plan
+    // Modified runAnalysis to reveal UI for free plan without real data
     const handleRunAnalysis = async () => {
         if (isFreePlan) {
-            alert("Cette fonctionnalité est réservée aux membres Pro. Veuillez mettre à jour votre plan.")
+            setAnalyzing(true)
+            await new Promise(resolve => setTimeout(resolve, 1500)) // Fake loading
+            setAnalysis({
+                summary: "Mettez à niveau votre compte pour que l'IA puisse analyser vos conversations et générer un rapport détaillé.",
+                topQuestions: [
+                    "Donnée restreinte (Plan Pro)",
+                    "Donnée restreinte (Plan Pro)",
+                    "Donnée restreinte (Plan Pro)"
+                ],
+                recommendations: {
+                    missingData: ["Donnée restreinte (Plan Pro)"],
+                    prompt: "La suggestion de prompt système est réservée aux abonnements Pro."
+                }
+            })
+            setAnalyzing(false)
             return
         }
         await runAnalysis()
@@ -147,53 +163,65 @@ export default function StatisticsPage() {
                         onChange={(val) => setSelectedBot(val)}
                     />
 
-                    {isFreePlan ? (
-                        <Link href="/billing">
-                            <Button className={styles.upgradeBtn}>
-                                <Lock size={16} style={{ marginRight: 8 }} />
-                                Débloquer (Plan Pro)
-                            </Button>
-                        </Link>
-                    ) : (
-                        <Button onClick={handleRunAnalysis} disabled={analyzing} className={styles.analyzeBtn}>
-                            {analyzing ? (
-                                <>
-                                    <Sparkles size={16} className={styles.spin} style={{ marginRight: 8 }} />
-                                    Analyse en cours...
-                                </>
-                            ) : (
-                                <>
-                                    <Brain size={16} style={{ marginRight: 8 }} />
-                                    Générer le rapport
-                                </>
-                            )}
-                        </Button>
-                    )}
+                    <Button onClick={handleRunAnalysis} disabled={analyzing} className={styles.analyzeBtn}>
+                        {analyzing ? (
+                            <>
+                                <Sparkles size={16} className={styles.spin} style={{ marginRight: 8 }} />
+                                Analyse en cours...
+                            </>
+                        ) : (
+                            <>
+                                <Brain size={16} style={{ marginRight: 8 }} />
+                                Générer le rapport
+                            </>
+                        )}
+                    </Button>
                 </div>
             </div>
 
             {/* Banner for Free Plan */}
-            {isFreePlan && (
-                <div className={styles.lockedBox}>
-                    <div className={styles.lockedBoxIcon}>
-                        <Lock size={24} />
+            <div style={{ position: 'relative' }}>
+                {isFreePlan && (
+                    <PlanRestriction
+                        tier="Pro"
+                        description="L'IA analyse vos conversations pour extraire des points clés exploitables et booster vos ventes. Réservé aux membres <strong>Pro</strong>."
+                        isOverlay={false}
+                    />
+                )}
+                <div style={{ pointerEvents: 'auto', opacity: 1 }}>
+                    <div className={styles.chartsGrid}>
+                        {/* Conversions Chart */}
+                        <div className={styles.chartCard}>
+                            <div className={styles.chartHeader}>
+                            </div>
+                            <div className={styles.chartPlaceholder}>
+                                <div className={styles.barContainer}>
+                                    {[40, 65, 45, 90, 55, 75, 85].map((h, i) => (
+                                        <div key={i} className={styles.bar} style={{ height: `${h}%` }}></div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Distribution Chart */}
+                        <div className={styles.chartCard}>
+                            <div className={styles.chartHeader}>
+                            </div>
+                            <div className={styles.chartPlaceholder}>
+                                <div className={styles.piePlaceholder}></div>
+                                <div className={styles.legend}>
+                                    <div className={styles.legendItem}><span style={{ background: '#8B5CF6' }}></span></div>
+                                    <div className={styles.legendItem}><span style={{ background: '#EC4899' }}></span></div>
+                                    <div className={styles.legendItem}><span style={{ background: '#3B82F6' }}></span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div style={{ flex: 1 }}>
-                        <div className={styles.lockedText}>Fonctionnalité Premium</div>
-                        <p className={styles.lockedSubText}>
-                            L&apos;analyse IA avancée est réservée aux plans Pro.
-                        </p>
-                    </div>
-                    <Link href="/billing">
-                        <Button className={styles.upgradeBtn} variant="outline">
-                            Mettre à niveau
-                        </Button>
-                    </Link>
                 </div>
-            )}
+            </div>
 
             {analysis ? (
-                <div className={styles.analysisContainer} style={{ opacity: isFreePlan ? 0.5 : 1, pointerEvents: isFreePlan ? 'none' : 'auto' }}>
+                <div className={styles.analysisContainer} style={{ pointerEvents: 'auto' }}>
 
                     {/* Summary Section */}
                     <div className={styles.summaryCard}>
@@ -261,8 +289,8 @@ export default function StatisticsPage() {
                     <p className={styles.emptyText}>
                         L&apos;IA va lire vos dernières conversations pour détecter les tendances, les questions fréquentes et les points d&apos;amélioration.
                     </p>
-                    <Button onClick={isFreePlan ? handleRunAnalysis : runAnalysis} disabled={analyzing} className={styles.analyzeBtn}>
-                        {isFreePlan ? <><Lock size={16} style={{ marginRight: 8 }} /> Analyse Verrouillée (Pro)</> : "Commencer l'analyse"}
+                    <Button onClick={handleRunAnalysis} disabled={analyzing} className={styles.analyzeBtn}>
+                        {analyzing ? "Analyse en cours..." : "Commencer l'analyse"}
                     </Button>
                 </div>
             )}

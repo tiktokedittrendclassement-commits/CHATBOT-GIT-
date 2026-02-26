@@ -6,6 +6,7 @@ import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Globe, MapPin, Users, Lock, ArrowUpRight } from 'lucide-react'
 import { CustomSelect } from '@/components/ui/custom-select'
+import { PlanRestriction } from '@/components/ui/plan-restriction'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -98,82 +99,72 @@ export default function InsightsPage() {
                 )}
             </div>
 
-            {/* Banner for Non-Agency */}
-            {!isAgency && (
-                <div className={styles.banner}>
-                    <div className={styles.bannerIcon}>
-                        <Globe size={24} />
-                    </div>
-                    <div className={styles.bannerContent}>
-                        <h3>Fonctionnalité Agence</h3>
-                        <p>
-                            Passez au plan Agence pour débloquer le suivi détaillé des visiteurs et les analyses de parcours.
-                        </p>
-                    </div>
-                    <Link href="/billing" style={{ marginLeft: 'auto' }}>
-                        <Button size="lg">Mettre à niveau</Button>
-                    </Link>
-                </div>
-            )}
-
-            <div className={styles.grid}>
-
-                {/* Stats Card */}
-                <div className={styles.card}>
-                    <div className={styles.cardTitle}>Vue d'ensemble</div>
-                    <div className={styles.statRow}>
-                        <div className={styles.statIcon}>
-                            <Users size={24} />
+            <div style={{ position: 'relative' }}>
+                {!isAgency && (
+                    <PlanRestriction
+                        tier="Agence"
+                        description="Analysez le parcours de vos visiteurs et identifiez les pages qui convertissent le mieux. Réservé aux comptes <strong>Agence</strong>."
+                        isOverlay={false}
+                    />
+                )}
+                <div style={{ pointerEvents: 'auto', opacity: 1 }}>
+                    <div className={styles.grid}>
+                        {/* Stats Card */}
+                        <div className={styles.card}>
+                            <div className={styles.cardTitle}>Vue d'ensemble</div>
+                            <div className={styles.statRow}>
+                                <div className={styles.statIcon}>
+                                    <Users size={24} />
+                                </div>
+                                <div>
+                                    <div className={styles.statLabel}>Interactions Totales</div>
+                                    <div className={styles.statValue}>{totalVisits}</div>
+                                </div>
+                            </div>
+                            <div className={styles.infoBox}>
+                                Ces données sont basées sur les interactions avec les chatbots sur votre site web.
+                            </div>
                         </div>
-                        <div>
-                            <div className={styles.statLabel}>Interactions Totales</div>
-                            <div className={styles.statValue}>{totalVisits}</div>
-                        </div>
-                    </div>
-                    <div className={styles.infoBox}>
-                        Ces données sont basées sur les interactions avec les chatbots sur votre site web.
-                    </div>
-                </div>
 
-                {/* Pages List */}
-                <div className={styles.card} style={{ padding: 0, overflow: 'hidden' }}>
-                    <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h2 className={styles.cardTitle} style={{ marginBottom: 0 }}>Pages les plus visitées</h2>
-                        <Globe size={16} className="text-slate-400" />
-                    </div>
+                        {/* Pages List */}
+                        <div className={styles.card} style={{ padding: 0, overflow: 'hidden' }}>
+                            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h2 className={styles.cardTitle} style={{ marginBottom: 0 }}>Pages les plus visitées</h2>
+                                <Globe size={16} style={{ opacity: 0.5 }} />
+                            </div>
 
-                    {visitedPages.length > 0 ? (
-                        <div>
-                            {visitedPages.map((page, i) => (
-                                <div key={i} className={styles.listItem} style={{ padding: '16px 24px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-                                        <div className={styles.rank}>
-                                            {i + 1}
-                                        </div>
-                                        <div style={{ overflow: 'hidden', minWidth: 0 }}>
-                                            <a href={page.url.startsWith('http') ? page.url : '#'} target="_blank" rel="noopener noreferrer" className={styles.urlLink}>
-                                                {page.url}
-                                                {page.url.startsWith('http') && <ArrowUpRight size={12} />}
-                                            </a>
-                                            <div className={styles.lastVisit}>
-                                                Dernière visite : {new Date(page.last_visit).toLocaleDateString()}
+                            {visitedPages.length > 0 ? (
+                                <div>
+                                    {visitedPages.map((page, i) => (
+                                        <div key={i} className={styles.listItem} style={{ padding: '16px 24px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+                                                <div className={styles.rank}>
+                                                    {i + 1}
+                                                </div>
+                                                <div style={{ overflow: 'hidden', minWidth: 0 }}>
+                                                    <a href={page.url.startsWith('http') ? page.url : '#'} target="_blank" rel="noopener noreferrer" className={styles.urlLink}>
+                                                        {page.url}
+                                                        {page.url.startsWith('http') && <ArrowUpRight size={12} />}
+                                                    </a>
+                                                    <div className={styles.lastVisit}>
+                                                        Dernière visite : {new Date(page.last_visit).toLocaleDateString()}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={styles.countBadge}>
+                                                {page.count}
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className={styles.countBadge}>
-                                        {page.count}
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
+                            ) : (
+                                <div className={styles.emptyState}>
+                                    <MapPin size={32} style={{ marginBottom: 12, opacity: 0.5 }} />
+                                    <p>Aucune donnée de visite enregistrée pour le moment.</p>
+                                </div>
+                            )}
                         </div>
-                    ) : (
-                        <div className={styles.emptyState}>
-                            <MapPin size={32} style={{ marginBottom: 12, opacity: 0.5 }} />
-                            <p>{isAgency ? 'Aucune donnée de visite enregistrée pour le moment.' : 'Données réservées aux Agences.'}</p>
-                            {!isAgency && <p style={{ fontSize: 12, marginTop: 8 }}>Upgradez votre plan pour voir les détails.</p>}
-                            {isAgency && <p style={{ fontSize: 12, marginTop: 8 }}>Assurez-vous que votre chatbot est bien installé sur votre site.</p>}
-                        </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>

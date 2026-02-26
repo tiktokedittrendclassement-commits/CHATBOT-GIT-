@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Lock, Mail, Download, Search, Calendar, User, ArrowRight, Settings, Sparkles, X, Bot, Send } from 'lucide-react'
 import Link from 'next/link'
+import { PlanRestriction } from '@/components/ui/plan-restriction'
 import styles from './page.module.css'
 import EmailComposer from '@/components/dashboard/email-composer'
 import aiStyles from './ai-modal.module.css'
@@ -56,11 +57,25 @@ export default function MarketingEmailPage() {
                 // Fetch bots
                 const { data: bots, error: botsError } = await supabase.from('chatbots').select('*').eq('user_id', user.id)
                 if (botsError) console.error('[MarketingEmail] Bots error:', botsError);
-                setChatbots(bots || [])
 
-                if (bots?.length > 0) {
+                let currentBots = bots || []
+
+                // Demo Data for Free Users
+                if (currentBots.length === 0 && (prof?.plan_tier === 'free' || !prof)) {
+                    currentBots = [{
+                        id: 'demo-bot',
+                        name: 'Assistant Démo',
+                        collect_emails: true,
+                        welcome_email_subject: 'Bienvenue chez nous !',
+                        welcome_email_body: 'Bonjour, merci de votre intérêt...'
+                    }]
+                }
+
+                setChatbots(currentBots)
+
+                if (currentBots.length > 0) {
                     // Auto-select first bot
-                    const initialBot = bots[0]
+                    const initialBot = currentBots[0]
                     setSelectedBot(initialBot)
                     setEditingEmail({
                         subject: initialBot.welcome_email_subject || 'Merci de votre visite !',
@@ -69,16 +84,30 @@ export default function MarketingEmailPage() {
                         reply_to: initialBot.reply_to || ''
                     })
 
-                    const botIds = bots.map(b => b.id)
-                    const { data: leadData, error: leadsError } = await supabase
-                        .from('leads')
-                        .select('*')
-                        .in('chatbot_id', botIds)
-                        .order('captured_at', { ascending: false })
+                    const botIds = currentBots.map(b => b.id).filter(id => id !== 'demo-bot')
+                    let currentLeads = []
 
-                    if (leadsError) console.error('[MarketingEmail] Leads error:', leadsError);
-                    setLeads(leadData || [])
+                    if (botIds.length > 0) {
+                        const { data: leadData, error: leadsError } = await supabase
+                            .from('leads')
+                            .select('*')
+                            .in('chatbot_id', botIds)
+                            .order('captured_at', { ascending: false })
+
+                        if (leadsError) console.error('[MarketingEmail] Leads error:', leadsError);
+                        currentLeads = leadData || []
+                    }
+
+                    // Add demo leads if empty
+                    if (currentLeads.length === 0 && (prof?.plan_tier === 'free' || !prof)) {
+                        currentLeads = [
+                            { id: 'l1', email: 'jean.doe@exemple.fr', captured_at: new Date().toISOString(), source_page: '/demo' },
+                            { id: 'l2', email: 'marie.lucas@test.com', captured_at: new Date(Date.now() - 86400000).toISOString(), source_page: '/contact' }
+                        ]
+                    }
+                    setLeads(currentLeads)
                 }
+
                 console.log('[MarketingEmail] Data fetch complete.');
             } catch (err) {
                 console.error('[MarketingEmail] Critical fetch error:', err);
@@ -152,7 +181,10 @@ export default function MarketingEmailPage() {
     }, [showAIModal, isChatExpanded, isAIPrompting])
 
     const toggleEmailCollection = async (botId, currentStatus) => {
-        if (profile?.plan_tier === 'free') return
+        if (isLocked) {
+            alert('Cette option est réservée aux membres Pro. (Mode Démo)')
+            return
+        }
 
         const { error } = await supabase
             .from('chatbots')
@@ -167,6 +199,11 @@ export default function MarketingEmailPage() {
     }
 
     const saveEmailTemplate = async () => {
+        if (isLocked) {
+            alert('Réglages sauvegardés ! (Mode Démo - Plan Pro requis)')
+            return
+        }
+
         if (!selectedBot) return
         if (editingEmail.reply_to) {
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -213,6 +250,10 @@ export default function MarketingEmailPage() {
     }
 
     const sendBulkCampaignFromComposer = async ({ subject, body }) => {
+        if (isLocked) {
+            alert("L'envoi de campagnes est réservé aux membres Pro. Votre email est prêt, mais l'envoi est désactivé en mode démo.")
+            return
+        }
         if (!subject || !body) return alert('Sujet et message requis.')
         if (!confirm(`Êtes-vous sûr de vouloir envoyer cet email à ${leads.length} contacts ?`)) return
 
@@ -247,8 +288,26 @@ export default function MarketingEmailPage() {
         const userMsg = { role: 'user', content: promptToUse }
         setChatMessages(prev => [...prev, userMsg])
         setAiPrompt('')
+
         setIsGeneratingAI(true)
-        setIsChatExpanded(true) // Always expand when generating
+        setIsChatExpanded(true)
+
+        if (isLocked) {
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            const assistantMsg = {
+                role: 'assistant',
+                content: "J'ai préparé un brouillon d'email expert pour vous ! (Mode Démo).\n\nComme vous êtes sur le plan gratuit, j'ai utilisé un modèle standard. Le plan Pro permet une génération 100% personnalisée adaptée à vos produits."
+            }
+            setChatMessages(prev => [...prev, assistantMsg])
+            setEditingEmail(prev => ({
+                ...prev,
+                subject: "Bienvenue chez nous ! (Brouillon Démo)",
+                body: "Bonjour,\n\nCeci est un exemple d'email généré par l'IA Vendo.\n\nEn passant au plan Pro, je pourrai analyser vos produits et votre ton pour créer des emails qui convertissent vraiment vos leads.\n\nÀ bientôt !"
+            }))
+            setIsComposerOpen(true)
+            setIsGeneratingAI(false)
+            return
+        }
 
         try {
             const response = await fetch('/api/chat', {
@@ -275,7 +334,6 @@ export default function MarketingEmailPage() {
                     })
                     setIsComposerOpen(true)
                 } catch (e) {
-                    // Not JSON, just display as text
                     console.log('AI response was not JSON')
                 }
             }
@@ -289,6 +347,7 @@ export default function MarketingEmailPage() {
     const sendBulkCampaign = async () => {
         // Legacy support
     }
+
 
     if (loading) return <div style={{ padding: 24 }}>Chargement...</div>
 
@@ -304,66 +363,70 @@ export default function MarketingEmailPage() {
                     <h1 className={styles.heading}>Marketing Email</h1>
                     <p className={styles.subheading}>Gérez vos contacts et automatisez vos séquences.</p>
                 </div>
-                {!isLocked && (
-                    <div className={styles.headerActions}>
-                        <Button
-                            onClick={() => {
-                                setIsComposerOpen(true)
-                                if (!hasTeaserBeenShown) {
-                                    setShowAIModal(true)
-                                    setHasTeaserBeenShown(true)
-                                }
-                            }}
-                            className={styles.composeBtn}
-                        >
-                            <Mail size={16} style={{ marginRight: 8 }} /> Nouvelle Campagne
-                        </Button>
-                    </div>
-                )}
+                <div className={styles.headerActions}>
+                    <Button
+                        onClick={() => {
+                            setIsComposerOpen(true)
+                            if (!hasTeaserBeenShown) {
+                                setShowAIModal(true)
+                                setHasTeaserBeenShown(true)
+                            }
+                        }}
+                        className={styles.composeBtn}
+                    >
+                        <Mail size={16} style={{ marginRight: 8 }} /> Nouvelle Campagne
+                    </Button>
+                </div>
             </div>
 
-            <div className={styles.grid}>
-                {/* Left: Bot Settings */}
-                <div className={styles.sidebar}>
-                    <div className={styles.card}>
-                        <div className={styles.cardTitle}>
-                            <Settings size={18} style={{ marginRight: 8 }} /> Configuration
-                        </div>
-                        <p className={styles.cardDescription}>
-                            Activez la capture pour chaque assistant.
-                        </p>
+            <div style={{ position: 'relative' }}>
+                {isLocked && (
+                    <PlanRestriction
+                        tier="Pro"
+                        description="Capturez les emails de vos visiteurs et transformez-les en clients avec des séquences automatiques. Réservé aux membres <strong>Pro</strong>."
+                        isOverlay={false}
+                    />
+                )}
+                <div className={styles.grid} style={{ pointerEvents: 'auto', opacity: 1 }}>
+                    {/* Left: Bot Settings */}
+                    <div className={styles.sidebar}>
+                        <div className={styles.card}>
+                            <div className={styles.cardTitle}>
+                                <Settings size={18} style={{ marginRight: 8 }} /> Configuration
+                            </div>
+                            <p className={styles.cardDescription}>
+                                Activez la capture pour chaque assistant.
+                            </p>
 
-                        <div className={styles.botList}>
-                            {chatbots.map(bot => (
-                                <div
-                                    key={bot.id}
-                                    className={`${styles.botItem} ${selectedBot?.id === bot.id ? styles.botItemSelected : ''}`}
-                                    onClick={() => selectBotForEditing(bot)}
-                                    style={{ cursor: 'pointer', marginBottom: 12 }}
-                                >
-                                    <div className={styles.botInfo} style={{ flex: 1 }}>
-                                        <div className={styles.botItemName} style={{ fontWeight: 800, fontSize: 15, color: '#fff', marginBottom: 2 }}>{bot.name}</div>
-                                        <div className={bot.collect_emails ? styles.statusActive : styles.statusInactive} style={{ fontSize: 12, fontWeight: 600 }}>
-                                            {bot.collect_emails ? 'Capture active' : 'Inactif'}
+                            <div className={styles.botList}>
+                                {chatbots.map(bot => (
+                                    <div
+                                        key={bot.id}
+                                        className={`${styles.botItem} ${selectedBot?.id === bot.id ? styles.botItemSelected : ''}`}
+                                        onClick={() => selectBotForEditing(bot)}
+                                        style={{ cursor: 'pointer', marginBottom: 12 }}
+                                    >
+                                        <div className={styles.botInfo} style={{ flex: 1 }}>
+                                            <div className={styles.botItemName} style={{ fontWeight: 800, fontSize: 15, color: '#fff', marginBottom: 2 }}>{bot.name}</div>
+                                            <div className={bot.collect_emails ? styles.statusActive : styles.statusInactive} style={{ fontSize: 12, fontWeight: 600 }}>
+                                                {bot.collect_emails ? 'Capture active' : 'Inactif'}
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                            <label className={styles.switch}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={!!bot.collect_emails}
+                                                    onChange={() => toggleEmailCollection(bot.id, bot.collect_emails)}
+                                                />
+                                                <span className={styles.slider}></span>
+                                            </label>
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                        <label className={styles.switch}>
-                                            <input
-                                                type="checkbox"
-                                                checked={!!(bot.collect_emails && !isLocked)}
-                                                onChange={() => !isLocked && toggleEmailCollection(bot.id, bot.collect_emails)}
-                                                disabled={isLocked}
-                                            />
-                                            <span className={styles.slider}></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {selectedBot && (
                         <div className={styles.card} style={{ marginTop: 24 }}>
                             <div className={styles.cardTitle}>
                                 <Settings size={18} style={{ marginRight: 8 }} /> Personnalisation Email
@@ -405,26 +468,11 @@ export default function MarketingEmailPage() {
                                 {saving ? 'Enregistrement...' : 'Sauvegarder les réglages'}
                             </Button>
                         </div>
-                    )}
+                    </div>
 
-
-                </div>
-
-                {/* Right: Leads Table */}
-                <div className={styles.mainContent}>
-                    {isLocked ? (
-                        <div className={styles.lockedCard}>
-                            <div className={styles.lockedIcon}>
-                                <Lock size={32} />
-                            </div>
-                            <h2>Débloquez le Marketing Email</h2>
-                            <p>Capturez les emails de vos visiteurs et transformez-les en clients avec des séquences automatiques.</p>
-                            <Link href="/billing">
-                                <Button size="lg">Passer à l'offre Pro</Button>
-                            </Link>
-                        </div>
-                    ) : (
-                        <>
+                    {/* Right: Leads Table */}
+                    <div className={styles.mainContent}>
+                        <div>
                             <div className={styles.card}>
                                 <div className={styles.tableHeader}>
                                     <div className={styles.tableTitle}>CONTACTS RÉCOLTÉS ({leads.length})</div>
@@ -502,10 +550,11 @@ export default function MarketingEmailPage() {
                                     />
                                 </div>
                             )}
-                        </>
-                    )}
+                        </div>
+                    </div>
                 </div>
             </div>
+
             {/* AI Assistant Modal */}
             {showAIModal && (
                 <>

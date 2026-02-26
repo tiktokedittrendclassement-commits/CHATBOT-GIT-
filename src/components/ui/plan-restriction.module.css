@@ -1,0 +1,117 @@
+/* Locked Box Container - Restyled as a Banner */
+.lockedBox {
+    background: rgba(15, 15, 20, 0.95);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(139, 92, 246, 0.1);
+    position: relative;
+    z-index: 100;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.iconContainer {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(103, 61, 230, 0.2));
+    padding: 10px;
+    border-radius: 12px;
+    color: #A78BFA;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.content {
+    flex: 1;
+}
+
+.lockedText {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+}
+
+.lockedSubText {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.lockedSubText strong {
+    color: #A78BFA;
+    font-weight: 700;
+}
+
+/* Upgrade Button */
+.upgradeBtn {
+    background: linear-gradient(135deg, #673DE6, #8B5CF6) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    padding: 0 20px !important;
+    height: 40px !important;
+    font-size: 13px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 12px rgba(103, 61, 230, 0.3) !important;
+    border: none !important;
+}
+
+.upgradeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(103, 61, 230, 0.5) !important;
+    filter: brightness(1.1);
+}
+
+@media (max-width: 768px) {
+    .lockedBox {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        gap: 12px;
+    }
+
+    .iconContainer {
+        margin: 0 auto;
+    }
+
+    .upgradeBtn {
+        width: 100%;
+    }
+}
+
+/* Overlay Wrapper - Now a Sticky Top Bar */
+.overlayWrapper {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    pointer-events: auto;
+    /* Ensure clicks on banner work */
+}
+
+/* Base state for restricted content is handled in the page.js */

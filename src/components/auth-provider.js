@@ -15,7 +15,10 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         // Check active session
         const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession()
+            const { data: { session }, error } = await supabase.auth.getSession()
+            if (error) {
+                console.error('Error fetching session:', error)
+            }
             setUser(session?.user ?? null)
             setLoading(false)
         }
@@ -23,11 +26,20 @@ export const AuthProvider = ({ children }) => {
         getSession()
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setUser(session?.user ?? null)
             setLoading(false)
+
+            if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED') {
+                // Potential logic for persistent cookies if needed, but Supabase handles LS/Cookies by default
+            }
+
             if (_event === 'SIGNED_IN') {
                 router.refresh()
+            }
+
+            if (_event === 'SIGNED_OUT') {
+                router.push('/login')
             }
         })
 

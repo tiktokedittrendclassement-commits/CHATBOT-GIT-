@@ -13,6 +13,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
+    const [rememberMe, setRememberMe] = useState(true)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const router = useRouter()
@@ -110,6 +111,18 @@ export default function LoginPage() {
                             >
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
+                        </div>
+                    </div>
+
+                    <div className={styles.options}>
+                        <div className={styles.rememberMe}>
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
+                            <label htmlFor="rememberMe">Se souvenir de moi</label>
                         </div>
                     </div>
 

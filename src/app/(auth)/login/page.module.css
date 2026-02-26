@@ -120,6 +120,38 @@
     margin-bottom: 20px;
 }
 
+.options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 4px 0 16px;
+}
+
+.rememberMe {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.rememberMe input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent, #7c3aed);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.rememberMe label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1;
+    cursor: pointer;
+    font-weight: 500;
+}
+
 .submit {
     margin-top: 12px;
     width: 100%;

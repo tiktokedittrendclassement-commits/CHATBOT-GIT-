@@ -168,13 +168,25 @@
 }
 
 .saveBtn {
-    background: #ffffff;
-    color: #000000;
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    color: #ffffff;
     border: none;
     font-weight: 800;
     height: 48px;
     border-radius: 14px;
     transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+    cursor: pointer;
+}
+
+.saveBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+    filter: brightness(1.1);
+}
+
+.saveBtn:active {
+    transform: translateY(1px);
 }
 
 

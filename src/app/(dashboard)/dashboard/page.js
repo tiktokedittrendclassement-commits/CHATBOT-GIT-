@@ -124,16 +124,17 @@ export default function DashboardPage() {
 
     // Welcome Message Popup (Once per session)
     useEffect(() => {
-        if (!user || !profile || loading) return
+        if (!user || loading) return
 
+        // If we don't have profile yet, we can wait a bit or use metadata
+        // But we don't block the WHOLE effect just for profile if we have user_metadata
         if (sessionStorage.getItem('vendo_welcome_seen')) return
 
         const timer = setTimeout(() => {
-            // Re-check just in case session storage was set in another tab/render
             if (sessionStorage.getItem('vendo_welcome_seen')) return
 
             const metaName = user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.given_name
-            const firstName = profile.full_name?.split(' ')[0] || metaName?.split(' ')[0] || 'Membre'
+            const firstName = profile?.full_name?.split(' ')[0] || metaName?.split(' ')[0] || 'Membre'
             const message = `Bienvenue sur le tableau de bord ${firstName}`
 
             window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {

@@ -13,6 +13,23 @@ import styles from './page.module.css'
 export default function SettingsPage() {
     const { user, signOut } = useAuth()
     const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
+    const [message, setMessage] = useState(null) // { type: 'success' | 'error', text: '' }
+
+    const [profile, setProfile] = useState({
+        full_name: '',
+        email: '',
+        plan_tier: 'free'
+    })
+
+    const [passwords, setPasswords] = useState({
+        newPassword: '',
+        confirmPassword: ''
+    })
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
     const [isEditingEmail, setIsEditingEmail] = useState(false)
     const [newEmail, setNewEmail] = useState('')
 

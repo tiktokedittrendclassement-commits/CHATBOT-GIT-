@@ -40,6 +40,7 @@ export async function POST(req) {
         let systemInstruction = '';
         let chatbot = null;
         let isSystemBot = (chatbotId === 'DEMO' || chatbotId === 'VENDO_SUPPORT');
+        const supabaseAdmin = getSupabaseAdmin()
 
         // 1. Determine Identity & Instructions
         if (chatbotId === 'DEMO') {
@@ -56,7 +57,6 @@ export async function POST(req) {
             chatbot = { name: 'Vendo Support', user_id: 'SYSTEM' };
         } else {
             // Fetch Custom Bot Config
-            const supabaseAdmin = getSupabaseAdmin()
             const { data, error: botError } = await supabaseAdmin
                 .from('chatbots')
                 .select('name, system_prompt, data_sources, user_id, welcome_email_subject, welcome_email_body')

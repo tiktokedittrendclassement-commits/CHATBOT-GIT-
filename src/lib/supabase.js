@@ -25,6 +25,10 @@ const createMockClient = () => {
     auth: {
       getSession: async () => ({ data: { session: null }, error: null }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } }),
+      signInWithOAuth: async () => {
+        console.error('Supabase Mock: signInWithOAuth called but no keys configured.')
+        return { data: null, error: new Error('Mock: Keys missing') }
+      },
       signOut: async () => ({ error: null }),
       getUser: async () => ({ data: { user: null }, error: null }),
     },

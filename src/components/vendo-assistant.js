@@ -25,7 +25,7 @@ export default function VendoAssistant() {
 
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: "Bienvenue sur Vendo. ✨\n\nJe suis votre **Concierge IA**. Je peux vous présenter la puissance de notre plateforme ou **forger le System Prompt d'élite** pour votre futur chatbot.\n\nQuelle est votre mission aujourd'hui ?", shouldType: false }
+        { role: 'assistant', content: "Bienvenue ! ✨\n\nJe suis votre **Concierge IA**. Prêt à transformer vos visiteurs en clients ?", shouldType: false }
     ])
     const [teaserText, setTeaserText] = useState(null)
     const messagesContainerRef = useRef(null)
@@ -143,7 +143,7 @@ export default function VendoAssistant() {
 
     const DEFAULT_MESSAGE = {
         role: 'assistant',
-        content: "Bienvenue sur Vendo. ✨\n\nJe suis votre **Concierge IA**. Je peux vous présenter la puissance de notre plateforme ou **forger le System Prompt d'élite** pour votre futur chatbot.\n\nQuelle est votre mission aujourd'hui ?",
+        content: "Bienvenue ! ✨\n\nJe suis votre **Concierge IA**. Prêt à transformer vos visiteurs en clients ?",
         shouldType: false
     }
 

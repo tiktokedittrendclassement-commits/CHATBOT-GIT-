@@ -38,7 +38,7 @@ export default function MarketingEmailPage() {
     const [chatMessages, setChatMessages] = useState([
         {
             role: 'assistant',
-            content: "Bienvenue sur Vendo. ✨\n\nJe suis votre **Concierge IA**. Je peux vous présenter la puissance de notre plateforme ou **forger le System Prompt d'élite** pour votre futur chatbot.\n\nQuelle est votre mission aujourd'hui ?"
+            content: "Bienvenue ! ✨\n\nJe suis votre **Concierge IA**. Prêt à transformer vos visiteurs en clients ?"
         }
     ])
     const composerRef = useRef(null)
@@ -670,7 +670,7 @@ export default function MarketingEmailPage() {
                                                 window.dispatchEvent(new CustomEvent('vendo-assistant-open', {
                                                     detail: {
                                                         messages: [
-                                                            { role: 'assistant', content: "Bonjour ! Je suis votre **Concierge IA**. Je peux rédiger votre campagne email.\n\nDécrivez-moi le but de votre email. Je commencerai par définir l'**Objet** puis je rédigerai le contenu, qui s'afficheront directement dans l'éditeur à gauche. ✨", shouldType: false }
+                                                            { role: 'assistant', content: "Besoin d'un email impactant ? ✍️\n\nDécrivez-moi votre objectif et je rédige votre campagne en quelques secondes. ✨", shouldType: false }
                                                         ]
                                                     }
                                                 }))

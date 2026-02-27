@@ -191,12 +191,6 @@ export default function SettingsPage() {
                                     style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', borderColor: 'rgba(255,255,255,0.1)' }}
                                     className={styles.input}
                                 />
-                                <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>
-                            </div>
-                            <div className={styles.actions}>
-                                <Button type="submit" disabled={saving} size="md" style={{ minWidth: '220px' }}>
-                                    {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
-                                </Button>
                             </div>
                         </div>
                     </form>

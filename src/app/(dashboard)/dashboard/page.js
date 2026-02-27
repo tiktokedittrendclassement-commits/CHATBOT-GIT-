@@ -149,6 +149,9 @@ export default function DashboardPage() {
     // Calculate max revenue for chart scaling
     const maxRevenue = Math.max(...revenueByBot.map(b => b.amount), 100)
 
+    const isFree = !profile?.plan_tier || profile?.plan_tier === 'free'
+    const limit = 100
+
     return (
         <div className={styles.container}>
             {/* Header / Welcome Banner - Style Minimaliste Pro */}
@@ -215,27 +218,29 @@ export default function DashboardPage() {
                     <div className={styles.cardHeader}>
                         <div>
                             <div className={styles.cardTitle}>Messages Envoyés</div>
-                            <div className={styles.cardValue}>{stats.messages} <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>/ {profile?.plan_tier === 'free' ? '1000' : '∞'}</span></div>
+                            <div className={styles.cardValue}>
+                                {stats.messages} <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>/ {isFree ? limit : '∞'}</span>
+                            </div>
                         </div>
                         <div className={styles.iconBox}>
                             <MessageSquare size={24} />
                         </div>
                     </div>
 
-                    {profile?.plan_tier === 'free' && (
+                    {isFree && (
                         <>
                             <div className={styles.progressContainer}>
                                 <div
                                     className={styles.progressBar}
-                                    style={{ width: `${Math.min((stats.messages / 1000) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((stats.messages / limit) * 100, 100)}%` }}
                                 />
                             </div>
                             <div className={styles.cardDesc}>
-                                <span>Limite de 1000 messages (Non renouvelable)</span>
+                                <span>Limite de {limit} messages (Non renouvelable)</span>
                             </div>
                         </>
                     )}
-                    {profile?.plan_tier !== 'free' && (
+                    {!isFree && (
                         <div className={styles.cardDesc} style={{ marginTop: 12 }}>
                             <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 500, fontSize: '13px' }}>Volume illimité activé</span>
                         </div>

@@ -15,6 +15,7 @@ export default function EmbedPage() {
     const [botConfig, setBotConfig] = useState(null)
     const [error, setError] = useState(null)
     const [visitorId, setVisitorId] = useState(null)
+    const [planTier, setPlanTier] = useState(null)
     const [pageUrl, setPageUrl] = useState('')
     const [conversationId, setConversationId] = useState(null)
     const messagesEndRef = useRef(null)
@@ -43,7 +44,7 @@ export default function EmbedPage() {
         const fetchBot = async () => {
             const { data, error } = await supabase
                 .from('chatbots')
-                .select('name, color, logo_url, welcome_message_new, welcome_message_returning, triggers, theme, subtitle')
+                .select('name, color, logo_url, welcome_message_new, welcome_message_returning, triggers, theme, subtitle, user_id')
                 .eq('id', params.chatbotId)
                 .single()
 
@@ -52,13 +53,39 @@ export default function EmbedPage() {
             } else {
                 setBotConfig(data)
 
+                // Fetch owner's plan to check for branding
+                if (data.user_id) {
+                    console.log('Fetching plan for user:', data.user_id);
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('plan_tier')
+                        .eq('id', data.user_id)
+                        .single()
+
+                    if (profileError) console.error('Error fetching profile (check RLS):', profileError);
+
+                    const fetchedTier = profile?.plan_tier || null;
+                    console.log('Plan tier fetched:', fetchedTier);
+                    setPlanTier(fetchedTier)
+                } else {
+                    console.warn('No user_id found for chatbot');
+                    setPlanTier(null)
+                }
+
                 if (typeof window !== 'undefined') {
                     window.parent.postMessage({
                         type: 'vendo-bot-config',
-                        name: data.name,
+                        name: data.name || 'Mon Assistant Vendo',
                         color: data.color,
                         avatar: data.logo_url,
                         theme: data.theme
+                    }, '*')
+
+                    // Send triggers to parent immediately
+                    window.parent.postMessage({
+                        type: 'vendo-init-triggers',
+                        chatbotId: params.chatbotId,
+                        triggers: data.triggers || []
                     }, '*')
 
                     // Also share visitor ID for sale tracking
@@ -74,15 +101,6 @@ export default function EmbedPage() {
 
                 if (isReturning && data.welcome_message_returning) {
                     greeting = data.welcome_message_returning
-                }
-
-                // Send triggers to parent
-                if (typeof window !== 'undefined') {
-                    window.parent.postMessage({
-                        type: 'vendo-init-triggers',
-                        chatbotId: params.chatbotId,
-                        triggers: data.triggers || []
-                    }, '*')
                 }
 
                 if (greeting && greeting.trim().length > 0) {
@@ -165,7 +183,7 @@ export default function EmbedPage() {
     // Prioritize logo_url if it contains 1-2 characters (custom initials)
     const brandInitial = (botConfig.logo_url && botConfig.logo_url.length <= 2)
         ? botConfig.logo_url.toUpperCase()
-        : (botConfig.name ? botConfig.name.substring(0, 2).toUpperCase() : 'A')
+        : (botConfig.name ? botConfig.name.substring(0, 2).toUpperCase() : 'AV')
 
     const quickActions = botConfig.quick_actions || []
 
@@ -250,7 +268,9 @@ export default function EmbedPage() {
                     )}
                 </div>
                 <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>{botConfig.name}</div>
+                    <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>
+                        {botConfig.name || 'Mon Assistant Vendo'}
+                    </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
                         <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%', boxShadow: '0 0 8px #10B981', animation: 'embedPulse 2s infinite' }}></div>
                         <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
@@ -314,7 +334,7 @@ export default function EmbedPage() {
                                 color: !isAssistant ? '#fff' : themeColors.textMain,
                                 background: !isAssistant ? brandColor : themeColors.bubbleAssistant,
                                 boxShadow: !isAssistant
-                                    ? `0 8px 16px ${brandColor}33`
+                                    ? `0 2px 8px ${brandColor}22`
                                     : isDark ? '0 4px 12px rgba(0,0,0,0.2)' : '0 2px 10px rgba(0,0,0,0.03)',
                                 border: isAssistant ? `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` : 'none',
                                 fontWeight: 500,
@@ -422,6 +442,37 @@ export default function EmbedPage() {
                     <Send size={20} />
                 </button>
             </form>
+
+            {/* Footer Branding - Only for Free and Pro plans */}
+            {(planTier?.toLowerCase() === 'free' || planTier?.toLowerCase() === 'pro') && (
+                <div
+                    id="vendo-branding-footer"
+                    style={{
+                        padding: '12px 24px',
+                        textAlign: 'center',
+                        background: themeColors.bgMain,
+                        borderTop: `1px solid ${themeColors.inputBorder}`
+                    }}
+                >
+                    <a
+                        href="https://usevendo.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            fontSize: '11px',
+                            color: themeColors.textMuted,
+                            textDecoration: 'none',
+                            fontWeight: 600,
+                            letterSpacing: '0.02em',
+                            transition: 'color 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.color = isDark ? '#fff' : '#1E293B'}
+                        onMouseLeave={e => e.currentTarget.style.color = themeColors.textMuted}
+                    >
+                        powered by <span style={{ color: '#673DE6' }}>vendo</span>
+                    </a>
+                </div>
+            )}
         </div>
     )
 }

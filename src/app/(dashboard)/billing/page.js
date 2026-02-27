@@ -13,7 +13,7 @@ const PLANS = [
         id: 'free',
         name: 'Gratuit',
         price: '0€/mois',
-        features: ['1 Chatbot', '1000 messages (Total)', 'Personnalisation Basique', 'Support Communautaire', 'Crédits à la demande'],
+        features: ['1 Chatbot', '100 messages (Total)', 'Personnalisation Basique', 'Support Communautaire', 'Crédits à la demande'],
         current: true // Default logic handling below
     },
     {

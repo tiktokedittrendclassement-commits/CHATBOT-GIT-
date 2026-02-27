@@ -80,8 +80,8 @@ export async function POST(req) {
             // Optional: Free plan limit check
             if (profile.plan_tier === 'free' || !profile.plan_tier) {
                 const { data: messageCount } = await supabaseAdmin.rpc('get_user_message_count', { p_user_id: chatbot.user_id });
-                if (messageCount >= 1000) {
-                    return NextResponse.json({ role: 'assistant', content: 'Limite de 1000 messages atteinte (Plan Gratuit).' });
+                if (messageCount >= 100) {
+                    return NextResponse.json({ role: 'assistant', content: 'Limite de 100 messages atteinte (Plan Gratuit).' });
                 }
             }
         }

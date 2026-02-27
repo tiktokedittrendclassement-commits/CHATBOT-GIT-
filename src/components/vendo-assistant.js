@@ -338,9 +338,9 @@ export default function VendoAssistant() {
                             alignItems: 'center',
                             gap: 6,
                             background: '#673DE6',
-                            padding: '6px 12px',
-                            borderRadius: 12,
-                            boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+                            padding: '6px 16px',
+                            borderRadius: 99,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                         }}>
                             Répondre <Send size={12} />
                         </div>

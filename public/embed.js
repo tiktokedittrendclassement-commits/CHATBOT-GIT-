@@ -163,6 +163,10 @@
         bubble.style.visibility = 'visible';
         bubble.style.opacity = '1';
         bubble.style.transform = 'translateY(0) scale(1)';
+
+        if (window.location.protocol === 'file:' || window.location.hostname === 'localhost') {
+          console.log('UseVendo: Chatbot configured & ready:', name);
+        }
         break;
 
       case 'vendo-visitor-id':
@@ -191,14 +195,30 @@
           // If restricted to once per user (forever), check localStorage
           if (trigger.oncePerUser && localStorage.getItem(persistentKey)) return;
 
-          // Otherwise check session storage (default behavior for repeat visitors in same session)
-          if (sessionStorage.getItem(sessionKey)) return;
+          // Check if already sent in this session
+          // Bypass check for file:// to allow refresh-testing
+          const isFileProtocol = window.location.protocol === 'file:';
+          if (!isFileProtocol && sessionStorage.getItem(sessionKey)) return;
 
-          if (trigger.page && !window.location.href.includes(trigger.page)) return;
+          // Page Matching logic
+          const currentUrl = window.location.href;
+          let pageMatch = true;
+
+          if (trigger.page && trigger.page !== '/') {
+            pageMatch = currentUrl.includes(trigger.page);
+
+            // On file://, also try to match the filename if the full path fails
+            if (!pageMatch && isFileProtocol) {
+              const fileName = currentUrl.split('/').pop();
+              if (fileName && fileName.includes(trigger.page)) pageMatch = true;
+            }
+          }
+
+          if (!pageMatch) return;
 
           const executeTrigger = () => {
             if (trigger.oncePerUser && localStorage.getItem(persistentKey)) return;
-            if (sessionStorage.getItem(sessionKey)) return;
+            if (!isFileProtocol && sessionStorage.getItem(sessionKey)) return;
 
             showTeaser(trigger.message, trigger);
 
@@ -210,7 +230,12 @@
           };
 
           if (trigger.type === 'time') {
-            setTimeout(executeTrigger, (parseInt(trigger.spawn) || 5) * 1000);
+            const spawnSecs = parseFloat(trigger.spawn) || 0;
+            if (spawnSecs <= 0) {
+              executeTrigger();
+            } else {
+              setTimeout(executeTrigger, spawnSecs * 1000);
+            }
           } else if (trigger.type === 'scroll') {
             const onScroll = () => {
               const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
@@ -413,7 +438,17 @@
 
   function showTeaser(text, triggerContext = null) {
     if (isOpen) return; // Don't show if already open
-    if (sessionStorage.getItem(`vendo_teaser_seen_${chatbotId}`)) return; // Only show once per session
+
+    const triggerId = triggerContext?.id || btoa(text).substring(0, 16);
+    const sessionTeaserKey = `vendo_teaser_seen_${chatbotId}_${triggerId}`;
+    const isFileProtocol = window.location.protocol === 'file:';
+
+    if (!isFileProtocol && sessionStorage.getItem(sessionTeaserKey)) {
+      if (window.location.hostname === 'localhost') {
+        console.log('UseVendo: Teaser skipped (already seen in this session):', text);
+      }
+      return;
+    }
 
     // cleanup previous if exists
     removeTeaser();
@@ -485,7 +520,7 @@
             </div>
             <div style="margin: 0 4px 4px; padding: 10px 16px; background: ${brandColor}1A; border-radius: 18px; display: flex; align-items: center; justify-content: space-between;">
                  <span style="font-size: 11px; color: ${isDark ? '#94A3B8' : '#6b7280'}; font-weight: 600;">Maintenant</span>
-                 <div style="font-size: 13px; font-weight: 700; color: ${teaserReplyTextColor}; background: ${teaserReplyBg}; padding: 6px 12px; borderRadius: 12px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                 <div style="font-size: 13px; font-weight: 700; color: ${teaserReplyTextColor}; background: ${teaserReplyBg}; padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                     Répondre <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
                  </div>
             </div>
@@ -516,7 +551,11 @@
     });
 
     // Mark as seen
-    sessionStorage.setItem(`vendo_teaser_seen_${chatbotId}`, 'true');
+    sessionStorage.setItem(sessionTeaserKey, 'true');
+
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost') {
+      console.log('UseVendo: Showing teaser:', text);
+    }
 
     // 1. Auto-close after custom duration
     const dismissDuration = (parseInt(triggerContext?.despawn) || 5) * 1000;

@@ -148,12 +148,12 @@ export default function ChatbotsPage() {
                                         <img src={bot.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8 }} />
                                     ) : (
                                         <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 16 }}>
-                                            {bot.logo_url || bot.name?.charAt(0) || 'V'}
+                                            {bot.logo_url || (bot.name || 'Mon Assistant Vendo').charAt(0)}
                                         </span>
                                     )}
                                 </div>
                                 <div className={styles.botInfo}>
-                                    <h3 className={styles.botName}>{bot.name}</h3>
+                                    <h3 className={styles.botName}>{bot.name || 'Mon Assistant Vendo'}</h3>
                                     <div className={styles.botMeta}>
                                         <span>{new Date(bot.created_at).toLocaleDateString()}</span>
                                         <span className={styles.compactStat}>

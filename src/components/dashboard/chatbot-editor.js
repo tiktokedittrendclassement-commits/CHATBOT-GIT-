@@ -117,7 +117,7 @@ export default function ChatbotEditor({ botId = null }) {
 
                 if (data) {
                     setFormData({
-                        name: userPlan === 'free' ? 'Assistant Vendo' : data.name,
+                        name: userPlan === 'free' ? 'Mon Assistant Vendo' : data.name,
                         subtitle: data.subtitle ?? 'En ligne · repond en 3s',
                         color: data.color,
                         logo_url: data.logo_url || '',
@@ -132,7 +132,7 @@ export default function ChatbotEditor({ botId = null }) {
                     })
                 }
             } else if (userPlan === 'free') {
-                setFormData(prev => ({ ...prev, name: 'Assistant Vendo' }))
+                setFormData(prev => ({ ...prev, name: 'Mon Assistant Vendo' }))
             }
             setFetching(false)
         }
@@ -208,7 +208,7 @@ export default function ChatbotEditor({ botId = null }) {
         try {
             console.log('Saving chatbot payload:', formData); // Debug log
             const payload = {
-                name: isFreePlan ? 'Assistant Vendo' : formData.name,
+                name: isFreePlan ? 'Mon Assistant Vendo' : formData.name,
                 subtitle: formData.subtitle,
                 color: formData.color,
                 logo_url: formData.logo_url,
@@ -298,7 +298,7 @@ export default function ChatbotEditor({ botId = null }) {
                         <div className={styles.field}>
                             <label>Nom de l'Assistant</label>
                             <Input
-                                value={isFreePlan ? 'Assistant Vendo' : formData.name}
+                                value={isFreePlan ? 'Mon Assistant Vendo' : formData.name}
                                 onChange={(e) => !isFreePlan && setFormData({ ...formData, name: e.target.value })}
                                 placeholder="Ex: Mon Assistant Vendo"
                                 required

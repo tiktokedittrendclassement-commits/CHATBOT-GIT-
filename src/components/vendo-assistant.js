@@ -25,7 +25,7 @@ export default function VendoAssistant() {
 
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: "Bienvenue ! ✨\n\nJe suis votre **Concierge IA**. Prêt à transformer vos visiteurs en clients ?", shouldType: false }
+        { role: 'assistant', content: "Bienvenue. Je suis votre Chatbot. Prêt à transformer vos visiteurs en clients ?", shouldType: false }
     ])
     const [teaserText, setTeaserText] = useState(null)
     const messagesContainerRef = useRef(null)
@@ -133,7 +133,7 @@ export default function VendoAssistant() {
 
         const timer = setTimeout(() => {
             if (!isOpen) {
-                setTeaserText("Bonjour ! Je suis votre assistant IA. Je peux répondre à toutes vos questions sur Vendo. ✨")
+                setTeaserText("Bonjour. Je suis votre chatbot. Je peux répondre à toutes vos questions sur Vendo.")
                 sessionStorage.setItem('vendo_teaser_shown', 'true')
             }
         }, 500)
@@ -143,7 +143,7 @@ export default function VendoAssistant() {
 
     const DEFAULT_MESSAGE = {
         role: 'assistant',
-        content: "Bienvenue ! ✨\n\nJe suis votre **Concierge IA**. Prêt à transformer vos visiteurs en clients ?",
+        content: "Bienvenue. Je suis votre Chatbot. Prêt à transformer vos visiteurs en clients ?",
         shouldType: false
     }
 
@@ -289,7 +289,7 @@ export default function VendoAssistant() {
                             <div style={{ position: 'absolute', bottom: -2, right: -2, width: 14, height: 14, background: '#10B981', border: '3px solid #0f172a', borderRadius: '50%' }}></div>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Assistant Vendo</div>
+                            <div style={{ fontSize: 13, fontWeight: 800, color: '#8B5CF6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Chatbot Vendo</div>
                             <div style={{ fontSize: 14.5, color: '#F1F5F9', fontWeight: 600, lineHeight: 1.5 }}>{teaserText}</div>
                         </div>
                         <button
@@ -434,7 +434,7 @@ export default function VendoAssistant() {
                                 <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 22, color: 'white' }}>V</span>
                             </div>
                             <div>
-                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>Assistant Vendo</div>
+                                <div style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.4px' }}>Chatbot Vendo</div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                     <div style={{ width: 6, height: 6, background: '#10B981', borderRadius: '50%', boxShadow: '0 0 10px #10B981' }}></div>
                                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Expert Vendo Connecté</span>
@@ -530,7 +530,7 @@ export default function VendoAssistant() {
                                                     e.currentTarget.style.color = '#A78BFA'
                                                 }}
                                             >
-                                                <Sparkles size={14} /> Utiliser pour l'email
+                                                Utiliser pour l'email
                                             </button>
                                         </div>
                                     )}

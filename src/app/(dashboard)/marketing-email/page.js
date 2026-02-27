@@ -38,7 +38,7 @@ export default function MarketingEmailPage() {
     const [chatMessages, setChatMessages] = useState([
         {
             role: 'assistant',
-            content: "Bienvenue ! ✨\n\nJe suis votre **Concierge IA**. Prêt à transformer vos visiteurs en clients ?"
+            content: "Bienvenue. Je suis votre Chatbot. Prêt à transformer vos visiteurs en clients ?"
         }
     ])
     const composerRef = useRef(null)
@@ -301,8 +301,8 @@ export default function MarketingEmailPage() {
             setChatMessages(prev => [...prev, assistantMsg])
             setEditingEmail(prev => ({
                 ...prev,
-                subject: "Bienvenue chez nous ! (Brouillon Démo)",
-                body: "Bonjour,\n\nCeci est un exemple d'email généré par l'IA Vendo.\n\nEn passant au plan Pro, je pourrai analyser vos produits et votre ton pour créer des emails qui convertissent vraiment vos leads.\n\nÀ bientôt !"
+                subject: "Bienvenue chez nous. (Brouillon Démo)",
+                body: "Bonjour,\n\nCeci est un exemple d'email généré par le chatbot Vendo.\n\nEn passant au plan Pro, je pourrai analyser vos produits et votre ton pour créer des emails qui convertissent vraiment vos leads.\n\nÀ bientôt !"
             }))
             setIsComposerOpen(true)
             setIsGeneratingAI(false)
@@ -632,7 +632,7 @@ export default function MarketingEmailPage() {
                                     </div>
 
                                     <div className={aiStyles.content}>
-                                        <div style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Assistant Vendo</div>
+                                        <div style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>Chatbot Vendo</div>
                                         <div className={aiStyles.title}>
                                             {isAIPrompting ? "Que souhaitez-vous écrire ?" : "Je peux rédiger cet email pour vous en quelques secondes."}
                                         </div>
@@ -670,7 +670,7 @@ export default function MarketingEmailPage() {
                                                 window.dispatchEvent(new CustomEvent('vendo-assistant-open', {
                                                     detail: {
                                                         messages: [
-                                                            { role: 'assistant', content: "Besoin d'un email impactant ? ✍️\n\nDécrivez-moi votre objectif et je rédige votre campagne en quelques secondes. ✨", shouldType: false }
+                                                            { role: 'assistant', content: "Besoin d'un email impactant ? Décrivez-moi votre objectif et je rédige votre campagne en quelques secondes.", shouldType: false }
                                                         ]
                                                     }
                                                 }))

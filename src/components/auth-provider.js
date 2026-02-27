@@ -13,6 +13,11 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter()
 
     useEffect(() => {
+        if (!supabase) {
+            setLoading(false)
+            return
+        }
+
         const ensureProfileExists = async (sessionUser) => {
             if (!sessionUser) return
 
@@ -42,14 +47,19 @@ export const AuthProvider = ({ children }) => {
 
         // Check active session
         const getSession = async () => {
-            const { data: { session }, error } = await supabase.auth.getSession()
-            if (error) {
-                console.error('Error fetching session:', error)
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession()
+                if (error) {
+                    console.error('Error fetching session:', error)
+                }
+                const sessionUser = session?.user ?? null
+                setUser(sessionUser)
+                setLoading(false)
+                if (sessionUser) ensureProfileExists(sessionUser)
+            } catch (err) {
+                console.error('Auth check failed:', err)
+                setLoading(false)
             }
-            const sessionUser = session?.user ?? null
-            setUser(sessionUser)
-            setLoading(false)
-            if (sessionUser) ensureProfileExists(sessionUser)
         }
 
         getSession()
@@ -60,10 +70,6 @@ export const AuthProvider = ({ children }) => {
             setUser(sessionUser)
             setLoading(false)
             if (sessionUser) ensureProfileExists(sessionUser)
-
-            if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED') {
-                // Potential logic for persistent cookies if needed, but Supabase handles LS/Cookies by default
-            }
 
             if (_event === 'SIGNED_IN') {
                 router.refresh()
@@ -78,7 +84,9 @@ export const AuthProvider = ({ children }) => {
     }, [router])
 
     const signOut = async () => {
-        await supabase.auth.signOut()
+        if (supabase) {
+            await supabase.auth.signOut()
+        }
         sessionStorage.removeItem('vendo_welcome_seen')
         sessionStorage.removeItem('vendo_dashboard_welcome_seen')
         setUser(null)

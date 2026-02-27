@@ -18,6 +18,39 @@ export const getSupabase = () => {
   })
 }
 
+// Safe mock for local development without env vars
+const createMockClient = () => {
+  console.warn('Supabase: Missing environment variables. Using mock client.')
+  return {
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } }),
+      signOut: async () => ({ error: null }),
+      getUser: async () => ({ data: { user: null }, error: null }),
+    },
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: 'PGRST116', message: 'Mock: Not found' } }),
+          order: () => ({ data: [], error: null }),
+          in: () => ({ order: async () => ({ data: [], error: null }) }),
+        }),
+        order: async () => ({ data: [], error: null }),
+      }),
+      update: () => ({ eq: async () => ({ error: null }) }),
+      insert: async () => ({ error: null }),
+      upsert: async () => ({ error: null }),
+      delete: () => ({ eq: async () => ({ error: null }) }),
+    }),
+    storage: {
+      from: () => ({
+        upload: async () => ({ data: null, error: null }),
+        getPublicUrl: () => ({ data: { publicUrl: '' } }),
+      })
+    }
+  }
+}
+
 // Keep legacy export for browser usage where env vars are available
 export const supabase = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey, {
@@ -27,4 +60,4 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
       detectSessionInUrl: true
     }
   })
-  : null
+  : createMockClient()

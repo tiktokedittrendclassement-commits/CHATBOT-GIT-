@@ -13,22 +13,8 @@ import styles from './page.module.css'
 export default function SettingsPage() {
     const { user, signOut } = useAuth()
     const router = useRouter()
-    const [loading, setLoading] = useState(true)
-    const [saving, setSaving] = useState(false)
-    const [message, setMessage] = useState(null) // { type: 'success' | 'error', text: '' }
-
-    const [profile, setProfile] = useState({
-        full_name: '',
-        email: '',
-        plan_tier: 'free'
-    })
-
-    const [passwords, setPasswords] = useState({
-        newPassword: '',
-        confirmPassword: ''
-    })
-    const [showNewPassword, setShowNewPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [isEditingEmail, setIsEditingEmail] = useState(false)
+    const [newEmail, setNewEmail] = useState('')
 
     useEffect(() => {
         if (!user) return
@@ -46,6 +32,7 @@ export default function SettingsPage() {
                     email: data.email || user.email,
                     plan_tier: data.plan_tier || 'free'
                 })
+                setNewEmail(data.email || user.email)
             }
             setLoading(false)
         }
@@ -68,6 +55,35 @@ export default function SettingsPage() {
             if (profileError) throw profileError
 
             setMessage({ type: 'success', text: 'Profil mis à jour avec succès !' })
+        } catch (error) {
+            setMessage({ type: 'error', text: error.message })
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    const handleUpdateEmail = async (e) => {
+        e.preventDefault()
+        if (!newEmail || newEmail === profile.email) {
+            setIsEditingEmail(false)
+            return
+        }
+
+        setSaving(true)
+        setMessage(null)
+
+        try {
+            const { error } = await supabase.auth.updateUser({
+                email: newEmail
+            })
+
+            if (error) throw error
+
+            setMessage({
+                type: 'success',
+                text: 'Une demande de confirmation a été envoyée à votre nouvelle adresse email. Votre email ne sera mis à jour qu\'après confirmation.'
+            })
+            setIsEditingEmail(false)
         } catch (error) {
             setMessage({ type: 'error', text: error.message })
         } finally {
@@ -184,13 +200,53 @@ export default function SettingsPage() {
                             </div>
                             <div className={styles.fieldGroup}>
                                 <label className={styles.label}>Email</label>
-                                <Input
-                                    value={profile.email}
-                                    disabled
-                                    style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', borderColor: 'rgba(255,255,255,0.1)' }}
-                                    className={styles.input}
-                                />
-                                <p className={styles.helperText}>L'adresse email ne peut pas être modifiée ici.</p>
+                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                    <Input
+                                        value={isEditingEmail ? newEmail : profile.email}
+                                        onChange={e => setNewEmail(e.target.value)}
+                                        disabled={!isEditingEmail}
+                                        style={{
+                                            flex: 1,
+                                            background: !isEditingEmail ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
+                                            color: !isEditingEmail ? 'rgba(255,255,255,0.4)' : '#fff',
+                                            borderColor: !isEditingEmail ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'
+                                        }}
+                                        className={styles.input}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                            if (isEditingEmail) {
+                                                setNewEmail(profile.email)
+                                                setIsEditingEmail(false)
+                                            } else {
+                                                setIsEditingEmail(true)
+                                            }
+                                        }}
+                                        style={{ fontSize: '12px', height: '38px', padding: '0 16px' }}
+                                    >
+                                        {isEditingEmail ? 'Annuler' : 'Modifier'}
+                                    </Button>
+                                    {isEditingEmail && (
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            onClick={handleUpdateEmail}
+                                            disabled={saving || newEmail === profile.email}
+                                            style={{ fontSize: '12px', height: '38px', padding: '0 16px', background: '#7c3aed' }}
+                                        >
+                                            {saving ? '...' : 'Valider'}
+                                        </Button>
+                                    )}
+                                </div>
+                                <p className={styles.helperText}>
+                                    {isEditingEmail
+                                        ? "Vous devrez confirmer le nouvel email via un lien envoyé sur votre messagerie."
+                                        : "L'adresse email utilisée pour la connexion."
+                                    }
+                                </p>
                             </div>
                             <div className={styles.actions}>
                                 <Button type="submit" disabled={saving} size="md" style={{ minWidth: '220px' }}>

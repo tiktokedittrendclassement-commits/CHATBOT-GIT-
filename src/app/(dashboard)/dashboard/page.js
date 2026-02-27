@@ -132,7 +132,8 @@ export default function DashboardPage() {
             // Re-check just in case session storage was set in another tab/render
             if (sessionStorage.getItem('vendo_welcome_seen')) return
 
-            const firstName = profile.full_name?.split(' ')[0] || 'Membre'
+            const metaName = user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.given_name
+            const firstName = profile.full_name?.split(' ')[0] || metaName?.split(' ')[0] || 'Membre'
             const message = `Bienvenue sur le tableau de bord ${firstName}`
 
             window.dispatchEvent(new CustomEvent('vendo-proactive-trigger', {
@@ -158,7 +159,7 @@ export default function DashboardPage() {
             <div className={styles.header}>
                 <div>
                     <h1 className={styles.heading}>
-                        Bonjour, {profile?.full_name?.split(' ')[0] || 'Membre Premium'}
+                        Bonjour, {profile?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || user?.user_metadata?.name?.split(' ')[0] || 'Membre Premium'}
                     </h1>
                     <p className={styles.subheading}>Voici l'aperçu de votre activité aujourd'hui.</p>
                 </div>

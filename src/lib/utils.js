@@ -37,6 +37,13 @@ export function getContrastColor(hexColor) {
 }
 
 export function getURL() {
+    // Client-side: use current origin
+    if (typeof window !== 'undefined') {
+        const origin = window.location.origin
+        return origin.endsWith('/') ? origin : `${origin}/`
+    }
+
+    // Server-side / Fallback
     let url =
         process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production
         process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set on Vercel
@@ -45,6 +52,6 @@ export function getURL() {
     // Make sure to include `https://` when not localhost
     url = url.includes('http') ? url : `https://${url}`
     // Make sure to include a trailing `/`
-    url = url.charAt(url.length - 1) === '/' ? url : `${url}/`
+    url = url.endsWith('/') ? url : `${url}/`
     return url
 }

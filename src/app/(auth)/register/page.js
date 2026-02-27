@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { getURL } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -45,7 +46,7 @@ export default function RegisterPage() {
                 email: trimmedEmail,
                 password,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/login`,
+                    emailRedirectTo: `${getURL()}login`,
                     data: {
                         full_name: fullName,
                     },
@@ -82,7 +83,7 @@ export default function RegisterPage() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback`
+                    redirectTo: `${getURL()}auth/callback`
                 }
             })
             if (error) throw error

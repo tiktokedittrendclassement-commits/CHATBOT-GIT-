@@ -19,8 +19,8 @@ export const getSupabase = () => {
 }
 
 // Keep legacy export for browser usage where env vars are available
-export const supabase = (typeof window !== 'undefined' || (supabaseUrl && supabaseAnonKey))
-  ? createClient(supabaseUrl || '', supabaseAnonKey || '', {
+export const supabase = (supabaseUrl && supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,

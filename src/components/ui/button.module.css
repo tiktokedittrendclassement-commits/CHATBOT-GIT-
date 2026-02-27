@@ -27,6 +27,15 @@
   filter: brightness(1.1);
 }
 
+.destructive {
+  background-color: #ef4444;
+  color: white;
+}
+
+.destructive:hover {
+  background-color: #dc2626;
+}
+
 .secondary {
   background-color: var(--secondary);
   color: var(--foreground);

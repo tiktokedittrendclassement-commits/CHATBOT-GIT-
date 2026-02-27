@@ -8,15 +8,26 @@ export default function AuthCallback() {
     const router = useRouter()
 
     useEffect(() => {
-        const handleAuth = async () => {
-            const { data: { session }, error } = await supabase.auth.getSession()
-            if (session) {
-                router.push('/dashboard')
-            } else {
+        // More robust session detection
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' || session) {
+                // Force a hard redirect or use router.push
+                window.location.href = '/dashboard'
+            } else if (event === 'SIGNED_OUT') {
                 router.push('/login')
             }
+        })
+
+        // Also check immediately
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                window.location.href = '/dashboard'
+            }
         }
-        handleAuth()
+        checkSession()
+
+        return () => subscription.unsubscribe()
     }, [router])
 
     return (

@@ -13,6 +13,7 @@ export function middleware(request) {
         pathname.startsWith('/maintenance') ||
         pathname.startsWith('/login') ||
         pathname.startsWith('/register') ||
+        pathname.startsWith('/auth') ||
         pathname.startsWith('/embed') ||
         pathname.startsWith('/api') ||
         pathname.includes('.') || // matches assets like favicon.ico, images, etc.

@@ -206,6 +206,25 @@ export default function ChatbotEditor({ botId = null }) {
         setLoading(true)
 
         try {
+            // Safety: Ensure profile exists before save
+            const { data: existingProfile } = await supabase
+                .from('profiles')
+                .select('id')
+                .eq('id', user.id)
+                .single()
+
+            if (!existingProfile) {
+                console.log('Safety check: Profile missing in editor, creating now...')
+                const { error: createError } = await supabase
+                    .from('profiles')
+                    .insert({
+                        id: user.id,
+                        email: user.email,
+                        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.given_name || 'Membre'
+                    })
+                if (createError) throw new Error('Impossible de créer votre profil utilisateur : ' + createError.message)
+            }
+
             console.log('Saving chatbot payload:', formData); // Debug log
             const payload = {
                 name: isFreePlan ? 'Mon Assistant Vendo' : formData.name,

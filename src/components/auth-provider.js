@@ -13,22 +13,53 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter()
 
     useEffect(() => {
+        const ensureProfileExists = async (sessionUser) => {
+            if (!sessionUser) return
+
+            // Check if profile exists
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('id')
+                .eq('id', sessionUser.id)
+                .single()
+
+            if (error && error.code === 'PGRST116') {
+                // Profile missing, create it
+                console.log('Profile missing for user, creating now...', sessionUser.id)
+                const { error: insertError } = await supabase
+                    .from('profiles')
+                    .insert({
+                        id: sessionUser.id,
+                        email: sessionUser.email,
+                        full_name: sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name || sessionUser.user_metadata?.given_name || 'Membre'
+                    })
+
+                if (insertError) {
+                    console.error('Error auto-creating profile:', insertError)
+                }
+            }
+        }
+
         // Check active session
         const getSession = async () => {
             const { data: { session }, error } = await supabase.auth.getSession()
             if (error) {
                 console.error('Error fetching session:', error)
             }
-            setUser(session?.user ?? null)
+            const sessionUser = session?.user ?? null
+            setUser(sessionUser)
             setLoading(false)
+            if (sessionUser) ensureProfileExists(sessionUser)
         }
 
         getSession()
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            setUser(session?.user ?? null)
+            const sessionUser = session?.user ?? null
+            setUser(sessionUser)
             setLoading(false)
+            if (sessionUser) ensureProfileExists(sessionUser)
 
             if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED') {
                 // Potential logic for persistent cookies if needed, but Supabase handles LS/Cookies by default

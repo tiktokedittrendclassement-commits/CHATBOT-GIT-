@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 
@@ -11,11 +13,13 @@ const getResend = () => {
     return resend;
 };
 
-// Admin client to bypass RLS for bulk operations
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+// Safe tool for admin client
+const getSupabaseAdmin = () => {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    )
+}
 
 export async function POST(req) {
     try {
@@ -26,6 +30,8 @@ export async function POST(req) {
         }
 
         console.log(`[API Campaign] Starting campaign for user: ${userId}`);
+
+        const supabaseAdmin = getSupabaseAdmin()
 
         // 1. Get all chatbots for this user to get settings and botIds
         const { data: chatbots, error: botError } = await supabaseAdmin

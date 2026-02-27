@@ -81,8 +81,14 @@ export default function DashboardLayout({ children }) {
         getProfile()
     }, [user])
 
+    const SHOW_PREMIUM = process.env.NODE_ENV === 'development'
+
     const getNavItems = () => {
-        return navItems
+        if (SHOW_PREMIUM) return navItems
+        return navItems.filter(item =>
+            item.href !== '/reseller' &&
+            item.href !== '/marketing-whatsapp'
+        )
     }
 
     const currentNavItems = getNavItems()

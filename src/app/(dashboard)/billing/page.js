@@ -140,8 +140,14 @@ export default function BillingPage() {
 
             <div className={styles.grid}>
                 {PLANS.map(plan => {
+                    const SHOW_PREMIUM = process.env.NODE_ENV === 'development'
                     const isCurrent = profile?.plan_tier === plan.id || (plan.id === 'free' && !profile?.plan_tier)
                     const isRecommended = plan.id === 'agency'
+
+                    // Filter features in production for Agency plan
+                    const displayFeatures = plan.id === 'agency' && !SHOW_PREMIUM
+                        ? plan.features.filter(f => !['Marketing WhatsApp', 'Droits de Revente', 'Marque Blanche'].includes(f))
+                        : plan.features
 
                     return (
                         <div key={plan.id} className={`${styles.card} ${isRecommended && !isCurrent ? styles.recommendedCard : ''}`}>
@@ -153,7 +159,7 @@ export default function BillingPage() {
                             </div>
 
                             <ul className={styles.features}>
-                                {plan.features.map((f, i) => (
+                                {displayFeatures.map((f, i) => (
                                     <li key={i} className={styles.feature}>
                                         <Check size={16} className={styles.checkIcon} />
                                         {f}

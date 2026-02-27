@@ -1,11 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-// Service role client to bypass RLS and delete from auth.users
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+export const dynamic = 'force-dynamic'
+
+// Initialize supabaseAdmin only when needed to avoid issues during static analysis/build
+function getSupabaseAdmin() {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!url || !key) {
+        throw new Error('Missing Supabase environment variables for Admin client')
+    }
+
+    return createClient(url, key)
+}
 
 export async function POST(req) {
     try {
@@ -16,6 +24,8 @@ export async function POST(req) {
         }
 
         const token = authHeader.replace('Bearer ', '')
+
+        const supabaseAdmin = getSupabaseAdmin()
 
         // 1. Get the user from the token
         const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)

@@ -13,7 +13,7 @@ export default function MaintenancePage() {
                     Transformez vos visiteurs en <span>clients fidèles</span> grâce à l'IA.
                 </h2>
                 <p className={styles.description}>
-                    Vendo est la plateforme ultime pour créer des agents IA intelligents qui connaissent votre catalogue par cœur, répondent à vos clients 24/7 et automatisent vos ventes sur <strong>Shopify, WordPress et WhatsApp</strong>.
+                    Vendo est la plateforme ultime pour créer des agents IA intelligents qui connaissent votre catalogue par cœur, répondent à vos clients 24/7 et automatisent vos ventes sur <strong>Shopify et WordPress</strong>.
                 </p>
 
                 <div className={styles.features}>

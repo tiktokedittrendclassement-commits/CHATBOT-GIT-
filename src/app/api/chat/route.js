@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
 import { generateChatResponse } from '@/lib/deepseek'
 import { supabase } from '@/lib/supabase'
 import { createClient } from '@supabase/supabase-js'
 import { VENDO_KNOWLEDGE_BASE } from '@/lib/vendo_knowledge'
 
-// Admin client to bypass RLS for credit checks
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+// Safe way to get admin client to avoid build-time issues
+const getSupabaseAdmin = () => {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    )
+}
 
 export async function POST(req) {
     let chatbotId = 'UNKNOWN'; // For error logging
@@ -48,7 +52,8 @@ export async function POST(req) {
             chatbot = { name: 'Vendo Support', user_id: 'SYSTEM' };
         } else {
             // Fetch Custom Bot Config
-            const { data, error: botError } = await supabase
+            const supabaseAdmin = getSupabaseAdmin()
+            const { data, error: botError } = await supabaseAdmin
                 .from('chatbots')
                 .select('name, system_prompt, data_sources, user_id, welcome_email_subject, welcome_email_body')
                 .eq('id', chatbotId)

@@ -1,11 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-// Use service role to bypass RLS
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+export const dynamic = 'force-dynamic'
+
+const getSupabaseAdmin = () => {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    )
+}
 
 export async function POST(req) {
     try {
@@ -16,6 +19,8 @@ export async function POST(req) {
         if (!file || !token) {
             return NextResponse.json({ error: 'File and token are required' }, { status: 400 })
         }
+
+        const supabaseAdmin = getSupabaseAdmin()
 
         // 1. Validate Token (Security)
         const { data: chatbot, error: tokenError } = await supabaseAdmin

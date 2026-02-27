@@ -1,11 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-// Use service role to bypass RLS for token-based access
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY // Fallback to anon but service role is needed if RLS is strict
-)
+export const dynamic = 'force-dynamic'
+
+const getSupabaseAdmin = () => {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    )
+}
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url)
@@ -15,6 +18,7 @@ export async function GET(req) {
         return NextResponse.json({ error: 'Token is required' }, { status: 400 })
     }
 
+    const supabaseAdmin = getSupabaseAdmin()
     const { data, error } = await supabaseAdmin
         .from('chatbots')
         .select('id, name, color, system_prompt, data_sources, reseller_token, logo_url')
@@ -51,6 +55,7 @@ export async function PATCH(req) {
         return NextResponse.json({ error: 'No valid fields provided' }, { status: 400 })
     }
 
+    const supabaseAdmin = getSupabaseAdmin()
     const { data, error } = await supabaseAdmin
         .from('chatbots')
         .update({ ...updateData, updated_at: new Date() })

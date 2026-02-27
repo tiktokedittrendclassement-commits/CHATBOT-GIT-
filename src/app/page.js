@@ -475,21 +475,28 @@ export default function Home() {
             </p>
           </div>
           <div className={styles.plans}>
-            {PLANS.map((p, i) => (
-              <div key={i} className={`${styles.plan} ${p.fill ? styles.planFill : ''}`}>
-                {p.fill && <div className={styles.planBadge}>Le plus populaire</div>}
-                <p className={styles.planName}>{p.n}</p>
-                <div className={styles.planPrice}>
-                  <span className={styles.planNum}>{p.p}€</span>
-                  <span className={styles.planFreq}>/mois</span>
+            {PLANS.map((p, i) => {
+              const SHOW_PREMIUM = process.env.NODE_ENV === 'development'
+              const displayItems = p.n === 'Agence' && !SHOW_PREMIUM
+                ? p.items.filter(item => !['WhatsApp marketing', 'Marque blanche complète', 'Droits de revente'].includes(item))
+                : p.items
+
+              return (
+                <div key={i} className={`${styles.plan} ${p.fill ? styles.planFill : ''}`}>
+                  {p.fill && <div className={styles.planBadge}>Le plus populaire</div>}
+                  <p className={styles.planName}>{p.n}</p>
+                  <div className={styles.planPrice}>
+                    <span className={styles.planNum}>{p.p}€</span>
+                    <span className={styles.planFreq}>/mois</span>
+                  </div>
+                  <p className={styles.planDesc}>{p.d}</p>
+                  <ul className={styles.planList}>
+                    {displayItems.map(it => <li key={it}><Check size={13} strokeWidth={3} /><span>{it}</span></li>)}
+                  </ul>
+                  <Link href="/register" className={p.fill ? styles.planBtnFill : styles.planBtnLine}>{p.cta}</Link>
                 </div>
-                <p className={styles.planDesc}>{p.d}</p>
-                <ul className={styles.planList}>
-                  {p.items.map(it => <li key={it}><Check size={13} strokeWidth={3} /><span>{it}</span></li>)}
-                </ul>
-                <Link href="/register" className={p.fill ? styles.planBtnFill : styles.planBtnLine}>{p.cta}</Link>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
         </div>

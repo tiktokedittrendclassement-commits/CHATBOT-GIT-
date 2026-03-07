@@ -18,6 +18,7 @@ export default function AppWrapper({ children }) {
     const hideAssistant = !pathname ||
         pathname.startsWith('/maintenance') ||
         pathname.startsWith('/embed') ||
+        pathname.startsWith('/reseller') ||
         pathname === '/login' ||
         pathname === '/register'
 

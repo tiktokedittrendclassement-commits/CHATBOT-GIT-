@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Lock, Mail, Download, Search, Calendar, User, ArrowRight, Settings, Sparkles, X, Bot, Send } from 'lucide-react'
+import { Lock, Mail, Download, Search, Calendar, User, ArrowRight, Settings, Sparkles, X, Bot, Send, Zap, Play, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { PlanRestriction } from '@/components/ui/plan-restriction'
 import styles from './page.module.css'
@@ -24,13 +24,21 @@ export default function MarketingEmailPage() {
         subject: '',
         body: '',
         sender_name: '',
-        reply_to: ''
+        reply_to: '',
+        // SMTP Fields
+        smtp_host: '',
+        smtp_port: 587,
+        smtp_user: '',
+        smtp_pass: '',
+        smtp_from: '',
+        use_custom_smtp: false
     })
     const [saving, setSaving] = useState(false)
     const [sendingCampaign, setSendingCampaign] = useState(false)
     const [isComposerOpen, setIsComposerOpen] = useState(false)
     const [showAIModal, setShowAIModal] = useState(false)
     const [isAIPrompting, setIsAIPrompting] = useState(false)
+    const [showSmtpPass, setShowSmtpPass] = useState(false)
     const [isChatExpanded, setIsChatExpanded] = useState(false)
     const [aiPrompt, setAiPrompt] = useState('')
     const [isGeneratingAI, setIsGeneratingAI] = useState(false)
@@ -50,9 +58,10 @@ export default function MarketingEmailPage() {
             try {
                 console.log('[MarketingEmail] Fetching data...');
                 // Fetch profile
-                const { data: prof, error: profError } = await supabase.from('profiles').select('plan_tier').eq('id', user.id).single()
+                const { data: prof, error: profError } = await supabase.from('profiles').select('*').eq('id', user.id).single()
                 if (profError) console.error('[MarketingEmail] Profile error:', profError);
-                setProfile(prof || { plan_tier: 'free' })
+                const currentProfile = prof || { plan_tier: 'free' }
+                setProfile(currentProfile)
 
                 // Fetch bots
                 const { data: bots, error: botsError } = await supabase.from('chatbots').select('*').eq('user_id', user.id)
@@ -81,7 +90,14 @@ export default function MarketingEmailPage() {
                         subject: initialBot.welcome_email_subject || 'Merci de votre visite !',
                         body: initialBot.welcome_email_body || '',
                         sender_name: initialBot.custom_sender_name || '',
-                        reply_to: initialBot.reply_to || ''
+                        reply_to: initialBot.reply_to || initialBot.custom_sender_name || '',
+                        // Profile SMTP fields
+                        smtp_host: prof?.smtp_host || '',
+                        smtp_port: prof?.smtp_port || 587,
+                        smtp_user: prof?.smtp_user || '',
+                        smtp_pass: prof?.smtp_pass || '',
+                        smtp_from: prof?.smtp_from || '',
+                        use_custom_smtp: prof?.use_custom_smtp || false
                     })
 
                     const botIds = currentBots.map(b => b.id).filter(id => id !== 'demo-bot')
@@ -161,6 +177,7 @@ export default function MarketingEmailPage() {
                 }
 
                 setEditingEmail(prev => ({
+                    ...prev,
                     subject: subject || prev.subject,
                     body: body
                 }))
@@ -225,16 +242,44 @@ export default function MarketingEmailPage() {
             .eq('id', selectedBot.id)
 
         if (error) {
-            alert('Erreur: ' + error.message)
+            alert('Erreur Bot: ' + error.message)
         } else {
-            setChatbots(chatbots.map(b => b.id === selectedBot.id ? {
-                ...b,
-                welcome_email_subject: editingEmail.subject,
-                welcome_email_body: editingEmail.body,
-                custom_sender_name: editingEmail.sender_name,
-                reply_to: editingEmail.reply_to
-            } : b))
-            alert('Template sauvegardé !')
+            // Update profile with SMTP settings
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({
+                    smtp_host: editingEmail.smtp_host,
+                    smtp_port: parseInt(editingEmail.smtp_port),
+                    smtp_user: editingEmail.smtp_user,
+                    smtp_pass: editingEmail.smtp_pass,
+                    smtp_from: editingEmail.smtp_from,
+                    use_custom_smtp: true // Force to true since they are deploying
+                })
+                .eq('id', user.id)
+
+
+            if (profileError) {
+                alert('Erreur Profile: ' + profileError.message)
+            } else {
+                setChatbots(chatbots.map(b => b.id === selectedBot.id ? {
+                    ...b,
+                    welcome_email_subject: editingEmail.subject,
+                    welcome_email_body: editingEmail.body,
+                    custom_sender_name: editingEmail.sender_name,
+                    reply_to: editingEmail.reply_to
+                } : b))
+                setProfile({
+                    ...profile,
+                    smtp_host: editingEmail.smtp_host,
+                    smtp_port: editingEmail.smtp_port,
+                    smtp_user: editingEmail.smtp_user,
+                    smtp_pass: editingEmail.smtp_pass,
+                    smtp_from: editingEmail.smtp_from,
+                    use_custom_smtp: true
+                })
+
+                alert('Toutes les configurations (Bot & Email Pro) ont été sauvegardées !')
+            }
         }
         setSaving(false)
     }
@@ -242,6 +287,7 @@ export default function MarketingEmailPage() {
     const selectBotForEditing = (bot) => {
         setSelectedBot(bot)
         setEditingEmail({
+            ...editingEmail, // Keep global SMTP settings
             subject: bot.welcome_email_subject || 'Merci de votre visite !',
             body: bot.welcome_email_body || '',
             sender_name: bot.custom_sender_name || '',
@@ -265,7 +311,9 @@ export default function MarketingEmailPage() {
                 body: JSON.stringify({
                     userId: user.id,
                     subject: subject,
-                    body: body
+                    body: body,
+                    senderName: editingEmail.sender_name,
+                    replyTo: editingEmail.reply_to
                 })
             })
             const data = await res.json()
@@ -328,10 +376,11 @@ export default function MarketingEmailPage() {
                 setChatMessages(prev => [...prev, { role: 'assistant', content: data.content }])
                 try {
                     const result = JSON.parse(data.content.replace(/```json|```/g, '').trim())
-                    setEditingEmail({
+                    setEditingEmail(prev => ({
+                        ...prev,
                         subject: result.subject || '',
                         body: result.body || ''
-                    })
+                    }))
                     setIsComposerOpen(true)
                 } catch (e) {
                     console.log('AI response was not JSON')
@@ -352,9 +401,10 @@ export default function MarketingEmailPage() {
     if (loading) return <div style={{ padding: 24 }}>Chargement...</div>
 
     const filteredLeads = leads.filter(l =>
-        l.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        l.source_page?.toLowerCase().includes(searchTerm.toLowerCase())
+        (l.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (l.source_page?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     )
+
 
     return (
         <div className={styles.container}>
@@ -404,11 +454,10 @@ export default function MarketingEmailPage() {
                                         key={bot.id}
                                         className={`${styles.botItem} ${selectedBot?.id === bot.id ? styles.botItemSelected : ''}`}
                                         onClick={() => selectBotForEditing(bot)}
-                                        style={{ cursor: 'pointer', marginBottom: 12 }}
                                     >
                                         <div className={styles.botInfo} style={{ flex: 1 }}>
-                                            <div className={styles.botItemName} style={{ fontWeight: 800, fontSize: 15, color: '#fff', marginBottom: 2 }}>{bot.name}</div>
-                                            <div className={bot.collect_emails ? styles.statusActive : styles.statusInactive} style={{ fontSize: 12, fontWeight: 600 }}>
+                                            <div className={styles.botItemName}>{bot.name || 'Mon Assistant Vendo'}</div>
+                                            <div className={bot.collect_emails ? styles.statusActive : styles.statusInactive}>
                                                 {bot.collect_emails ? 'Capture active' : 'Inactif'}
                                             </div>
                                         </div>
@@ -424,63 +473,28 @@ export default function MarketingEmailPage() {
                                         </div>
                                     </div>
                                 ))}
-                            </div>
-                        </div>
 
-                        <div className={styles.card} style={{ marginTop: 24 }}>
-                            <div className={styles.cardTitle}>
-                                <Settings size={18} style={{ marginRight: 8 }} /> Personnalisation Email
-                            </div>
 
-                            <div className={styles.formGroup} style={{ marginTop: 16 }}>
-                                <label className={styles.label}>Nom de l'expéditeur</label>
-                                <Input
-                                    value={editingEmail.sender_name}
-                                    onChange={(e) => setEditingEmail({ ...editingEmail, sender_name: e.target.value })}
-                                    placeholder="Ex: Thomas de Vendo"
-                                />
-                                <p style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.3)', marginTop: 6, fontWeight: 500 }}>
-                                    Nom qui apparaîtra dans la boîte mail du client.
-                                </p>
                             </div>
-
-                            <div className={styles.formGroup} style={{ marginTop: 20 }}>
-                                <label className={styles.label}>Email de réponse (Reply-to)</label>
-                                <Input
-                                    value={editingEmail.reply_to}
-                                    onChange={(e) => setEditingEmail({ ...editingEmail, reply_to: e.target.value })}
-                                    placeholder="Ex: contact@ma-marque.com"
-                                    type="email"
-                                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                                    title="Veuillez entrer une adresse email valide (ex: utilisateur@domaine.com)"
-                                />
-                                <p style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.3)', marginTop: 6, fontWeight: 500 }}>
-                                    Les réponses des clients iront sur cette adresse.
-                                </p>
-                            </div>
-
-                            <Button
-                                className={styles.saveBtn}
-                                onClick={saveEmailTemplate}
-                                disabled={saving}
-                                style={{ marginTop: 20, width: '100%' }}
-                            >
-                                {saving ? 'Enregistrement...' : 'Sauvegarder les réglages'}
-                            </Button>
                         </div>
                     </div>
 
-                    {/* Right: Leads Table */}
+                    {/* Right: Main Content Area */}
                     <div className={styles.mainContent}>
                         <div>
                             <div className={styles.card}>
                                 <div className={styles.tableHeader}>
                                     <div className={styles.tableTitle}>CONTACTS RÉCOLTÉS ({leads.length})</div>
+
+
                                     <div className={styles.searchBar}>
                                         <Search size={16} />
                                         <input
+                                            id="marketing_lead_search"
+                                            name="marketing_lead_search"
                                             type="text"
                                             placeholder="Rechercher un email..."
+                                            autoComplete="one-time-code"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
@@ -538,6 +552,169 @@ export default function MarketingEmailPage() {
                                 </div>
                             </div>
 
+                            {/* THE SMTP CONFIG SECTION - PREMIUM DESIGN */}
+                            <div className={styles.card} style={{ marginTop: 32 }}>
+                                <div className={styles.cardTitle} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <Mail size={18} style={{ marginRight: 8 }} /> Configuration Email Expert
+                                    </div>
+                                    <a
+                                        href="#"
+                                        onClick={(e) => e.preventDefault()}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 6,
+                                            fontSize: 12,
+                                            color: '#7c3aed',
+                                            fontWeight: 600,
+                                            textDecoration: 'none',
+                                            background: 'rgba(124, 58, 237, 0.05)',
+                                            padding: '6px 12px',
+                                            borderRadius: 8,
+                                            border: '1px solid rgba(124, 58, 237, 0.1)'
+                                        }}
+                                    >
+                                        <Play size={14} fill="#7c3aed" /> Voir le tuto
+                                    </a>
+                                </div>
+                                <p className={styles.cardDescription} style={{ marginBottom: 24 }}>
+                                    Connectez votre propre serveur SMTP pour envoyer des campagnes illimitées avec votre domaine.
+                                </p>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+                                    {/* Presets Grid Item */}
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Configuration Rapide</label>
+                                        <div style={{ display: 'flex', gap: 12 }}>
+                                            <button
+                                                type="button"
+                                                onClick={() => setEditingEmail({ ...editingEmail, smtp_host: 'smtp.gmail.com', smtp_port: 587 })}
+                                                style={{
+                                                    flex: 1,
+                                                    height: 44,
+                                                    borderRadius: 12,
+                                                    border: editingEmail.smtp_host === 'smtp.gmail.com' ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                                                    background: editingEmail.smtp_host === 'smtp.gmail.com' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.03)',
+                                                    color: '#fff',
+                                                    fontSize: 11,
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                            >
+                                                GMAIL
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setEditingEmail({ ...editingEmail, smtp_host: 'smtp.office365.com', smtp_port: 587 })}
+                                                style={{
+                                                    flex: 1,
+                                                    height: 44,
+                                                    borderRadius: 12,
+                                                    border: editingEmail.smtp_host === 'smtp.office365.com' ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                                                    background: editingEmail.smtp_host === 'smtp.office365.com' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.03)',
+                                                    color: '#fff',
+                                                    fontSize: 11,
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                            >
+                                                OUTLOOK
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Nom d'expéditeur</label>
+                                        <Input
+                                            value={editingEmail.sender_name}
+                                            onChange={e => setEditingEmail({ ...editingEmail, sender_name: e.target.value })}
+                                            placeholder="Ex: Sophie de Vendo"
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Votre Email (Utilisateur)</label>
+                                        <Input
+                                            value={editingEmail.reply_to}
+                                            onChange={e => setEditingEmail({ ...editingEmail, reply_to: e.target.value, smtp_user: e.target.value })}
+                                            placeholder="votre-email@gmail.com"
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Hôte SMTP</label>
+                                        <Input
+                                            value={editingEmail.smtp_host}
+                                            onChange={e => setEditingEmail({ ...editingEmail, smtp_host: e.target.value })}
+                                            placeholder="smtp.gmail.com"
+                                        />
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>Port</label>
+                                            <Input
+                                                type="number"
+                                                value={editingEmail.smtp_port}
+                                                onChange={e => setEditingEmail({ ...editingEmail, smtp_port: parseInt(e.target.value) })}
+                                                placeholder="587"
+                                            />
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>Mot de passe App</label>
+                                            <div style={{ position: 'relative' }}>
+                                                <Input
+                                                    type={showSmtpPass ? "text" : "password"}
+                                                    value={editingEmail.smtp_pass}
+                                                    onChange={e => setEditingEmail({ ...editingEmail, smtp_pass: e.target.value })}
+                                                    placeholder="••••••••••••"
+                                                    style={{ paddingRight: 40 }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowSmtpPass(!showSmtpPass)}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        right: 12,
+                                                        top: '50%',
+                                                        transform: 'translateY(-50%)',
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        color: 'rgba(255,255,255,0.4)',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    {showSmtpPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+                                    <Button
+                                        onClick={saveEmailTemplate}
+                                        disabled={saving}
+                                        className={styles.saveBtn}
+                                        style={{ width: 'auto', padding: '0 40px' }}
+                                    >
+                                        {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className={styles.infoBox} style={{ marginTop: 24 }}>
+                                {editingEmail.smtp_host === 'smtp.gmail.com'
+                                    ? "Gmail : Activez le 2FA et créez un 'Mot de passe d'application'."
+                                    : "Conseil : Vérifiez que le port 587 est autorisé par votre hébergeur."}
+                            </div>
+
                             {isComposerOpen && (
                                 <div ref={composerRef} className={styles.card} style={{ marginTop: 32 }}>
                                     <EmailComposer
@@ -547,6 +724,8 @@ export default function MarketingEmailPage() {
                                         leadsCount={leads.length}
                                         initialSubject={editingEmail.subject}
                                         initialBody={editingEmail.body}
+                                        senderName={editingEmail.sender_name}
+                                        senderEmail={editingEmail.reply_to}
                                     />
                                 </div>
                             )}

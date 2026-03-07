@@ -12,8 +12,17 @@ create table profiles (
   lemon_squeezy_customer_id text,
   subscription_status text default 'active', -- active, past_due, canceled
   created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  updated_at timestamptz default now(),
+  smtp_host text,
+  smtp_port integer,
+  smtp_user text,
+  smtp_from text,
+  use_custom_smtp boolean default false,
+  whatsapp_phone_id text,
+  whatsapp_waba_id text,
+  whatsapp_access_token text
 );
+
 
 alter table profiles enable row level security;
 create policy "Users can view own profile" on profiles for select using (auth.uid() = id);
@@ -157,3 +166,71 @@ create policy "Public can read messages by conversation" on messages
   for select using (true);
 -- Warning: This allows scraping if conversation IDs are leaked.
 -- For an MVP, this is standard "security through unguessability".
+-- Table: sales
+create table sales (
+  id uuid default uuid_generate_v4() primary key,
+  chatbot_id uuid references chatbots(id) on delete cascade not null,
+  amount decimal(10,2) not null,
+  currency text default 'EUR',
+  status text default 'completed',
+  created_at timestamptz default now()
+);
+
+alter table sales enable row level security;
+create policy "Users can view sales for their chatbots" on sales
+  for select using (
+    exists (
+      select 1 from chatbots
+      where chatbots.id = sales.chatbot_id
+      and chatbots.user_id = auth.uid()
+    )
+  );
+
+-- Table: abandoned_carts
+create table abandoned_carts (
+  id uuid default uuid_generate_v4() primary key,
+  chatbot_id uuid references chatbots(id) on delete cascade not null,
+  visitor_id text not null,
+  cart_items jsonb default '[]'::jsonb,
+  total_amount decimal(10,2) default 0,
+  currency text default 'EUR',
+  last_page_url text,
+  status text default 'pending', -- pending, recovered, expired
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(chatbot_id, visitor_id)
+);
+
+alter table abandoned_carts enable row level security;
+create policy "Users can view abandoned carts for their chatbots" on abandoned_carts
+  for select using (
+    exists (
+      select 1 from chatbots
+      where chatbots.id = abandoned_carts.chatbot_id
+      and chatbots.user_id = auth.uid()
+    )
+  );
+-- Table: leads
+create table leads (
+  id uuid default uuid_generate_v4() primary key,
+  chatbot_id uuid references chatbots(id) on delete cascade not null,
+  visitor_id text,
+  email text,
+  phone text,
+  source_page text,
+  captured_at timestamptz default now(),
+  unique(chatbot_id, email, phone)
+);
+
+alter table leads enable row level security;
+create policy "Users can view leads for their chatbots" on leads
+  for select using (
+    exists (
+      select 1 from chatbots
+      where chatbots.id = leads.chatbot_id
+      and chatbots.user_id = auth.uid()
+    )
+  );
+
+-- Update chatbots to include collection flags
+alter table chatbots add column if not exists collect_phones boolean default false;

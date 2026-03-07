@@ -390,6 +390,86 @@
     setTimeout(checkNav, 1000); // Give page time to render
   };
 
+  // Cart Tracking API
+  window.Vendo.trackCart = async function (cartItems = [], totalAmount = 0, currency = 'EUR', pageUrl = window.location.href) {
+    const visitorId = sessionStorage.getItem('vendo_visitor_id');
+    const activeChatbotId = chatbotId || sessionStorage.getItem('vendo_active_chatbot_id');
+
+    if (!activeChatbotId || !visitorId) return;
+
+    // Use a simple debounce to avoid flooding the API
+    const lastTrackTime = sessionStorage.getItem('vendo_last_track_cart');
+    if (lastTrackTime && Date.now() - parseInt(lastTrackTime) < 5000) return;
+    sessionStorage.setItem('vendo_last_track_cart', Date.now().toString());
+
+    try {
+      await fetch(`${baseUrl}/api/track-cart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chatbotId: activeChatbotId,
+          visitorId: visitorId,
+          cartItems: cartItems,
+          totalAmount: totalAmount,
+          currency: currency,
+          pageUrl: pageUrl
+        })
+      });
+    } catch (err) {
+      console.error('UseVendo: Error tracking cart:', err);
+    }
+  };
+
+  // Automatic Cart Detection
+  async function detectCart() {
+    let cartItems = [];
+    let totalPrice = 0;
+    let currency = 'EUR';
+
+    // 1. SHOPIFY 
+    if (window.Shopify && window.Shopify.cart) {
+      try {
+        const response = await fetch('/cart.js');
+        const shopifyCart = await response.json();
+        if (shopifyCart && shopifyCart.items && shopifyCart.items.length > 0) {
+          cartItems = shopifyCart.items.map(i => ({
+            name: i.product_title,
+            price: i.price / 100,
+            quantity: i.quantity,
+            image: i.image
+          }));
+          totalPrice = shopifyCart.total_price / 100;
+          currency = shopifyCart.currency;
+        }
+      } catch (e) { }
+    }
+    // 2. WOOCOMMERCE / GENERIC HEURISTICS
+    else {
+      // Look for cart counters or items in mini-cart
+      const cartElements = document.querySelectorAll('.mini-cart-item, .cart-item, .cart_item');
+      if (cartElements.length > 0) {
+        cartElements.forEach(el => {
+          const title = el.querySelector('.product-name, .title, .item-name')?.innerText;
+          const priceStr = el.querySelector('.amount, .price, .item-price')?.innerText;
+          if (title) {
+            cartItems.push({
+              name: title,
+              price: priceStr ? parseFloat(priceStr.replace(/[^0-9,.]/g, '').replace(',', '.')) : 0
+            });
+          }
+        });
+      }
+    }
+
+    if (cartItems.length > 0) {
+      window.Vendo.trackCart(cartItems, totalPrice, currency);
+    }
+  }
+
+  // Monitor for cart changes
+  setInterval(detectCart, 10000); // Check every 10s
+  detectCart();
+
   // Initial check
   if (document.readyState === 'complete') {
     checkNav();

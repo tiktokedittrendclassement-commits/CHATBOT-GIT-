@@ -1,19 +1,9 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import { sendEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
-import { createClient } from '@supabase/supabase-js'
-import { Resend } from 'resend'
 
-// Initialize Resend lazily only if API key is present
-let resend;
-const getResend = () => {
-    if (!resend && process.env.RESEND_API_KEY) {
-        resend = new Resend(process.env.RESEND_API_KEY);
-    }
-    return resend;
-};
-
-// Safe tool for admin client
 const getSupabaseAdmin = () => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -27,7 +17,7 @@ const getSupabaseAdmin = () => {
 
 export async function POST(req) {
     try {
-        const { subject, body, userId } = await req.json()
+        const { subject, body, userId, senderName: reqSenderName, replyTo: reqReplyTo } = await req.json()
 
         if (!userId || !subject || !body) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -37,10 +27,21 @@ export async function POST(req) {
 
         const supabaseAdmin = getSupabaseAdmin()
 
-        // 1. Get all chatbots for this user to get settings and botIds
+        // 1. Get user profile for SMTP settings
+        const { data: profile, error: profError } = await supabaseAdmin
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single()
+
+        if (profError) {
+            console.error('[API Campaign] Profile error:', profError)
+        }
+
+        // 2. Get all chatbots for this user
         const { data: chatbots, error: botError } = await supabaseAdmin
             .from('chatbots')
-            .select('id, name, sender_name, reply_to')
+            .select('id, name, custom_sender_name, reply_to')
             .eq('user_id', userId)
 
         if (botError) {
@@ -54,7 +55,7 @@ export async function POST(req) {
 
         const botIds = chatbots.map(b => b.id)
 
-        // 2. Get all leads for these chatbots
+        // 3. Get all leads for these chatbots
         const { data: leads, error: leadError } = await supabaseAdmin
             .from('leads')
             .select('email')
@@ -73,8 +74,6 @@ export async function POST(req) {
                 .filter(email => emailRegex.test(email))
         )]
 
-        console.log(`[API Campaign] Chatbots found: ${chatbots.length}`);
-        console.log(`[API Campaign] Bot IDs: ${JSON.stringify(botIds)}`);
         console.log(`[API Campaign] Leads found: ${leads.length}`);
         console.log(`[API Campaign] Valid Unique emails: ${uniqueEmails.length}`);
 
@@ -83,61 +82,54 @@ export async function POST(req) {
             return NextResponse.json({ success: true, sentCount: 0, message: 'Aucun lead trouvé.' })
         }
 
-        // 3. Send emails
+        // 4. Send emails
         let successCount = 0
         let failCount = 0
 
-        console.log(`[API Campaign] Sending emails via Resend SDK...`);
+        const smtpSettings = (profile && profile.use_custom_smtp) ? profile : null
 
-        // Use Promise.all with some limit or just sequential for reliability on dev
+        const fs = require('fs');
+        fs.appendFileSync('lead_capture.log', `[${new Date().toISOString()}] CAMPAIGN START: Leads=${uniqueEmails.length}, SMTP=${!!smtpSettings}\n`);
+
         for (const email of uniqueEmails) {
             try {
-                if (!process.env.RESEND_API_KEY) {
-                    console.log(`[Campaign Simulation] To: ${email} | Sub: ${subject}`);
-                    successCount++;
-                    continue;
-                }
-
                 const firstBot = chatbots[0]
-                const senderName = firstBot?.sender_name || firstBot?.name || 'Vendo'
-                const replyTo = firstBot?.reply_to
+                const senderName = reqSenderName || firstBot?.custom_sender_name || firstBot?.name || 'Vendo'
+                const replyTo = reqReplyTo || firstBot?.reply_to
 
-                const { data, error } = await getResend().emails.send({
-                    from: `${senderName} <team@usevendo.com>`,
-                    to: [email],
-                    reply_to: replyTo || undefined,
-                    subject: subject,
-                    html: `
-                        <div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
-                            <h2 style="color: #7c3aed;">Bonjour !</h2>
-                            <div style="margin-top: 20px; line-height: 1.6;">
-                                ${body}
-                            </div>
-                            <hr style="margin-top: 30px; border: none; border-top: 1px solid #e2e8f0;" />
-                            <p style="font-size: 12px; color: #64748b;">
-                                Envoyé via <strong>${senderName}</strong>
-                            </p>
-                        </div>
-                    `,
+                const result = await sendEmail({
+                    to: email,
+                    subject,
+                    body,
+                    userId,
+                    chatbotName: firstBot?.name,
+                    senderName,
+                    replyTo,
+                    smtpSettings
                 });
 
-                if (error) {
-                    console.error(`[API Campaign] Error for ${email}:`, error);
-                    failCount++;
-                } else {
+                if (result.success) {
                     successCount++;
+                } else {
+                    failCount++;
                 }
+
+                fs.appendFileSync('lead_capture.log', `[${new Date().toISOString()}] CAMPAIGN LEAD ${email}: ${JSON.stringify(result)}\n`);
             } catch (err) {
                 console.error(`[API Campaign] Critical error for ${email}:`, err);
                 failCount++;
+                fs.appendFileSync('lead_capture.log', `[${new Date().toISOString()}] CAMPAIGN LEAD ${email} ERROR: ${err.message}\n`);
             }
         }
+
+        fs.appendFileSync('lead_capture.log', `[${new Date().toISOString()}] CAMPAIGN END: Success=${successCount}, Fail=${failCount}\n`);
 
         return NextResponse.json({
             success: true,
             sentCount: successCount,
             failCount: failCount,
-            totalLeads: uniqueEmails.length
+            totalLeads: uniqueEmails.length,
+            providerUsed: smtpSettings ? 'SMTP' : 'Resend'
         })
 
     } catch (error) {

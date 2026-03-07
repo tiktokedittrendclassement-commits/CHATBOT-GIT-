@@ -6,7 +6,7 @@ import { useAuth } from '@/components/auth-provider'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { User, Lock, LogOut, CreditCard, Trash2, AlertTriangle, CheckCircle, Eye, EyeOff } from 'lucide-react'
+import { User, Lock, LogOut, CreditCard, Trash2, AlertTriangle, CheckCircle, Eye, EyeOff, Mail, Server, Settings } from 'lucide-react'
 import Link from 'next/link'
 import styles from './page.module.css'
 
@@ -107,6 +107,7 @@ export default function SettingsPage() {
     }
 
     const handleSignOut = async () => {
+
         await signOut()
         router.push('/login')
     }
@@ -193,6 +194,11 @@ export default function SettingsPage() {
                                 />
                             </div>
                         </div>
+                        <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button type="submit" size="md" disabled={saving}>
+                                {saving ? 'Enregistrement...' : 'Sauvegarder les modifications'}
+                            </Button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -261,6 +267,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Subscription & Account Section */}
+
             <div className={styles.section}>
                 <div className={styles.sectionHeader}>
                     <div className={styles.iconWrapper}>
@@ -278,36 +285,9 @@ export default function SettingsPage() {
                         </div>
                         <div className={styles.actionsWrapper}>
                             {profile.plan_tier !== 'free' ? (
-                                <Button
-                                    size="md"
-                                    onClick={async () => {
-                                        if (!confirm('Êtes-vous sûr de vouloir résilier votre abonnement et repasser au plan Gratuit ?')) return;
-
-                                        setLoading(true);
-                                        try {
-                                            // Downgrade
-                                            await supabase
-                                                .from('profiles')
-                                                .update({ plan_tier: 'free' })
-                                                .eq('id', user.id);
-
-                                            // Rename bot
-                                            await supabase
-                                                .from('chatbots')
-                                                .update({ name: 'Mon Assistant Vendo' })
-                                                .eq('user_id', user.id);
-
-                                            alert('Votre abonnement a été résilié. Vous êtes maintenant sur le plan Gratuit.');
-                                            window.location.reload();
-                                        } catch (err) {
-                                            alert('Erreur: ' + err.message);
-                                            setLoading(false);
-                                        }
-                                    }}
-                                    className={styles.actionBtn}
-                                >
-                                    Se désabonner
-                                </Button>
+                                <Link href="/billing" className={styles.actionBtnLink}>
+                                    <Button size="md" className={styles.actionBtn}>Se désabonner</Button>
+                                </Link>
                             ) : (
                                 <Link href="/billing" className={styles.actionBtnLink}>
                                     <Button size="md" className={styles.actionBtn}>Gérer mon plan</Button>

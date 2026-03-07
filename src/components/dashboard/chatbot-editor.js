@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { PlanRestriction } from '@/components/ui/plan-restriction'
 import styles from './editor.module.css'
-import { ArrowLeft, Save, Bot, Lock, Clock, ArrowDown, Trash2, Plus, Zap, MousePointer2, Percent, Palette, Code, MessageSquare, Settings } from 'lucide-react'
+import { ArrowLeft, Save, Bot, Lock, Clock, ArrowDown, Trash2, Plus, Zap, MousePointer2, Percent, Palette, Code, MessageSquare, Settings, Globe, Loader2 } from 'lucide-react'
 
 // ... (existing code) ...
 
@@ -35,9 +35,12 @@ export default function ChatbotEditor({ botId = null }) {
         data_sources: '',
         triggers: [],
         theme: 'light',
-        sender_name: '',
-        reply_to: ''
+        collect_emails: false,
+        collect_phones: false
     })
+
+    const [scrapeUrl, setScrapeUrl] = useState('')
+    const [isScraping, setIsScraping] = useState(false)
 
     const PLAN_LIMITS = {
         free: 1,
@@ -127,8 +130,8 @@ export default function ChatbotEditor({ botId = null }) {
                         data_sources: data.data_sources || '',
                         triggers: data.triggers?.map(t => ({ ...t, id: t.id || Math.random().toString(36).substr(2, 9) })) || [],
                         theme: data.theme || 'light',
-                        sender_name: data.sender_name || '',
-                        reply_to: data.reply_to || ''
+                        collect_emails: data.collect_emails ?? false,
+                        collect_phones: data.collect_phones ?? false
                     })
                 }
             } else if (userPlan === 'free') {
@@ -187,6 +190,37 @@ export default function ChatbotEditor({ botId = null }) {
 
     const triggers = formData.triggers || []
 
+    const handleScrape = async () => {
+        if (!scrapeUrl) return
+        if (isFreePlan) {
+            alert('La fonctionnalité de scraping est réservée aux plans Pro et Agence.')
+            return
+        }
+
+        setIsScraping(true)
+        try {
+            const res = await fetch('/api/scrape', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: scrapeUrl })
+            })
+            const data = await res.json()
+
+            if (data.error) throw new Error(data.error)
+
+            setFormData(prev => ({
+                ...prev,
+                data_sources: prev.data_sources + (prev.data_sources ? '\n\n' : '') + data.data_sources
+            }))
+            alert(`Succès! ${data.page_count} pages scrappées et ajoutées aux sources de données.`)
+            setScrapeUrl('')
+        } catch (error) {
+            alert('Erreur: ' + error.message)
+        } finally {
+            setIsScraping(false)
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -195,13 +229,7 @@ export default function ChatbotEditor({ botId = null }) {
             return
         }
 
-        if (formData.reply_to) {
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-            if (!emailRegex.test(formData.reply_to.trim())) {
-                alert("Veuillez entrer une adresse email de réponse valide (ex: contact@domaine.com)")
-                return
-            }
-        }
+        // Email validation removed as email features are disabled
 
         setLoading(true)
 
@@ -237,8 +265,8 @@ export default function ChatbotEditor({ botId = null }) {
                 data_sources: formData.data_sources,
                 triggers: formData.triggers,
                 theme: formData.theme,
-                sender_name: formData.sender_name,
-                reply_to: formData.reply_to?.trim()
+                collect_emails: formData.collect_emails,
+                collect_phones: formData.collect_phones
             }
 
             if (botId) {
@@ -480,6 +508,41 @@ export default function ChatbotEditor({ botId = null }) {
                         </h3>
                         <div className={styles.field}>
                             <label>Sources de Données</label>
+
+                            {/* Website Scraper section - Pro/Agency only */}
+                            <div style={{ marginBottom: 16, border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, padding: 12, background: 'rgba(255,255,255,0.01)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                                    <h4 style={{ fontSize: 13, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <Globe size={14} color="var(--primary)" />
+                                        Scrapper un site web
+                                    </h4>
+                                </div>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    <Input
+                                        placeholder="ex: https://monsite.com"
+                                        value={scrapeUrl}
+                                        onChange={(e) => setScrapeUrl(e.target.value)}
+                                        disabled={isScraping || isFreePlan}
+                                        style={{ height: 36, fontSize: 13, flex: 1 }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        onClick={handleScrape}
+                                        disabled={isScraping || !scrapeUrl || isFreePlan}
+                                        variant={isFreePlan ? "outline" : "default"}
+                                    >
+                                        {isScraping ? <Loader2 size={14} className={styles.animateSpin} /> : 'Scrapper'}
+                                    </Button>
+                                </div>
+                                <p className={styles.hint} style={{ margin: '8px 0 0 0', fontSize: 12 }}>Scrappe automatiquement jusqu'à 10 pages de ce domaine.</p>
+                                {isFreePlan && (
+                                    <p className={styles.hint} style={{ color: '#ef4444', marginTop: 12, fontSize: 12 }}>
+                                        <Link href="/billing" className={styles.upgradeLink}>Passer sur un plan payant</Link> pour activer le scraping.
+                                    </p>
+                                )}
+                            </div>
+
                             <textarea
                                 className={styles.textarea}
                                 rows={6}
@@ -625,9 +688,8 @@ export default function ChatbotEditor({ botId = null }) {
                             />
                             <p className={styles.hint}>Instructions pour le comportement du bot (ton, style, etc).</p>
                         </div>
-
-
                     </div>
+
 
 
 

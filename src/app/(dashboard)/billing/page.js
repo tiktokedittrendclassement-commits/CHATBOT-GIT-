@@ -1,5 +1,6 @@
 
 'use client'
+export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -171,11 +172,23 @@ export default function BillingPage() {
                                 {isCurrent ? (
                                     <Button disabled size="md" className={styles.currentBtn}>Plan Actuel</Button>
                                 ) : (
-                                    <a href={plan.link || '#'} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                                        <Button size="md">
-                                            Choisir {plan.name}
-                                        </Button>
-                                    </a>
+                                    <Button
+                                        size="md"
+                                        onClick={() => {
+                                            if (plan.id === 'free') {
+                                                handlePlanChange('free')
+                                            } else if (plan.link) {
+                                                window.location.href = plan.link
+                                            } else {
+                                                handlePlanChange(plan.id)
+                                            }
+                                        }}
+                                    >
+                                        {plan.id === 'free' && profile?.plan_tier !== 'free' && profile?.plan_tier
+                                            ? 'Se désabonner'
+                                            : `Choisir ${plan.name}`
+                                        }
+                                    </Button>
                                 )}
                             </div>
                         </div>

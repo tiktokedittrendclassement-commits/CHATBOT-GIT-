@@ -22,7 +22,8 @@ import {
     ChevronRight,
     Bell,
     User,
-    Mail
+    Mail,
+    ShoppingCart
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -31,6 +32,7 @@ const navItems = [
     { href: '/chatbots', label: 'mes chatbots', icon: Bot },
     { href: '/conversations', label: 'conversation', icon: MessageSquare },
     { href: '/statistics', label: 'statistique ia', icon: TrendingUp },
+    { href: '/abandoned-carts', label: 'paniers abandonnés', icon: ShoppingCart },
     { href: '/marketing-email', label: 'marketing email', icon: Mail },
     { href: '/marketing-whatsapp', label: 'marketing whatsapp', icon: MessageSquare },
     { href: '/insights', label: 'visiteurs', icon: Users },
@@ -61,6 +63,7 @@ export default function DashboardLayout({ children }) {
         'settings': 'Paramètres',
         'reseller': 'Revendeur',
         'marketing-email': 'Marketing Email',
+        'abandoned-carts': 'Paniers Abandonnés',
         'marketing-whatsapp': 'Marketing WhatsApp',
         'new': 'Nouveau'
     }
@@ -85,11 +88,15 @@ export default function DashboardLayout({ children }) {
 
     const getNavItems = () => {
         if (SHOW_PREMIUM) return navItems
-        return navItems.filter(item =>
-            item.href !== '/reseller' &&
-            item.href !== '/marketing-whatsapp'
-        )
+        return navItems.filter(item => {
+            const isAgencyOnly = item.href === '/reseller' || item.href === '/marketing-whatsapp';
+            if (isAgencyOnly) {
+                return profile?.plan_tier === 'agency';
+            }
+            return true;
+        })
     }
+
 
     const currentNavItems = getNavItems()
 

@@ -24,13 +24,17 @@ export default function InsightsPage() {
 
         const fetchData = async () => {
             // 1. Check Plan
-            // 1. Check Plan
             const { data: profileData } = await supabase
                 .from('profiles')
                 .select('plan_tier')
                 .eq('id', user.id)
                 .single()
             setProfile(profileData)
+
+            if (profileData?.plan_tier !== 'agency') {
+                setLoading(false)
+                return
+            }
 
             // 2. Fetch User's Chatbots
             const { data: bots } = await supabase.from('chatbots').select('id, name').eq('user_id', user.id)
@@ -47,7 +51,7 @@ export default function InsightsPage() {
                     .eq('role', 'user')
                     .in('conversations.chatbot_id', botIds)
                     .order('created_at', { ascending: false })
-                    .limit(1000) // Increase sample
+                    .limit(1000)
 
                 if (messages) {
                     setTotalVisits(messages.length)
@@ -85,7 +89,7 @@ export default function InsightsPage() {
                     </h1>
                     <p className={styles.subheading}>Découvrez sur quelles pages vos utilisateurs interagissent avec vos chatbots.</p>
                 </div>
-                {chatbots.length > 0 && (
+                {chatbots.length > 0 && isAgency && (
                     <div className={styles.filterContainer}>
                         <CustomSelect
                             options={[
@@ -101,13 +105,15 @@ export default function InsightsPage() {
 
             <div style={{ position: 'relative' }}>
                 {!isAgency && (
-                    <PlanRestriction
-                        tier="Agence"
-                        description="Analysez le parcours de vos visiteurs et identifiez les pages qui convertissent le mieux. Réservé aux comptes <strong>Agence</strong>."
-                        isOverlay={false}
-                    />
+                    <div style={{ marginBottom: 24 }}>
+                        <PlanRestriction
+                            tier="Agence"
+                            description="Analysez le parcours de vos visiteurs et identifiez les pages qui convertissent le mieux. Réservé aux comptes <strong>Agence</strong>."
+                            isOverlay={false}
+                        />
+                    </div>
                 )}
-                <div style={{ pointerEvents: 'auto', opacity: 1 }}>
+                <div>
                     <div className={styles.grid}>
                         {/* Stats Card */}
                         <div className={styles.card}>

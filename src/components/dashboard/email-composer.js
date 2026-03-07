@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { X, Bold, Italic, List, Link as LinkIcon, Send } from 'lucide-react'
 import styles from './email-composer.module.css'
 
-export default function EmailComposer({ isOpen, onClose, onSend, leadsCount, initialSubject = '', initialBody = '' }) {
+export default function EmailComposer({ isOpen, onClose, onSend, leadsCount, initialSubject = '', initialBody = '', senderName = '', senderEmail = '' }) {
     const [subject, setSubject] = useState(initialSubject)
     const [isBold, setIsBold] = useState(false)
     const [isItalic, setIsItalic] = useState(false)
@@ -53,6 +53,12 @@ export default function EmailComposer({ isOpen, onClose, onSend, leadsCount, ini
             </div>
 
             <div className={styles.body}>
+                <div className={styles.inputGroup}>
+                    <span className={styles.inputLabel}>De</span>
+                    <span style={{ fontSize: '13px', color: '#fff', fontWeight: 600 }}>
+                        {senderName || 'Votre Marque'} {senderEmail ? `<${senderEmail}>` : '(Email Pro non configuré)'}
+                    </span>
+                </div>
                 <div className={styles.inputGroup}>
                     <span className={styles.inputLabel}>À</span>
                     <span style={{ fontSize: '13px', color: '#fff' }}>Tous vos leads ({leadsCount})</span>

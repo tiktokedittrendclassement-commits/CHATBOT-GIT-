@@ -1,7 +1,7 @@
 
 import OpenAI from 'openai'
 
-export async function generateChatResponse(messages, systemPrompt = 'You are a helpful assistant.') {
+export async function generateChatResponse(messages, systemPrompt = 'You are a helpful assistant.', maxTokens = 1000) {
     // Instantiate inside the function so it only runs at request time (not build time)
     const deepseek = new OpenAI({
         baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
@@ -18,7 +18,7 @@ export async function generateChatResponse(messages, systemPrompt = 'You are a h
             messages: fullMessages,
             model: 'deepseek-chat',
             temperature: 0.7,
-            max_tokens: 1000,
+            max_tokens: maxTokens,
         })
 
         return completion.choices[0].message.content

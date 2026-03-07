@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendEmail } from '@/lib/email'
+import { createClient } from '@supabase/supabase-js'
 
-let resend;
-const getResend = () => {
-    if (!resend && process.env.RESEND_API_KEY) {
-        resend = new Resend(process.env.RESEND_API_KEY);
-    }
-    return resend;
-};
+const getSupabaseAdmin = () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!url || !key) return null
+    return createClient(url, key)
+}
 
 export async function POST(req) {
     try {
-        const { to, subject, body, chatbotName, senderName, replyTo } = await req.json()
+        const { to, subject, body, userId: reqUserId, chatbotName, senderName, replyTo } = await req.json()
 
         // Validation de l'email destinataire
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -19,42 +19,37 @@ export async function POST(req) {
             return NextResponse.json({ error: 'Adresse email destinataire invalide' }, { status: 400 })
         }
 
-        if (!process.env.RESEND_API_KEY) {
-            console.log('--- EMAIL SIMULATION (No API Key) ---')
-            console.log(`To: ${to}`)
-            console.log(`Subject: ${subject}`)
-            console.log(`Body: ${body}`)
-            return NextResponse.json({ success: true, simulated: true })
+        let smtpSettings = null
+        if (reqUserId) {
+            const supabaseAdmin = getSupabaseAdmin()
+            if (supabaseAdmin) {
+                const { data: profile } = await supabaseAdmin
+                    .from('profiles')
+                    .select('smtp_host, smtp_port, smtp_user, smtp_pass, smtp_from, use_custom_smtp')
+                    .eq('id', reqUserId)
+                    .single()
+
+                if (profile && profile.use_custom_smtp) {
+                    smtpSettings = profile
+                }
+            }
         }
 
-        const { data, error } = await getResend().emails.send({
-            from: `${senderName || chatbotName || 'Vendo'} <team@usevendo.com>`,
-            to: [to],
-            reply_to: replyTo || undefined,
-            subject: subject || `Nouveau message de ${chatbotName || 'ton assistant'}`,
-            html: `
-                <div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
-                    <h2 style="color: #7c3aed;">Bonjour !</h2>
-                    <div style="margin-top: 20px; line-height: 1.6;">
-                        ${body}
-                    </div>
-                    <hr style="margin-top: 30px; border: none; border-top: 1px solid #e2e8f0;" />
-                    <p style="font-size: 12px; color: #64748b;">
-                        Envoyé via <strong>${chatbotName || 'Vendo Assistant'}</strong>
-                    </p>
-                </div>
-            `,
+        const result = await sendEmail({
+            to,
+            subject,
+            body,
+            userId: reqUserId,
+            chatbotName,
+            senderName,
+            replyTo,
+            smtpSettings
         })
 
-        if (error) {
-            console.error('[API Send Email] Resend Error:', error)
-            return NextResponse.json({ error: error.message }, { status: 500 })
-        }
-
-        return NextResponse.json({ success: true, id: data.id })
+        return NextResponse.json(result)
 
     } catch (error) {
         console.error('[API Send Email] Critical Error:', error)
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
     }
 }

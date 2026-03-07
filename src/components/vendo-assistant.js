@@ -70,6 +70,12 @@ export default function VendoAssistant() {
         }))
     }
 
+    const copyToWhatsApp = (content) => {
+        window.dispatchEvent(new CustomEvent('vendo-assistant-copy-to-whatsapp', {
+            detail: { content }
+        }))
+    }
+
     const handleSend = async (e) => {
         e.preventDefault()
         if (!input.trim() || isTyping) return
@@ -503,10 +509,10 @@ export default function VendoAssistant() {
                                     fontWeight: 500
                                 }}>
                                     {msg.content}
-                                    {msg.role === 'assistant' && pathname === '/marketing-email' && (
+                                    {msg.role === 'assistant' && (pathname === '/marketing-email' || pathname === '/marketing-whatsapp') && (
                                         <div style={{ marginTop: 12, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 10, display: 'flex', justifyContent: 'flex-end' }}>
                                             <button
-                                                onClick={() => copyToEmail(msg.content)}
+                                                onClick={() => pathname === '/marketing-email' ? copyToEmail(msg.content) : copyToWhatsApp(msg.content)}
                                                 style={{
                                                     background: 'rgba(103, 61, 230, 0.2)',
                                                     color: '#A78BFA',
@@ -530,7 +536,7 @@ export default function VendoAssistant() {
                                                     e.currentTarget.style.color = '#A78BFA'
                                                 }}
                                             >
-                                                Utiliser pour l'email
+                                                {pathname === '/marketing-email' ? "Utiliser pour l'email" : "Utiliser pour le WhatsApp"}
                                             </button>
                                         </div>
                                     )}

@@ -1,0 +1,28 @@
+[2026-03-07T12:38:45.381Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=baptistecastano06@gmail.com
+[2026-03-07T12:38:45.465Z] SAVE SUCCESS: baptistecastano06@gmail.com
+[2026-03-07T13:56:24.800Z] CAMPAIGN START: Leads=1, SMTP=false
+[2026-03-07T13:56:24.960Z] CAMPAIGN LEAD baptistecastano06@gmail.com ERROR: SMTP non configuré. Veuillez activer votre propre email pro dans les paramètres pour envoyer des messages.
+[2026-03-07T13:56:24.961Z] CAMPAIGN END: Success=0, Fail=1
+[2026-03-07T13:57:15.584Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=superaliments45@gmail.com
+[2026-03-07T13:57:15.751Z] SAVE SUCCESS: superaliments45@gmail.com
+[2026-03-07T13:58:52.711Z] CAMPAIGN START: Leads=2, SMTP=false
+[2026-03-07T13:58:52.862Z] CAMPAIGN LEAD baptistecastano06@gmail.com ERROR: SMTP non configuré. Veuillez activer votre propre email pro dans les paramètres pour envoyer des messages.
+[2026-03-07T13:58:52.982Z] CAMPAIGN LEAD superaliments45@gmail.com ERROR: SMTP non configuré. Veuillez activer votre propre email pro dans les paramètres pour envoyer des messages.
+[2026-03-07T13:58:52.983Z] CAMPAIGN END: Success=0, Fail=2
+[2026-03-07T14:02:30.241Z] CAMPAIGN START: Leads=2, SMTP=true
+[2026-03-07T14:02:31.181Z] CAMPAIGN LEAD baptistecastano06@gmail.com: {"success":true,"id":"<967bd0f9-7496-7833-5cf9-f631a814f439@gmail.com>","provider":"smtp"}
+[2026-03-07T14:02:32.299Z] CAMPAIGN LEAD superaliments45@gmail.com: {"success":true,"id":"<77ceed74-f2ef-6c94-3962-b3e28f9ddcec@gmail.com>","provider":"smtp"}
+[2026-03-07T14:02:32.300Z] CAMPAIGN END: Success=2, Fail=0
+[2026-03-07T14:04:00.368Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null
+[2026-03-07T14:06:38.318Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:06:49.765Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:09:25.177Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:12:21.476Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:14:43.638Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:14:43.699Z] SAVE ERROR: null value in column "email" of relation "leads" violates not-null constraint (Code: 23502)
+[2026-03-07T14:17:49.649Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:17:49.719Z] SAVE SUCCESS: 0616998137
+[2026-03-07T14:20:22.083Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=null, phone=0616998137
+[2026-03-07T14:20:22.151Z] SAVE SUCCESS: 0616998137
+[2026-03-07T14:28:13.125Z] Capture attempt for bot 153cfa98-00bb-4491-8e3f-07c9a79b5016: email=baptistecastano06@gmail.com, phone=null
+[2026-03-07T14:28:13.202Z] SAVE ERROR: duplicate key value violates unique constraint "leads_chatbot_id_email_key" (Code: 23505)

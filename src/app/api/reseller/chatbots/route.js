@@ -19,17 +19,66 @@ export async function GET(req) {
     }
 
     const supabaseAdmin = getSupabaseAdmin()
-    const { data, error } = await supabaseAdmin
+
+    // 1. Fetch chatbot info
+    const { data: bot, error: botErr } = await supabaseAdmin
         .from('chatbots')
-        .select('id, name, color, system_prompt, data_sources, reseller_token, logo_url')
+        .select('*')
         .eq('reseller_token', token)
         .single()
 
-    if (error || !data) {
+    if (botErr || !bot) {
         return NextResponse.json({ error: 'Invalid token or chatbot not found' }, { status: 404 })
     }
 
-    return NextResponse.json(data)
+    // 2. Fetch stats
+    // Count conversations
+    const { count: convCount } = await supabaseAdmin
+        .from('conversations')
+        .select('*', { count: 'exact', head: true })
+        .eq('chatbot_id', bot.id)
+
+    // Count messages
+    const { count: msgCount } = await supabaseAdmin
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('chatbot_id', bot.id)
+
+    // Calculate revenue
+    const { data: sales } = await supabaseAdmin
+        .from('sales')
+        .select('amount')
+        .eq('chatbot_id', bot.id)
+
+    const revenue = sales?.reduce((acc, s) => acc + Number(s.amount), 0) || 0
+
+    // Fetch leads (recent conversations with contact info)
+    const { data: leads } = await supabaseAdmin
+        .from('conversations')
+        .select('id, visitor_email, visitor_phone, created_at')
+        .eq('chatbot_id', bot.id)
+        .or('visitor_email.not.is.null,visitor_phone.not.is.null')
+        .order('created_at', { ascending: false })
+        .limit(5)
+
+    // Fetch recent activity
+    const { data: recentConvs } = await supabaseAdmin
+        .from('conversations')
+        .select('id, visitor_id, created_at')
+        .eq('chatbot_id', bot.id)
+        .order('created_at', { ascending: false })
+        .limit(5)
+
+    return NextResponse.json({
+        ...bot,
+        stats: {
+            conversations: convCount || 0,
+            messages: msgCount || 0,
+            leads: leads || [],
+            revenue: revenue,
+            recentConversations: recentConvs || []
+        }
+    })
 }
 
 export async function PATCH(req) {

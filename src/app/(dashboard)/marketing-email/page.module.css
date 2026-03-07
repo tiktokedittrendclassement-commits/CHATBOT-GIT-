@@ -535,3 +535,13 @@ input:checked+.slider:before {
         /* Hide Date on very small screens */
     }
 }
+
+.infoBox {
+    background: rgba(124, 58, 237, 0.05);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
+}
